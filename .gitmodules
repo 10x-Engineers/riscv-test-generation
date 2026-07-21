@@ -1,0 +1,6 @@
+[submodule "isla-gen-extension"]
+	path = isla-gen-extension
+	url = https://github.com/10x-Engineers/isla-testgen.git
+[submodule "autotest"]
+	path = autotest
+	url = https://github.com/10x-Engineers/sail-riscv-autotest.git

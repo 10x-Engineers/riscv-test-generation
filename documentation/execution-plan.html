@@ -1,0 +1,499 @@
+<title>RISC-V Test Generation from Sail — Execution Plan</title>
+<style>
+  :root {
+    --bg: #F5F7F9;
+    --surface: #FFFFFF;
+    --surface-2: #EDF1F4;
+    --ink: #131A22;
+    --ink-2: #3B4652;
+    --muted: #6C7783;
+    --line: #DCE2E8;
+    --line-strong: #C6CED6;
+    --accent: #0E7C86;
+    --accent-ink: #0A5860;
+    --accent-soft: #D6ECEE;
+    --amber: #A9660F;
+    --amber-soft: #F3E6D2;
+    --shadow: 0 1px 2px rgba(19,26,34,.05), 0 8px 24px rgba(19,26,34,.05);
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0D1116;
+      --surface: #151B21;
+      --surface-2: #1D252D;
+      --ink: #E9EEF2;
+      --ink-2: #B0BAC4;
+      --muted: #7E8A96;
+      --line: #28313A;
+      --line-strong: #38434E;
+      --accent: #36B7C2;
+      --accent-ink: #7FD8DF;
+      --accent-soft: #123236;
+      --amber: #E0A24A;
+      --amber-soft: #33291A;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #F5F7F9; --surface: #FFFFFF; --surface-2: #EDF1F4; --ink: #131A22; --ink-2: #3B4652;
+    --muted: #6C7783; --line: #DCE2E8; --line-strong: #C6CED6; --accent: #0E7C86; --accent-ink: #0A5860;
+    --accent-soft: #D6ECEE; --amber: #A9660F; --amber-soft: #F3E6D2;
+    --shadow: 0 1px 2px rgba(19,26,34,.05), 0 8px 24px rgba(19,26,34,.05);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0D1116; --surface: #151B21; --surface-2: #1D252D; --ink: #E9EEF2; --ink-2: #B0BAC4;
+    --muted: #7E8A96; --line: #28313A; --line-strong: #38434E; --accent: #36B7C2; --accent-ink: #7FD8DF;
+    --accent-soft: #123236; --amber: #E0A24A; --amber-soft: #33291A;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: clamp(20px, 5vw, 56px) clamp(16px, 4vw, 40px) 72px; }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--accent-ink); font-weight: 600;
+  }
+  h1 {
+    font-size: clamp(1.7rem, 4.4vw, 2.55rem); line-height: 1.1; margin: .5rem 0 0;
+    letter-spacing: -.02em; text-wrap: balance; font-weight: 700;
+  }
+  .lede { color: var(--ink-2); font-size: 1.06rem; margin: .9rem 0 0; max-width: 62ch; text-wrap: pretty; }
+
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 8px 10px; margin-top: 20px;
+    font-family: var(--mono); font-size: .78rem;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 12px; color: var(--ink-2);
+  }
+  .chip b { color: var(--ink); font-weight: 600; }
+  .chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+
+  .decision {
+    margin-top: 28px; background: var(--surface); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow);
+  }
+  .decision .k {
+    font-family: var(--mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent-ink); font-weight: 600;
+  }
+  .decision p { margin: 6px 0 0; color: var(--ink); font-size: 1.02rem; }
+  .decision p b { color: var(--accent-ink); }
+
+  section { margin-top: 48px; }
+  .sec-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+  .sec-num { font-family: var(--mono); font-size: .78rem; color: var(--muted); font-weight: 600; }
+  h2 { font-size: 1.28rem; margin: 0; letter-spacing: -.01em; font-weight: 700; }
+  .sec-sub { color: var(--muted); font-size: .92rem; margin: 2px 0 0; }
+
+  /* two-axis matrix */
+  .axis {
+    display: grid; grid-template-columns: auto 1fr 1fr; gap: 10px; align-items: stretch;
+  }
+  .axis .corner { display: flex; align-items: flex-end; justify-content: flex-end; padding: 6px; }
+  .axis .corner span {
+    font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted); text-align: right; line-height: 1.35;
+  }
+  .axis .colhead {
+    font-family: var(--mono); font-size: .74rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-2); text-align: center; padding: 8px; align-self: center; font-weight: 600;
+  }
+  .axis .rowhead {
+    font-family: var(--mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--ink-2); display: flex; align-items: center; padding: 0 4px; font-weight: 600;
+    writing-mode: horizontal-tb; max-width: 108px;
+  }
+  .cell {
+    border-radius: 12px; padding: 16px; border: 1px solid var(--line); background: var(--surface);
+    min-height: 108px; display: flex; flex-direction: column; gap: 6px; box-shadow: var(--shadow);
+  }
+  .cell.fill-teal { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); background: color-mix(in srgb, var(--accent-soft) 55%, var(--surface)); }
+  .cell.fill-amber { border-color: color-mix(in srgb, var(--amber) 38%, var(--line)); background: color-mix(in srgb, var(--amber-soft) 55%, var(--surface)); }
+  .cell.empty { background: transparent; border-style: dashed; box-shadow: none; align-items: center; justify-content: center; }
+  .cell .tag { font-family: var(--mono); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .cell .name { font-weight: 700; font-size: 1.02rem; }
+  .cell .name.teal { color: var(--accent-ink); }
+  .cell .name.amber { color: var(--amber); }
+  .cell .desc { font-size: .86rem; color: var(--ink-2); }
+  .cell.empty .desc { color: var(--muted); text-align: center; font-size: .82rem; }
+
+  /* gantt */
+  .gantt-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); }
+  .gantt { min-width: 740px; padding: 8px 14px 16px; }
+  .g-row { display: grid; grid-template-columns: 132px repeat(11, 1fr); align-items: center; }
+  .g-row.head .cell-day, .g-row.head .lbl { border-bottom: 1px solid var(--line-strong); }
+  .lbl { grid-column: 1; grid-row: 1; padding: 9px 12px 9px 2px; font-family: var(--mono); font-size: .78rem; }
+  .lbl .id { color: var(--ink); font-weight: 700; }
+  .lbl .nm { color: var(--muted); display: block; font-size: .68rem; letter-spacing: .02em; }
+  .cell-day {
+    grid-row: 1; height: 100%; min-height: 40px; border-right: 1px dashed var(--line);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .cell-day.we { background: color-mix(in srgb, var(--surface-2) 70%, transparent); }
+  .cell-day .dnum { font-family: var(--mono); font-size: .8rem; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .cell-day .dwk { font-family: var(--mono); font-size: .58rem; color: var(--muted); letter-spacing: .05em; }
+  .g-row .cell-day:last-child { border-right: none; }
+
+  .bar {
+    grid-row: 1; height: 30px; border-radius: 8px; display: flex; align-items: center; padding: 0 11px;
+    font-family: var(--mono); font-size: .72rem; font-weight: 600; color: #fff; white-space: nowrap;
+    overflow: hidden; margin: 5px 3px; box-shadow: 0 1px 2px rgba(0,0,0,.18); z-index: 2;
+  }
+  .bar.teal { background: var(--accent); }
+  .bar.amber { background: var(--amber); }
+  .bar.ghost { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--accent) 78%, #000 0%), color-mix(in srgb, var(--accent) 78%, #000 0%) 6px, color-mix(in srgb, var(--accent) 60%, #000) 6px, color-mix(in srgb, var(--accent) 60%, #000) 12px); }
+  .bar.outline { background: transparent; border: 1.5px dashed var(--accent); color: var(--accent-ink); box-shadow: none; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; font-family: var(--mono); font-size: .72rem; color: var(--ink-2); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 20px; height: 10px; border-radius: 3px; display: inline-block; }
+  .sw.teal { background: var(--accent); } .sw.amber { background: var(--amber); }
+  .sw.ghost { background: repeating-linear-gradient(135deg, var(--accent), var(--accent) 4px, color-mix(in srgb, var(--accent) 55%, #000) 4px, color-mix(in srgb, var(--accent) 55%, #000) 8px); }
+  .sw.we { background: var(--surface-2); border: 1px solid var(--line); }
+
+  /* milestone cards */
+  .mstack { display: flex; flex-direction: column; gap: 14px; }
+  .ms {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px 20px; box-shadow: var(--shadow); position: relative;
+  }
+  .ms.risk { border-left: 3px solid var(--amber); }
+  .ms-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 14px; }
+  .ms-id {
+    font-family: var(--mono); font-weight: 700; font-size: .8rem; color: #fff; background: var(--accent);
+    padding: 3px 9px; border-radius: 6px; letter-spacing: .04em;
+  }
+  .ms.risk .ms-id { background: var(--amber); }
+  .ms-title { font-weight: 700; font-size: 1.08rem; flex: 1 1 240px; }
+  .ms-date {
+    font-family: var(--mono); font-size: .74rem; color: var(--ink-2);
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px;
+    white-space: nowrap;
+  }
+  .ms-tasks { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+  .ms-tasks li { position: relative; padding-left: 20px; font-size: .92rem; color: var(--ink-2); }
+  .ms-tasks li::before {
+    content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; border-radius: 1.5px;
+    background: var(--accent); transform: rotate(45deg);
+  }
+  .ms.risk .ms-tasks li::before { background: var(--amber); }
+  .ms-out {
+    margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line);
+    font-size: .9rem; display: flex; gap: 8px; align-items: baseline;
+  }
+  .ms-out .k { font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); flex: 0 0 auto; }
+  .ms-out .v { color: var(--ink); font-weight: 600; }
+
+  /* deliverables + tables */
+  .tbl-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; min-width: 460px; background: var(--surface); }
+  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); font-size: .92rem; }
+  th { font-family: var(--mono); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  tbody tr:last-child td, tr:last-child td { border-bottom: none; }
+  td.where { font-family: var(--mono); font-size: .8rem; color: var(--accent-ink); white-space: nowrap; }
+  td .num { font-family: var(--mono); color: var(--muted); }
+
+  .notes { display: grid; gap: 12px; }
+  .note {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 15px 17px;
+    font-size: .92rem; color: var(--ink-2); box-shadow: var(--shadow);
+  }
+  .note b { color: var(--ink); }
+  .note.warn { border-left: 3px solid var(--amber); }
+
+  footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: .74rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 16px; justify-content: space-between; }
+
+  @media (max-width: 560px) {
+    .axis { grid-template-columns: 1fr; }
+    .axis .corner, .axis .colhead, .axis .rowhead { display: none; }
+    .cell.empty { display: none; }
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Execution Plan · R&amp;D Methodology Evaluation</div>
+    <h1>Automated RISC-V Test Generation from Sail</h1>
+    <p class="lede">A time-boxed evaluation to decide <b>which methodology to propose</b> for building an automated RISC-V test generator from the Sail Golden Model — not to ship a generator, but to recommend the right architecture, backed by hands-on understanding of each candidate.</p>
+
+    <div class="meta">
+      <span class="chip"><span class="dot"></span> Window <b>21 – 31 Jul 2026</b></span>
+      <span class="chip"><b>11</b> working days</span>
+      <span class="chip">Owner <b>you + Claude</b></span>
+      <span class="chip">Deliverable <b>recommendation</b></span>
+    </div>
+
+    <div class="decision">
+      <div class="k">Decided approach</div>
+      <p>Evaluate <b>three candidates on two axes</b> — implementation <b>language</b> (Rust vs. Python) crossed with test-generation <b>methodology</b> (symbolic execution vs. concrete oracle) — and produce a single, justified recommendation by <b>31 July</b>. The Python track keeps ISLA's methodology <b>identical</b>; only the language changes, for industry familiarity and maintainability.</p>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <div>
+        <h2>The three candidates</h2>
+        <p class="sec-sub">Approaches 1 &amp; 2 share a methodology and differ in language; 2 &amp; 3 share a language and differ in methodology.</p>
+      </div>
+    </div>
+
+    <div class="axis">
+      <div class="corner"><span>Methodology&nbsp;↓&nbsp;&nbsp;Language&nbsp;→</span></div>
+      <div class="colhead">Rust</div>
+      <div class="colhead">Python</div>
+
+      <div class="rowhead">Symbolic execution (ISLA + SMT)</div>
+      <div class="cell fill-teal">
+        <span class="tag">Approach 1 · extend</span>
+        <span class="name teal">ISLA-GEN</span>
+        <span class="desc">Existing <code>isla-testgen</code>, already working end-to-end for RV32. Symbolic execution + SMT via the <code>isla</code> engine.</span>
+      </div>
+      <div class="cell fill-amber">
+        <span class="tag">Approach 2 · port</span>
+        <span class="name amber">python-isla</span>
+        <span class="desc">Same ISLA methodology, Python language. Built this sprint; carries the key architectural decision (see M2).</span>
+      </div>
+
+      <div class="rowhead">Concrete oracle (run the model)</div>
+      <div class="cell empty"><span class="desc">Not evaluated<br>(no candidate)</span></div>
+      <div class="cell fill-teal">
+        <span class="tag">Approach 3 · evaluate</span>
+        <span class="name teal">AutoTest / sailtest</span>
+        <span class="desc"><code>sail-riscv-autotest</code>. Uses the Golden Model itself as a concrete oracle — a genuinely different methodology. Already Python, zero-dependency.</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <div>
+        <h2>Timeline</h2>
+        <p class="sec-sub">11 working days incl. the 25–26 Jul weekend. M4 (AutoTest review) overlaps M2 (Python port) — the plan's one parallel track.</p>
+      </div>
+    </div>
+
+    <div class="gantt-scroll">
+      <div class="gantt">
+        <div class="g-row head">
+          <div class="lbl"></div>
+          <div class="cell-day"><span class="dnum">21</span><span class="dwk">Tue</span></div>
+          <div class="cell-day"><span class="dnum">22</span><span class="dwk">Wed</span></div>
+          <div class="cell-day"><span class="dnum">23</span><span class="dwk">Thu</span></div>
+          <div class="cell-day"><span class="dnum">24</span><span class="dwk">Fri</span></div>
+          <div class="cell-day we"><span class="dnum">25</span><span class="dwk">Sat</span></div>
+          <div class="cell-day we"><span class="dnum">26</span><span class="dwk">Sun</span></div>
+          <div class="cell-day"><span class="dnum">27</span><span class="dwk">Mon</span></div>
+          <div class="cell-day"><span class="dnum">28</span><span class="dwk">Tue</span></div>
+          <div class="cell-day"><span class="dnum">29</span><span class="dwk">Wed</span></div>
+          <div class="cell-day"><span class="dnum">30</span><span class="dwk">Thu</span></div>
+          <div class="cell-day"><span class="dnum">31</span><span class="dwk">Fri</span></div>
+        </div>
+
+        <!-- Phase 0 -->
+        <div class="g-row">
+          <div class="lbl"><span class="id">P0</span><span class="nm">scaffold</span></div>
+          <div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="cell-day we"></div><div class="cell-day we"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="bar teal" style="grid-column: 2 / 3;">Repo</div>
+        </div>
+        <!-- M1 -->
+        <div class="g-row">
+          <div class="lbl"><span class="id">M1</span><span class="nm">review ISLA-GEN</span></div>
+          <div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="cell-day we"></div><div class="cell-day we"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="bar teal" style="grid-column: 2 / 5;">Understand ISLA-GEN</div>
+        </div>
+        <!-- M2 -->
+        <div class="g-row">
+          <div class="lbl"><span class="id">M2</span><span class="nm">python port</span></div>
+          <div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="cell-day we"></div><div class="cell-day we"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="bar amber" style="grid-column: 4 / 9;">Port to Python · verify · cost (b)</div>
+        </div>
+        <!-- M4 (overlap) -->
+        <div class="g-row">
+          <div class="lbl"><span class="id">M4</span><span class="nm">review AutoTest</span></div>
+          <div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="cell-day we"></div><div class="cell-day we"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="bar ghost" style="grid-column: 6 / 9;">draft ∥</div>
+          <div class="bar outline" style="grid-column: 9 / 10;">✓ val</div>
+        </div>
+        <!-- M3 -->
+        <div class="g-row">
+          <div class="lbl"><span class="id">M3</span><span class="nm">review python</span></div>
+          <div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="cell-day we"></div><div class="cell-day we"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="bar teal" style="grid-column: 9 / 11;">Diff + lessons</div>
+        </div>
+        <!-- M5 -->
+        <div class="g-row">
+          <div class="lbl"><span class="id">M5</span><span class="nm">recommend</span></div>
+          <div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="cell-day we"></div><div class="cell-day we"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="cell-day"></div><div class="cell-day"></div><div class="cell-day"></div>
+          <div class="bar amber" style="grid-column: 11 / 13;">Compare + recommend</div>
+        </div>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i class="sw teal"></i> milestone</span>
+      <span><i class="sw amber"></i> carries key decision / deliverable</span>
+      <span><i class="sw ghost"></i> parallel draft (Claude)</span>
+      <span><i class="sw we"></i> weekend (available)</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <div>
+        <h2>Milestones &amp; tasks</h2>
+        <p class="sec-sub">Every milestone modifies-then-documents or builds a tangible output. M1 &amp; M4 are review-only.</p>
+      </div>
+    </div>
+
+    <div class="mstack">
+      <div class="ms">
+        <div class="ms-top">
+          <span class="ms-id">P0</span>
+          <span class="ms-title">Repository scaffolding</span>
+          <span class="ms-date">Day 1 · 21 Jul</span>
+        </div>
+        <ul class="ms-tasks">
+          <li>Create the private <code>riscv-test-generation</code> repo; co-locate all three approaches as subprojects plus <code>documentation/</code>, <code>comparison/</code>, <code>experiments/</code>.</li>
+          <li>Bring AutoTest in as a submodule of <code>sail-riscv-autotest</code>; commit this plan under <code>documentation/</code>.</li>
+        </ul>
+        <div class="ms-out"><span class="k">Output</span><span class="v">All three approaches in one repo, ready to compare.</span></div>
+      </div>
+
+      <div class="ms">
+        <div class="ms-top">
+          <span class="ms-id">M1</span>
+          <span class="ms-title">Review &amp; understand ISLA-GEN</span>
+          <span class="ms-date">Days 1–3 · 21–23 Jul</span>
+        </div>
+        <ul class="ms-tasks">
+          <li>File-by-file walkthrough of all 14 Rust source files (each file its own tracked task) — leaning on knowledge already gained making RISC-V work.</li>
+          <li>Map exactly where Sail, ISLA, SMT solving, instruction generation, and ELF generation each live — including the RISC-V path through <code>isla-lib</code>.</li>
+          <li>Produce the execution-flow doc, function-call-flow diagram, and file-dependency diagram.</li>
+        </ul>
+        <div class="ms-out"><span class="k">Output</span><span class="v">ISLA-GEN fully documented — the blueprint M2 ports to Python.</span></div>
+      </div>
+
+      <div class="ms risk">
+        <div class="ms-top">
+          <span class="ms-id">M2</span>
+          <span class="ms-title">Port the ISLA-GEN approach to Python</span>
+          <span class="ms-date">Days 3–7 · 23–27 Jul</span>
+        </div>
+        <ul class="ms-tasks">
+          <li>Build <code>python-isla</code> mirroring ISLA-GEN's component seams — same methodology, Python language.</li>
+          <li><b>Depth (a):</b> Python framework driving the existing Rust <code>isla</code> engine for symbolic execution; generate <code>addi</code> (+ <code>csrrw</code>) end-to-end and verify on <code>sail_riscv_sim</code> / Spike.</li>
+          <li><b>Depth (b) spike:</b> prototype one IR op interpreted in Python against <code>z3-solver</code> to honestly cost a full all-Python engine.</li>
+        </ul>
+        <div class="ms-out"><span class="k">Output</span><span class="v">Working Python port (≥1 verified instruction) + an honest all-Python estimate.</span></div>
+      </div>
+
+      <div class="ms">
+        <div class="ms-top">
+          <span class="ms-id">M4</span>
+          <span class="ms-title">Review &amp; understand AutoTest</span>
+          <span class="ms-date">Overlaps M2 · validated Day 8 · 28 Jul</span>
+        </div>
+        <ul class="ms-tasks">
+          <li>File-by-file across all 13 Python files (each a tracked task), leveraging the repo's existing <code>ARCHITECTURE.md</code>.</li>
+          <li>Document the Golden-Model-as-oracle methodology and contrast it against ISLA-GEN's symbolic approach.</li>
+          <li>Produce architecture, execution-flow, and data-flow diagrams. Drafted in parallel by Claude while you drive M2.</li>
+        </ul>
+        <div class="ms-out"><span class="k">Output</span><span class="v">AutoTest fully documented, methodology explicitly contrasted.</span></div>
+      </div>
+
+      <div class="ms">
+        <div class="ms-top">
+          <span class="ms-id">M3</span>
+          <span class="ms-title">Review &amp; understand the Python port</span>
+          <span class="ms-date">Days 8–9 · 28–29 Jul</span>
+        </div>
+        <ul class="ms-tasks">
+          <li>Per-module docs plus call-flow and dependency diagrams for <code>python-isla</code>.</li>
+          <li>Write the Rust-vs-Python architectural-difference and lessons-learned doc: what ported cleanly, what stays Rust under depth (a), what depth (b) would add.</li>
+        </ul>
+        <div class="ms-out"><span class="k">Output</span><span class="v">Python port documented; deltas from ISLA-GEN captured.</span></div>
+      </div>
+
+      <div class="ms risk">
+        <div class="ms-top">
+          <span class="ms-id">M5</span>
+          <span class="ms-title">Comparative analysis &amp; recommendation</span>
+          <span class="ms-date">Days 10–11 · 30–31 Jul</span>
+        </div>
+        <ul class="ms-tasks">
+          <li>Score all three approaches across 10 dimensions — architecture, workflow, ease of implementation, maintainability, extensibility, performance, dependency complexity, Sail integration, SMT integration, methodology — as a matrix.</li>
+          <li>Deliver one recommended methodology + justification: symbolic (ISLA) vs. concrete oracle, and if ISLA, Rust vs. Python depth (a) vs. depth (b), grounded in the M2 spike.</li>
+        </ul>
+        <div class="ms-out"><span class="k">Output</span><span class="v">The deliverable — documented comparison + defensible recommendation.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <div>
+        <h2>Deliverables → where they land</h2>
+      </div>
+    </div>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th style="width:36px">#</th><th>Deliverable</th><th style="width:120px">Lands at</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td>Private repo with three subprojects + AutoTest included</td><td class="where">P0</td></tr>
+          <tr><td class="num">2</td><td>Complete understanding of ISLA-GEN — per-file docs, flow &amp; dependency diagrams, Sail/ISLA/SMT/gen map</td><td class="where">M1</td></tr>
+          <tr><td class="num">3</td><td>Working Python port of the core concepts (same methodology, Python language)</td><td class="where">M2</td></tr>
+          <tr><td class="num">4</td><td>Python port reviewed; Rust-vs-Python differences + lessons documented</td><td class="where">M3</td></tr>
+          <tr><td class="num">5</td><td>Complete understanding of AutoTest — per-file docs, arch/flow/data-flow diagrams</td><td class="where">M4</td></tr>
+          <tr><td class="num">6</td><td>Documented comparison of all three approaches</td><td class="where">M5</td></tr>
+          <tr><td class="num">7</td><td>Recommended methodology + justification</td><td class="where">M5</td></tr>
+          <tr><td class="num">8</td><td>Code comments, call-flow diagrams, dependency diagrams, change docs</td><td class="where">M1–M4</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <div>
+        <h2>Scope &amp; risks, stated plainly</h2>
+      </div>
+    </div>
+    <div class="notes">
+      <div class="note warn"><b>"Python" has two depths, and only the smaller fits the window.</b> Depth (a) — a Python framework over the reused Rust <code>isla</code> engine — is buildable by Day 7; depth (b) — an all-Python symbolic engine on <code>z3-solver</code> — is a multi-week effort. M2 ships (a) and <i>spikes</i> (b) to cost it; M5 recommends whether (b) is worth committing to. If the proposal ultimately wants full-Python maintainability, (a) alone does not deliver it — that gap is named in M5, not glossed.</div>
+      <div class="note"><b>"Understand every function" of <code>isla-lib</code> is not in scope.</b> It is a large codebase; M1 goes depth-first on the RISC-V execution path already traced for the PMP fix and notes the rest by responsibility.</div>
+      <div class="note"><b>11 days is comfortable because M4 overlaps M2 and Claude accelerates the docs.</b> If that overlap breaks down, M3 compresses first — M5 can draw its Python findings from M2 directly. Unused slack is reinvested into deeper coverage, not used to pull the deadline earlier.</div>
+      <div class="note"><b>Explicitly out of scope:</b> a production-ready or <i>fully</i> all-Python generator by 31 Jul; line-by-line reading of <code>isla-lib</code> or the ARM/CHERIoT backends; any AutoTest modifications (M4 is review-only); merging the existing <code>riscv-testgen-sail</code> PRs.</div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Automated RISC-V Test Generation from Sail · Execution Plan</span>
+    <span>Window 21–31 Jul 2026 · v1</span>
+  </footer>
+</div>
