@@ -130,7 +130,7 @@ buffer; submit by 31 Jul.**
 |---|---|---|
 | **S0 · Scaffold + compliance** | 1 (21 Jul) | Repo created; three approaches co-located; RFP compliance matrix (§2) drafted as the proposal's spine. |
 | **S1 · Understand both lineages** | 1–3 (21–23) | Per-file docs + flow/dependency diagrams for **ISLA-GEN** (14 Rust files) and **AutoTest** (13 Py files); explicit map of where Sail/ISLA/SMT/gen/ELF live. Demonstrated-skill evidence (criterion #4). |
-| **S2 · Prove the load-bearing claims** | 3–5 (23–25) | Two spikes, in Python where possible: **(i)** Sail-code coverage end-to-end — build model with `COVERAGE`, run a generated ELF, emit a per-ELF + suite coverage report; **(ii)** oracle backbone generates a **privileged** test (PMP or trap) verified on `sail_riscv_sim`/Spike. Evidence the hybrid is real, not hypothetical. |
+| **S2 · Prove the load-bearing claims** | 3–5 (23–25) | Two spikes, in Python where possible: **(i)** Sail-code coverage end-to-end — build model with `COVERAGE`, run a generated ELF, emit a per-ELF + suite coverage report; **(ii)** oracle backbone generates a **privileged** test (PMP or trap) verified on `sail_riscv_sim`/Spike. Plus **fill in the [coverage-risk canary matrix](../comparison/coverage-risk-matrix.md)** — probe the hardest representative of each instruction class per approach, recording proven/partial/blocked. Evidence the hybrid is real, not hypothetical. |
 | **S3 · Post-award roadmap + cost** | 5–6 (25–26) | The multi-month execution roadmap (§5) with effort ranges; cost framework (effort × rate, rate = your input); team + community-integration plan (criteria #3–#5). |
 | **S4 · Write the proposal** | 6–8 (26–28) | `PROPOSAL/` document: technical plan, timeline, cost — every RFP goal/deliverable/consideration mapped (§2). |
 | **S5 · Internal review-ready** | 9 (29 Jul) | Proposal complete and reviewed internally. **Buffer 30–31 Jul**, then submit to `tech-proposals@riscv.org` by the 31st. |
@@ -166,8 +166,12 @@ weights highest; P1 and the coverage harness are the reusable spine under everyt
    date, so these must be real numbers before submission).
 2. **ISLA's privileged blockers are real** — PMP struct/vector, VM/PTW path explosion. The
    architecture *contains* this risk by making ISLA the specialist, not the backbone; the
-   oracle covers those classes by construction. The S2 spike proves the coverage + oracle
-   path before we commit to it in writing.
+   oracle covers those classes by construction. The way we de-risk this concretely is the
+   **[coverage-risk canary matrix](../comparison/coverage-risk-matrix.md)**: probe the hardest
+   representative of each of the ~12 instruction classes first (VM/PTW and Vector earliest on
+   ISLA, since those are the walls), and treat a "blocked — here's why" as a *successful*
+   boundary-mapping result. Oracle has no fundamentally-blocked class; its risk is
+   setup-machinery effort, measured the same way.
 3. **"Understand every function" of `isla-lib` isn't in scope** for the sprint — S1 is
    depth-first on the RISC-V/privileged path (already traced for the PMP fix).
 4. **Explicitly out of scope of the proposal itself:** hypervisor extension (RFP defers it);
