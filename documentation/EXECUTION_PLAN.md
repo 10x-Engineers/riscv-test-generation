@@ -128,12 +128,12 @@ buffer; submit by 31 Jul.**
 
 | Milestone | Days | Tangible output |
 |---|---|---|
-| **S0 · Scaffold + compliance** | 1 (21 Jul) | Repo created; three approaches co-located; RFP compliance matrix (§2) drafted as the proposal's spine. |
-| **S1 · Understand both lineages** | 1–3 (21–23) | Per-file docs + flow/dependency diagrams for **ISLA-GEN** (14 Rust files) and **AutoTest** (13 Py files); explicit map of where Sail/ISLA/SMT/gen/ELF live. Demonstrated-skill evidence (criterion #4). |
-| **S2 · Prove the load-bearing claims** | 3–5 (23–25) | Two spikes, in Python where possible: **(i)** Sail-code coverage end-to-end — build model with `COVERAGE`, run a generated ELF, emit a per-ELF + suite coverage report; **(ii)** oracle backbone generates a **privileged** test (PMP or trap) verified on `sail_riscv_sim`/Spike. Plus **fill in the [coverage-risk canary matrix](../comparison/coverage-risk-matrix.md)** — probe the hardest representative of each instruction class per approach, recording proven/partial/blocked. Evidence the hybrid is real, not hypothetical. |
-| **S3 · Post-award roadmap + cost** | 5–6 (25–26) | The multi-month execution roadmap (§5) with effort ranges; cost framework (effort × rate, rate = your input); team + community-integration plan (criteria #3–#5). |
-| **S4 · Write the proposal** | 6–8 (26–28) | `PROPOSAL/` document: technical plan, timeline, cost — every RFP goal/deliverable/consideration mapped (§2). |
-| **S5 · Internal review-ready** | 9 (29 Jul) | Proposal complete and reviewed internally. **Buffer 30–31 Jul**, then submit to `tech-proposals@riscv.org` by the 31st. |
+| **S0 · Scaffold + compliance** | 22 Jul | Repo created; three approaches co-located; RFP compliance matrix (§2) drafted as the proposal's spine. |
+| **S1 · Understand both lineages** | 22–24 | Per-file docs + flow/dependency diagrams for **ISLA-GEN** (14 Rust files) and **AutoTest** (13 Py files); explicit map of where Sail/ISLA/SMT/gen/ELF live. Demonstrated-skill evidence (criterion #4). |
+| **S2 · Prove the load-bearing claims** | 24–26 | Two spikes, in Python where possible: **(i)** Sail-code coverage end-to-end — build model with `COVERAGE`, run a generated ELF, emit a per-ELF + suite coverage report; **(ii)** oracle backbone generates a **privileged** test (PMP or trap) verified on `sail_riscv_sim`/Spike. Plus **fill in the [coverage-risk canary matrix](../comparison/coverage-risk-matrix.md)** — probe the hardest representative of each instruction class per approach, recording proven/partial/blocked. Evidence the hybrid is real, not hypothetical. |
+| **S3 · Post-award roadmap + cost** | 26–27 | The multi-month execution roadmap (§5) with effort ranges; cost framework (effort × rate, rate = your input); team + community-integration plan (criteria #3–#5). |
+| **S4 · Write the proposal** | 27–28 | `PROPOSAL/` document: technical plan, timeline, cost — every RFP goal/deliverable/consideration mapped (§2). |
+| **S5 · Internal review-ready** | 29 Jul | Proposal complete and reviewed internally. **Buffer 30–31 Jul**, then submit to `tech-proposals@riscv.org` by the 31st. |
 
 *(S1 for AutoTest overlaps S2 — Claude drafts AutoTest docs while you drive the coverage spike.)*
 
