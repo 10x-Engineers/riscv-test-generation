@@ -120,22 +120,47 @@ all three lineages are co-located and comparable; `python-isla` is developed in-
 
 ---
 
-## 4. Pre-proposal sprint (21–31 Jul) — output is a *submitted proposal*
+## 4. Execution workflow — understand → implement the table → finalize → propose
 
-**Staffing: you + Claude** (you: direction/validation/technical judgment; Claude: drafting
-docs, diagrams, prototype code, running the spikes). **Internal completion 29 Jul; 30–31 review
-buffer; submit by 31 Jul.**
+**Staffing: you + Claude.** **Internal completion 29 Jul; 30–31 review buffer; submit by 31 Jul.**
 
-| Milestone | Days | Tangible output |
+The sprint runs as five phases. The engine is **Phase 3**: walk the
+[coverage-risk matrix](../comparison/coverage-risk-matrix.md) class by class, implementing
+each in isla-gen, one class = one task, **merged only once reviewed and understood**. The
+filled-in table is both the coverage guarantee ("almost every instruction is reachable") *and*
+the evidence for the methodology — where isla-gen hits a wall (VM/PTW, Vector), that blocking
+is exactly what justifies the oracle backbone in the hybrid.
+
+| Phase | Days | Tangible output |
 |---|---|---|
-| **S0 · Scaffold + compliance** | 22 Jul | Repo created; three approaches co-located; RFP compliance matrix (§2) drafted as the proposal's spine. |
-| **S1 · Understand both lineages** | 22–24 | Per-file docs + flow/dependency diagrams for **ISLA-GEN** (14 Rust files) and **AutoTest** (13 Py files); explicit map of where Sail/ISLA/SMT/gen/ELF live. Demonstrated-skill evidence (criterion #4). |
-| **S2 · Prove the load-bearing claims** | 24–26 | Two spikes, in Python where possible: **(i)** Sail-code coverage end-to-end — build model with `COVERAGE`, run a generated ELF, emit a per-ELF + suite coverage report; **(ii)** oracle backbone generates a **privileged** test (PMP or trap) verified on `sail_riscv_sim`/Spike. Plus **fill in the [coverage-risk canary matrix](../comparison/coverage-risk-matrix.md)** — probe the hardest representative of each instruction class per approach, recording proven/partial/blocked. Evidence the hybrid is real, not hypothetical. |
-| **S3 · Post-award roadmap + cost** | 26–27 | The multi-month execution roadmap (§5) with effort ranges; cost framework (effort × rate, rate = your input); team + community-integration plan (criteria #3–#5). |
-| **S4 · Write the proposal** | 27–28 | `PROPOSAL/` document: technical plan, timeline, cost — every RFP goal/deliverable/consideration mapped (§2). |
-| **S5 · Internal review-ready** | 29 Jul | Proposal complete and reviewed internally. **Buffer 30–31 Jul**, then submit to `tech-proposals@riscv.org` by the 31st. |
+| **P1 · Document the existing isla-gen RISC-V work** | 22 Jul | A **flow diagram** of the isla-gen RISC-V pipeline (init → symbolic step → state extract → ELF) and **inline code comments** on every change made to extend isla-gen for `addi` and the PMP tests. In `documentation/isla-gen/`. |
+| **P2 · Review & understand the changes** | 23 Jul | Using the diagram + comments, a written walkthrough confirming what each change does and why — the shared understanding Phase 3 builds on. |
+| **P3 · Implement the instruction table, class by class** | 23–28 Jul | One task per class (below); each implemented, verified on `sail_riscv_sim`/Spike, **reviewed, understood, and merged** before the next; each result updates the coverage-risk matrix (proven / partial / blocked-with-reason). |
+| **P4 · Finalize the methodology** | 28 Jul | With the table covered, lock the recommended methodology: isla-gen (symbolic) where it's proven tractable, oracle backbone where isla-gen blocks — justified by the concrete per-class evidence. |
+| **P5 · Review the proposal & send** | 29 Jul | Proposal reviewed against the six RFP criteria; **buffer 30–31 Jul**; submit to `tech-proposals@riscv.org` by the 31st. The completed table is the proposal's coverage guarantee. |
 
-*(S1 for AutoTest overlaps S2 — Claude drafts AutoTest docs while you drive the coverage spike.)*
+### Phase 3 — instruction-class tasks (ordered RFP-privileged-first)
+
+Each is a task that gets *merged once reviewed and understood*. Status carried from the
+coverage-risk matrix:
+
+| # | Class | Current status | Notes |
+|---|---|---|---|
+| C0 | Base ALU (`addi`) + CSR (`csrrw`) | ✅ proven | Documented in P1/P2; no new work, baseline. |
+| C1 | **PMP** | 🟠 partial | Finish the Spike reset-value gap; first privileged class merged. |
+| C2 | **Traps / exceptions** | ◻ to do | illegal-instr, misaligned load — RFP core. |
+| C3 | **Interrupts / timers** | ◻ to do | timer interrupt; needs nondeterminism handling — RFP core. |
+| C4 | Branch / jump | ◻ to do | quick (RFP says unprivileged should be easy). |
+| C5 | Load / store (aligned) | ◻ to do | symbolic-address canary. |
+| C6 | Fence / WFI / system | ◻ to do | quick. |
+| C7 | Atomics (A / LR-SC) | ◻ to do | reservation primops currently stubbed. |
+| C8 | **Virtual memory / PTW (S-mode)** | ◻ to do | RFP "highly desirable"; **the hardest for isla** — likely the wall → evidence for the hybrid. |
+| C9 | Float / Double (F/D) | ◻ future | RFP consideration D — framework-extendable; likely post-award. |
+| C10 | Vector (V) | ◻ future | RFP consideration D — hard for isla; likely post-award. |
+
+Privileged classes (C1–C3, C8) are the RFP's #1 criterion and go first; the easy unprivileged
+ones (C4–C6) are quick wins; F/D and Vector (C9–C10) are explicitly future per the RFP and are
+candidates to defer to the post-award roadmap (§5) rather than force into this window.
 
 ---
 
