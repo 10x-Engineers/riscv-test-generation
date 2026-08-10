@@ -1,0 +1,90 @@
+# Model paths in scope for the RFP's coverage claim, as path prefixes matched
+# against branch_info's file names. Passed to coverage_report.py --scope.
+#
+# READ THIS BEFORE QUOTING A SCOPED NUMBER. Restricting the denominator is the
+# easiest way to make a coverage figure look better than the work behind it, so
+# every exclusion below has to be defensible as "not architectural behaviour of
+# a deliverable extension" -- not merely "we haven't covered it yet". Anything
+# excluded because it is *hard* belongs in the plan as a gap, not in here.
+#
+# Always report the whole-model number alongside the scoped one.
+#
+# Provenance: this is a reconstruction. The RFP text is not in the repo
+# (PROPOSAL/ is empty), so the extension list is taken from what the sweep
+# actually delivers plus the RFP considerations recalled in the plan
+# (RV32 + RV64, F/D on/off, VLEN/ELEN, M-mode traps, PMP/PMA, S-mode VM).
+# Replace this file with the real list when the RFP text is to hand.
+#
+# Note: extensions/H does not appear in this build's instrumented spans at all,
+# so the "exclude Hypervisor" instruction needs no rule here -- there is
+# nothing to exclude.
+
+# --- architectural core ---------------------------------------------------
+core/
+prelude/prelude.sail
+sys/
+pmp/
+exceptions/
+mops/
+
+# --- fetch, decode, step, CSR plumbing ------------------------------------
+postlude/fetch.sail
+postlude/step.sail
+postlude/step_common.sail
+postlude/step_ext.sail
+postlude/csr_end.sail
+postlude/insts_end.sail
+postlude/decode_ext.sail
+postlude/model.sail
+
+# --- deliverable extensions -----------------------------------------------
+extensions/
+
+# --- exclusions (leading `-`) ---------------------------------------------
+# These sit *inside* an included directory prefix, so they need an explicit
+# rule. Previously they were only described in the comments below while the
+# filter silently kept them -- `sys/simple_interrupt_generator.sail` was being
+# counted at 0% against us.
+-core/rvfi_dii
+-postlude/fetch_rvfi.sail
+-postlude/device_tree.sail
+-sys/simple_interrupt_generator
+-postlude/validate_config.sail
+-prelude/errors.sail
+
+# ==========================================================================
+# EXCLUDED, with the reason each is not architectural test surface. Those
+# inside an included prefix are listed as `-` rules above; the rest are simply
+# absent from the prefixes. Listed here so the omissions are reviewable
+# rather than silent.
+#
+#   core/rvfi_dii*.sail, postlude/fetch_rvfi.sail
+#       RVFI-DII is a co-simulation *trace interface* for hardware
+#       verification harnesses. It is not RISC-V architectural behaviour and
+#       no generated program can exercise it -- it is driven by an external
+#       harness over a socket.
+#
+#   postlude/device_tree.sail
+#       Generates a DTB blob describing the platform. Firmware plumbing, not
+#       instruction semantics.
+#
+#   sys/simple_interrupt_generator*.sail
+#       A model-only MMIO test device (docs/SimpleInterruptGenerator.md), not
+#       part of any ratified extension.
+#
+#   unit_tests/test_mstatus.sail
+#       The model's own unit tests. Covering them measures the model's test
+#       suite, not ours.
+#
+#   main/main.sail
+#       Emulator entry point.
+#
+#   postlude/validate_config.sail
+#       Startup validation of the JSON platform config. Reachable, and in fact
+#       well covered since it runs on every boot -- excluded because it
+#       describes the *configuration file format*, not the ISA. This one is
+#       borderline; including it would raise the scoped number, so it is
+#       excluded in the direction that does not flatter us.
+#
+#   prelude/errors.sail
+#       Error-reporting helpers for model-internal failures.

@@ -1,0 +1,60 @@
+# Scope for the CURRENT RFQ deliverable.
+#
+# Same as rfp-scope.txt, minus the extensions the RFQ defers to a follow-up:
+#
+#   "Future iterations of this RFQ may target automatic test generation for the
+#    hypervisor extension, the extensions involving floating point, and the
+#    vector extensions. The framework should be developed to be extendable to
+#    those applications."
+#
+# So V, vector-crypto, Zvabd, bfloat16, FD and H are *not* part of what is
+# being delivered now. They are still generated and measured -- the framework
+# extending to them is itself a requirement, and a working generator is the
+# only convincing evidence of it -- but they do not belong in the denominator
+# of the current deliverable's coverage claim.
+#
+# Report both numbers. Excluding the future extensions raises the total (they
+# are the better-covered half), so quoting only the current-scope figure would
+# flatter the work; quoting only the combined one hides that the deliverable
+# is the *less* complete half.
+#
+#   current deliverable   1058/1519   69.7%
+#   future (V + FP)       1904/2240   85.0%
+#   combined              2962/3759   78.8%
+
+# --- architectural core ---------------------------------------------------
+core/
+prelude/prelude.sail
+sys/
+pmp/
+exceptions/
+mops/
+
+# --- fetch, decode, step, CSR plumbing ------------------------------------
+postlude/fetch.sail
+postlude/step.sail
+postlude/step_common.sail
+postlude/step_ext.sail
+postlude/csr_end.sail
+postlude/insts_end.sail
+postlude/decode_ext.sail
+postlude/model.sail
+
+# --- extensions in scope now ----------------------------------------------
+extensions/
+
+# --- deferred to a future RFQ iteration -----------------------------------
+-extensions/V/
+-extensions/vector_crypto/
+-extensions/Zvabd/
+-extensions/bfloat16/
+-extensions/FD/
+-extensions/H
+
+# --- not architectural test surface (see rfp-scope.txt for the reasoning) --
+-core/rvfi_dii
+-postlude/fetch_rvfi.sail
+-postlude/device_tree.sail
+-sys/simple_interrupt_generator
+-postlude/validate_config.sail
+-prelude/errors.sail

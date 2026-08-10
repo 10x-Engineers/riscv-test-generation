@@ -1,0 +1,92 @@
+# Scope for the PRIVILEGED architecture only.
+#
+# Why this file exists: the RFP's #1 evaluation criterion is
+#
+#   "Coverage of the RISC-V Privileged Architecture ISA extensions as
+#    implemented by the RISC-V Sail model"
+#
+# -- privileged specifically, not the model overall. `rfp-scope-current.txt`
+# answers a different question (everything the current deliverable covers), and
+# quoting it against criterion 1 answers a question nobody asked.
+#
+# The rule used here: a file is in scope if it implements privilege levels,
+# traps and interrupts, CSRs, address translation, or memory protection
+# (PMP/PMA) -- plus the extensions that exist only in the privileged
+# architecture. Everything else is out, including plenty of code we do cover.
+#
+# Two things this file deliberately does NOT do, because both would inflate the
+# number:
+#
+#  * It does not drop a privileged file because our coverage of it is poor.
+#    `sys/pma.sail` is in scope and we have no PMA tests at all. That is the
+#    point -- criterion 1 is measured against the privileged architecture, not
+#    against the part of it we happened to reach.
+#  * It does not claim the privileged instructions that live inside
+#    `extensions/I/base_insts.sail` (mret, sret, wfi, ecall, ebreak,
+#    sfence.vma). Scope is decided per *file*, and that file is overwhelmingly
+#    unprivileged ALU, so including it would credit us with ~391 spans of
+#    integer arithmetic. Those six instructions are covered (6/6 on Sail and
+#    Spike, both XLENs) -- they are just not counted here. This understates the
+#    result and is the safer direction to be wrong in.
+
+# --- privilege, traps, interrupts -----------------------------------------
+sys/sys_control.sail
+core/sys_regs.sail
+core/interrupt_regs.sail
+exceptions/
+
+# --- CSR machinery ---------------------------------------------------------
+core/csr_begin.sail
+postlude/csr_end.sail
+core/ext_regs.sail
+extensions/Zicsr/
+
+# --- address translation ---------------------------------------------------
+sys/vmem.sail
+sys/vmem_pte.sail
+sys/vmem_ptw.sail
+sys/vmem_tlb.sail
+sys/vmem_utils.sail
+core/vmem_types.sail
+core/addr_checks.sail
+core/addr_checks_common.sail
+extensions/Svinval/
+
+# --- memory protection: PMP and PMA ---------------------------------------
+pmp/
+sys/pma.sail
+sys/mem.sail
+sys/mem_utils.sail
+sys/split_access_utils.sail
+
+# --- extensions that exist only in the privileged architecture -------------
+extensions/Smcntrpmf/
+extensions/Sscofpmf/
+extensions/Ssqosid/
+extensions/Sstc/
+extensions/Stateen/
+extensions/Zihpm/
+extensions/Zicntr/
+extensions/pointer_masking/
+
+# --- excluded, with the reason --------------------------------------------
+#
+# Hypervisor: out of scope per the RFP's own Goals section ("Hypervisor
+# features can be considered out-of-scope for this RFQ") and Consideration D.
+-extensions/H
+
+# Zicfilp/Zicfiss: control-flow integrity. The *instructions* are unprivileged
+# even though the plumbing touches menvcfg and PTE permissions, so counting
+# them as privileged surface would be a stretch. Covered either way -- cfi is
+# 12/12 RV64, 8/8 RV32.
+-extensions/cfi/
+
+# Platform glue and config validation, not architectural test surface. Same
+# exclusions and reasoning as rfp-scope.txt; `platform.sail` is largely
+# unreachable in the configurations we run, and counting unreachable code as an
+# untested gap overstates what is left to do.
+-sys/platform.sail
+-sys/simple_interrupt_generator
+-postlude/validate_config.sail
+-core/rvfi_dii
+-prelude/errors.sail
