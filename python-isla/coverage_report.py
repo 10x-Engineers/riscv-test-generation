@@ -94,16 +94,31 @@ def parse_spans(path):
     return spans
 
 
-def replay(elf_dirs, limit=None, timeout=20):
+def replay(elf_dirs, limit=None, timeout=20, per_elf=None):
+    """Replay every ELF, appending into one `sail_coverage`.
+
+    `per_elf`, when given a dict, additionally records each ELF's *own* span
+    set. The RFP asks for "a measure of coverage of an individual ELF and for
+    all the ELFs in a generated test-suite" (Goal 6), and the merged file
+    answers only the second half -- once run N has appended, there is no way to
+    ask what run N alone reached.
+
+    Doing this needs the coverage file truncated between ELFs, which is why it
+    is opt-in: it costs one extra parse per ELF, and on a corpus of ~1900 that
+    is not free.
+    """
     elfs = sorted({p for d in elf_dirs for p in glob.glob(os.path.join(d, "**", "*.elf"),
                                                           recursive=True)})
     if limit:
         elfs = elfs[:limit]
     if os.path.exists(COVERAGE_FILE):
         os.remove(COVERAGE_FILE)
+    cumulative = set()
     ok = fail = 0
     t0 = time.time()
     for i, elf in enumerate(elfs, 1):
+        if per_elf is not None and os.path.exists(COVERAGE_FILE):
+            os.remove(COVERAGE_FILE)   # each ELF measured on its own, see below
         # Replay under the *same platform config the corpus was generated for*,
         # not the emulator's build default. VLEN is the one that bites: the IR
         # and the sweep are pinned to 128 (findings C8), and replaying vector
@@ -126,11 +141,82 @@ def replay(elf_dirs, limit=None, timeout=20):
                 pass
         else:
             fail += 1
+        if per_elf is not None:
+            # This ELF's own *absolute* coverage, which is what "coverage of an
+            # individual ELF" has to mean. Diffing against a running cumulative
+            # set instead would measure marginal contribution in replay order --
+            # under which the first ELF is credited with the entire shared boot
+            # prelude and an identical ELF later scores zero. Order-dependent,
+            # and not the question the RFP asks.
+            #
+            # So truncate before each run. The merged total is not lost: it is
+            # the union, accumulated here and returned.
+            spans = parse_spans(COVERAGE_FILE) if os.path.exists(COVERAGE_FILE) else set()
+            per_elf[elf] = spans
+            cumulative |= spans
+            if os.path.exists(COVERAGE_FILE):
+                os.remove(COVERAGE_FILE)
         if i % 200 == 0:
             print(f"  ... {i}/{len(elfs)} replayed ({round(time.time()-t0)}s)", flush=True)
     print(f"replayed {len(elfs)} ELFs: {ok} reached SUCCESS, {fail} did not "
           f"({round(time.time()-t0)}s)")
+    return cumulative if per_elf is not None else None
     return len(elfs)
+
+
+
+def report_per_elf(per_elf, suite_covered, dest):
+    """Per-ELF coverage, plus the check that it reconciles with the suite total.
+
+    The reconciliation is part of the output, not a follow-up: a per-ELF
+    capture that silently drops data would otherwise look exactly like a corpus
+    with a lot of redundant tests. If the union of the parts does not equal the
+    whole, the number is wrong and the report says so rather than printing a
+    plausible table.
+    """
+    # Scope-filter each ELF's set the same way the suite total was filtered,
+    # or a scoped run would compare unlike with unlike and always mismatch.
+    per_elf = {e: v & suite_covered for e, v in per_elf.items()}
+    union = set().union(*per_elf.values()) if per_elf else set()
+    ranked = sorted(per_elf.items(), key=lambda kv: -len(kv[1]))
+
+    print(f"\n{'=' * 74}\nper-ELF coverage (RFP Goal 6: individual ELF, not just the suite)\n{'=' * 74}")
+    print(f"{len(per_elf)} ELFs replayed; {sum(1 for _e, v in ranked if v)} contributed at least one span")
+    print(f"\n{'spans':>7s}  ELF (its own coverage, measured alone)")
+    for elf, spans in ranked[:15]:
+        print(f"{len(spans):7d}  {os.path.relpath(elf, os.path.expanduser('~/.cache/riscv-sweep'))}")
+
+    # Marginal contribution, computed greedily: what each ELF adds once the
+    # better ones are already in. This is the number a coverage-guided
+    # generator wants -- absolute coverage is dominated by shared boot code and
+    # ranks near-duplicates identically.
+    seen, marginal = set(), []
+    for elf, spans in ranked:
+        marginal.append((elf, len(spans - seen)))
+        seen |= spans
+    redundant = [e for e, n in marginal if n == 0]
+    top_marginal = [(e, n) for e, n in marginal if n][:8]
+    if top_marginal:
+        print(f"\n{'added':>7s}  greedy marginal contribution (what each adds after the ones above)")
+        for elf, n in top_marginal:
+            print(f"{n:7d}  {os.path.relpath(elf, os.path.expanduser('~/.cache/riscv-sweep'))}")
+    if redundant:
+        print(f"\n{len(redundant)} of {len(per_elf)} ELFs add nothing once the others are in. "
+              f"Expected for\nnear-duplicate tests, and exactly the signal a "
+              f"coverage-guided generator needs.")
+
+    ok = union == suite_covered
+    print(f"\nreconciliation: union of per-ELF spans {'==' if ok else '!='} suite total "
+          f"({len(union)} vs {len(suite_covered)})")
+    if not ok:
+        print("  MISMATCH -- the per-ELF capture is dropping data; do not quote these numbers.")
+
+    if dest and dest != "-":
+        with open(dest, "w") as f:
+            f.write("# spans\tELF -- each ELF's own contribution, not cumulative\n")
+            for elf, spans in ranked:
+                f.write(f"{len(spans)}\t{elf}\n")
+        print(f"wrote per-ELF coverage to {dest}")
 
 
 def main():
@@ -146,6 +232,11 @@ def main():
                          "actionable list for closing branch coverage, as opposed to "
                          "the percentage, which says how far there is to go but not "
                          "what to write next.")
+    ap.add_argument("--per-elf", metavar="FILE", nargs="?", const="-",
+                    help="Also report each ELF's own coverage, not just the "
+                         "suite total -- the other half of RFP Goal 6. Writes "
+                         "`spans<TAB>path` sorted by contribution, or prints a "
+                         "summary if no file is given. Requires a replay.")
     ap.add_argument("--scope", metavar="FILE",
                     help="Restrict the report to model files matching any newline- or "
                          "comma-separated prefix in this file (e.g. the RFP's "
@@ -160,11 +251,18 @@ def main():
             sys.exit(f"missing {what}: {path}\n"
                      f"build it with: cmake -B build-coverage -DCOVERAGE=ON && cmake --build build-coverage")
 
+    per_elf = {} if args.per_elf else None
+    merged = None
     if not args.no_replay:
-        replay(args.elf_dir or DEFAULT_ELF_DIRS, args.limit)
+        merged = replay(args.elf_dir or DEFAULT_ELF_DIRS, args.limit, per_elf=per_elf)
+    elif args.per_elf:
+        sys.exit("--per-elf needs a real replay; it cannot be derived from an "
+                 "already-merged sail_coverage file.")
 
     total = parse_spans(BRANCH_INFO)
-    covered = parse_spans(COVERAGE_FILE) & total
+    # In per-ELF mode the coverage file is truncated between runs, so the union
+    # accumulated during replay is the merged total rather than the file.
+    covered = (merged if merged is not None else parse_spans(COVERAGE_FILE)) & total
 
     scope_label = "whole model"
     if args.scope:
@@ -227,6 +325,9 @@ def main():
     lib_c = sum(1 for s in covered if s[1].startswith("/"))
     print(f"\n(excluded from the per-file table: {lib_c}/{lib_t} spans in the Sail "
           f"standard library, which measures the library rather than the model)")
+
+    if per_elf is not None:
+        report_per_elf(per_elf, covered, args.per_elf)
 
 
 if __name__ == "__main__":
