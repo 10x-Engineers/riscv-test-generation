@@ -28,6 +28,8 @@ import subprocess
 import sys
 import time
 
+import paths
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 ILLEGAL_INSTRUCTION = 2  # mcause for a write to a read-only CSR
@@ -58,7 +60,7 @@ SELF_UPDATING = {"mcycle", "minstret", "cycle", "instret", "time", "hpmcounter3"
 # checked against the model's own `csr_name_map` clauses rather than taken
 # from the spec alone, since an address the model doesn't implement would
 # trap for that reason instead and prove nothing about the extension.
-def model_csrs(model_dir="/home/jk/Documents/sail-riscv/model"):
+def model_csrs(model_dir=os.path.join(paths.SAIL_RISCV, "/model".lstrip("/"))):
     """Every CSR the model names, from its own `csr_name_map` clauses.
 
     The hand-written CSRS list below covers 37 registers. The model names
