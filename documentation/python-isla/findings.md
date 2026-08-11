@@ -691,3 +691,45 @@ covers.
 **Also worth noting what it is not**: a timeout is not evidence about the model. These
 ten were previously counted as failures, which overstated the failure number by making
 a solver-performance property look like a test result.
+
+## C13. A failing test contributes no coverage at all
+
+Found while building per-ELF coverage (RFP Goal 6): four ELFs reported **zero** spans,
+which is impossible for a program that runs.
+
+**Reproducer** — same emulator, same config, two ELFs that differ only in outcome:
+
+```
+$ rm -f sail_coverage; sail_riscv_sim --config rv32d_v128_e64.json m0_ebreak.elf
+$ wc -l sail_coverage          # exit 0  -> 2083 lines
+
+$ rm -f sail_coverage; sail_riscv_sim --config rv32d_v128_e64.json m2_load_denied.elf
+$ ls sail_coverage             # exit 1  -> No such file
+```
+
+The coverage runtime flushes on clean exit only. A nonzero exit produces **no file**, not
+a partial one.
+
+**Consequences, and they cut both ways:**
+
+- **Every coverage number this project has ever quoted comes from passing tests alone.**
+  That includes 79.6% combined and 71.8% current-scope. The direction of the error is at
+  least the safe one — failing tests' paths are *missing* from the numerator, so we
+  understate rather than overstate.
+- **Negative controls contribute nothing.** They are *designed* to fail, so every error
+  path they deliberately exercise is invisible to the measurement. The PMP-violation and
+  wrong-cause controls are exactly the tests that reach the interesting branches.
+- **It changes the size of the C11/A1 prize.** The measured "+76 spans from all-paths on
+  one `lw`" came from the 7 paths that passed; the 7 that trapped contributed **zero**.
+  Once a per-path trap expectation makes those pass, the real gain is larger than the
+  number that motivated the work.
+
+**What to do about it**: this is an argument for making trapping tests *pass* (by
+asserting the trap they expect) rather than for changing the measurement. A test that
+fails is a test whose expected state is wrong, and counting its coverage would credit us
+for reaching a branch via a test we cannot trust. The fix is A1.1, not a coverage-runtime
+patch.
+
+Worth stating in any summary that quotes a coverage figure: it is coverage from tests
+that pass, which is the honest thing to measure, but it is not "everything the corpus
+executed".
