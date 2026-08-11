@@ -90,3 +90,37 @@ git clone --recurse-submodules https://github.com/10x-Engineers/riscv-test-gener
 ## License
 
 Apache-2.0 (RFP-preferred for new repositories).
+
+## Clone and set up
+
+```bash
+git clone --recurse-submodules https://github.com/10x-Engineers/riscv-test-generation.git
+```
+
+`--recurse-submodules` is required — without it the three submodules arrive empty.
+
+| Submodule | Repo | Purpose |
+|---|---|---|
+| `sail-riscv/` | `10x-Engineers/sail-riscv-testgen` @ `riscv-testgen-support` | the Golden Model |
+| `isla-gen-extension/` | `10x-Engineers/isla-testgen` | symbolic engine (carries a nested `isla` submodule) |
+| `autotest/` | `10x-Engineers/sail-riscv-autotest` | concrete oracle |
+
+The folder names differ from the repo names, which is worth knowing before you
+go looking for them on GitHub.
+
+### Where things are found
+
+Paths are resolved by [`python-isla/paths.py`](python-isla/paths.py) rather than
+hardcoded. To see what resolved to what on your machine:
+
+```bash
+python3 python-isla/paths.py
+```
+
+Every entry can be overridden with the environment variable of the same name
+(`SAIL_RISCV`, `SPIKE_BIN`, `ISLA_TESTGEN_BIN`, `Z3_LIB_DIR`, …), so CI and
+other machines need no source edits.
+
+`SAIL_RISCV` prefers whichever checkout is actually *built* — the submodule for
+a fresh clone, or an existing sibling checkout for a developer who already has
+one. Neither case needs configuration.

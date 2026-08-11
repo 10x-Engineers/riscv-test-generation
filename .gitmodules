@@ -5,3 +5,7 @@
 [submodule "autotest"]
 	path = autotest
 	url = https://github.com/10x-Engineers/sail-riscv-autotest.git
+[submodule "sail-riscv"]
+	path = sail-riscv
+	url = https://github.com/10x-Engineers/sail-riscv-testgen.git
+	branch = riscv-testgen-support

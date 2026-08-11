@@ -29,10 +29,12 @@ import sys
 
 import model_opcodes
 
-SAIL_RISCV_ROOT = "/home/jk/Documents/sail-riscv"
-ISLA_TESTGEN_DIR = "/home/jk/Documents/riscv-test-generation/isla-gen-extension"
+import paths
+
+SAIL_RISCV_ROOT = paths.SAIL_RISCV
+ISLA_TESTGEN_DIR = paths.ISLA_DIR
 ISLA_TESTGEN_BIN = os.path.join(ISLA_TESTGEN_DIR, "target/release/isla-testgen")
-Z3_LIB_DIR = "/home/jk/.cache/udb/z3/z3-4.16.0/x64"
+Z3_LIB_DIR = paths.Z3_LIB
 # Hard address-space cap on each isla generation, in GiB.
 #
 # Some instructions make the solver allocate without bound -- `aes64im`,
@@ -60,10 +62,10 @@ def _limit_memory():
     resource.setrlimit(resource.RLIMIT_AS, (nbytes, nbytes))
 
 
-SAIL_RISCV_DIR = "/home/jk/Documents/sail-riscv"
+SAIL_RISCV_DIR = paths.SAIL_RISCV
 SAIL_RISCV_SIM = f"{SAIL_RISCV_DIR}/sail_riscv_sim"
-RISCV_TOOLCHAIN_DIR = "/home/jk/Documents/riscv/bin"
-SPIKE_BIN = "/home/jk/Documents/riscv/bin/spike"
+RISCV_TOOLCHAIN_DIR = paths.RISCV_TOOLCHAIN_DIR
+SPIKE_BIN = paths.SPIKE
 
 # Everything that differs by XLEN, in one place: isla-testgen's arch name +
 # compiled IR/config (see riscv-ir/riscv64.toml's own comment for how it was

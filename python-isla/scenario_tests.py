@@ -22,11 +22,13 @@ import os
 import subprocess
 import sys
 
-ISLA_DIR = "/home/jk/Documents/riscv-test-generation/isla-gen-extension"
+import paths
+
+ISLA_DIR = paths.ISLA_DIR
 ISLA_BIN = os.path.join(ISLA_DIR, "target/release/isla-testgen")
-Z3_LIB = "/home/jk/.cache/udb/z3/z3-4.16.0/x64"
-SAIL_SIM = "/home/jk/Documents/sail-riscv/sail_riscv_sim"
-SPIKE = "/home/jk/Documents/riscv/bin/spike"
+Z3_LIB = paths.Z3_LIB
+SAIL_SIM = paths.SAIL_SIM
+SPIKE = paths.SPIKE
 
 # Opcode sequences, assembled elsewhere and pinned here so a scenario is a
 # fixed, reviewable artefact rather than something re-derived each run.
@@ -136,7 +138,7 @@ SCENARIOS = [
 # ELF under the unmodified config must pass. If it does not, the test is
 # faulting for some unrelated reason and proves nothing about PMA.
 
-SAIL_CONFIG_BASE = "/home/jk/Documents/sail-riscv/build/config/rv{}d_v128_e64.json"
+SAIL_CONFIG_BASE = os.path.join(paths.SAIL_RISCV, "build/config/rv{}d_v128_e64.json")
 MAIN_MEMORY_BASE = "0x80000000"
 
 

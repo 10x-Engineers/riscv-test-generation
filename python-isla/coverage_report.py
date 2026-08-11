@@ -36,7 +36,9 @@ import subprocess
 import sys
 import time
 
-SAIL_RISCV = "/home/jk/Documents/sail-riscv"
+import paths
+
+SAIL_RISCV = paths.SAIL_RISCV
 COVERAGE_SIM = os.path.join(SAIL_RISCV, "build-coverage/c_emulator/sail_riscv_sim")
 BRANCH_INFO = os.path.join(SAIL_RISCV, "build-coverage/sail_riscv_model.branch_info")
 COVERAGE_FILE = os.path.join(SAIL_RISCV, "sail_coverage")
