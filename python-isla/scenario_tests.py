@@ -17,6 +17,7 @@ had to fail (see the plan's lesson 4). A control that stops failing is a
 regression, so `expect` is part of the test, not commentary.
 """
 import argparse
+import json
 import os
 import subprocess
 import sys
@@ -38,6 +39,13 @@ EBREAK = ["0x00100073"]
 LOAD_MAPPED = ["0x80020137", "0x02011113", "0x02015113", "0x00012083"]
 # lui x2, 0x40000; lw x1, 0(x2)   -- an address outside the Sv39 identity map
 LOAD_UNMAPPED = ["0x40000137", "0x00012083"]
+
+# ---- M-mode PMA: attributes come from the *region*, not from an instruction --
+# `lui x3, 0x80020` puts the address in main memory, whose PMA the config
+# variants below alter. Encodings taken from the assembler, not hand-computed.
+AMO_MAIN = ["0x800201b7", "0x0021b0af"]           # lui x3, 0x80020; amoadd.d x1, x2, (x3)
+LR_MAIN = ["0x800201b7", "0x1001b0af"]            # lui x3, 0x80020; lr.d x1, (x3)
+SC_MAIN = ["0x800201b7", "0x1001b0af", "0x1821b22f"]  # lr.d then sc.d x4, x2, (x3)
 
 # (name, opcodes, flags, expect) -- expect is True if the generated ELF must
 # pass on both simulators, False if it must fail.
@@ -88,6 +96,138 @@ SCENARIOS = [
 ]
 
 
+
+# --- M4: physical memory attributes (PMA) ---------------------------------
+#
+# PMA is named in the RFP's *required* M-mode list alongside PMP, and sat at
+# 15/97 spans before this. It needs no new generator capability: every PMA
+# attribute is a per-region field in the Golden Model's own config JSON, so a
+# test is "run this access under a config whose region says it is illegal".
+#
+# That is also what makes the negative control free and honest -- the *same*
+# ELF under the unmodified config must pass. If it does not, the test is
+# faulting for some unrelated reason and proves nothing about PMA.
+
+SAIL_CONFIG_BASE = "/home/jk/Documents/sail-riscv/build/config/rv{}d_v128_e64.json"
+MAIN_MEMORY_BASE = "0x80000000"
+
+
+def _strip_jsonc(text):
+    """Golden Model configs are JSONC; `json` will not parse the comments."""
+    out, in_str, esc, i = [], False, False, 0
+    while i < len(text):
+        c = text[i]
+        if in_str:
+            out.append(c)
+            if esc:
+                esc = False
+            elif c == "\\":
+                esc = True
+            elif c == '"':
+                in_str = False
+        elif c == '"':
+            in_str = True
+            out.append(c)
+        elif c == "/" and i + 1 < len(text) and text[i + 1] == "/":
+            while i < len(text) and text[i] != "\n":
+                i += 1
+            continue
+        else:
+            out.append(c)
+        i += 1
+    return "".join(out)
+
+
+# PMA attributes are not independently settable: the model *validates* the
+# config and rejects combinations that contradict a declared extension. Setting
+# main memory to AMONone while `Ziccamoa` is supported is refused outright --
+#
+#   "Main memory region starting at 0x80000000 is coherent and cacheable with
+#    AMONone atomicity support, but Ziccamoa is enabled which requires
+#    AMOArithmetic support."
+#
+# which is the model doing its job. So a PMA variant must also retract the
+# extension that guarantees the attribute. Mapping the attribute to the
+# extensions it contradicts keeps that link explicit rather than buried in a
+# hand-edited config.
+# The coupling is transitive, and the validator finds it for you: making main
+# memory RsrvNone also breaks Svadu, because hardware A/D updates write PTEs
+# atomically and so need a reservable region --
+#
+#   "The Svadu extension is enabled but no memory region supports hardware
+#    page-table writes."
+#
+# Each entry here was added because the model rejected the config without it,
+# not because it seemed likely.
+PMA_REQUIRES_DISABLING = {
+    "atomic_support": ["Ziccamoa", "Ziccamoc"],
+    "reservability": ["Ziccrse", "Svadu"],
+}
+
+
+def pma_config(xlen, out_dir, name, **attrs):
+    """Write a config variant with main memory's PMA attributes overridden.
+
+    Only the region at MAIN_MEMORY_BASE is touched, and only the named fields,
+    so a variant differs from the shipped config in exactly the attribute under
+    test -- which is what lets a failure be attributed to that attribute.
+    """
+    with open(SAIL_CONFIG_BASE.format(xlen)) as f:
+        cfg = json.loads(_strip_jsonc(f.read()))
+    hit = 0
+    for region in cfg["memory"]["regions"]:
+        if region["base"]["value"] == MAIN_MEMORY_BASE:
+            for k, v in attrs.items():
+                if k not in region["attributes"]:
+                    sys.exit(f"PMA attribute {k!r} is not in the config schema -- "
+                             f"the model's config format changed, fix this rather "
+                             f"than silently testing nothing")
+                region["attributes"][k] = v
+            hit += 1
+    if hit != 1:
+        sys.exit(f"expected exactly one main-memory region at {MAIN_MEMORY_BASE}, "
+                 f"found {hit}")
+    for attr in attrs:
+        for ext in PMA_REQUIRES_DISABLING.get(attr, []):
+            if ext in cfg.get("extensions", {}):
+                cfg["extensions"][ext]["supported"] = False
+    path = os.path.join(out_dir, f"config_{name}.json")
+    with open(path, "w") as f:
+        json.dump(cfg, f, indent=2)
+    return path
+
+
+# (name, opcodes, isla flags, expect, pma-attribute override or None).
+# A `None` override means the stock config, which is how the controls work.
+PMA_SCENARIOS = [
+    # An AMO to a region declaring no atomic support must raise a store/AMO
+    # access fault (cause 7).
+    ("m4_amo_unsupported", "AMO_MAIN",
+     ["--expect-trap-cause", "7", "--trap-is-pass"], True,
+     {"atomic_support": "AMONone"}),
+    # Control: same config, wrong expected cause. Must fail, which proves the
+    # handler compares the *cause* rather than merely noticing a trap.
+    #
+    # The obvious control -- the same ELF under the stock config -- was tried
+    # first and does not discriminate: with no trap the harness falls through
+    # to the ordinary final-state comparison, which isla solved for the
+    # non-trapping path, so it passes either way. A control that cannot fail
+    # is the thing this project keeps having to relearn.
+    ("m4_NEG_amo_wrong_cause", "AMO_MAIN",
+     ["--expect-trap-cause", "5", "--trap-is-pass"], False,
+     {"atomic_support": "AMONone"}),
+
+    # LR to a region declaring no reservability -- same fault class, different
+    # attribute, so a single over-broad config change cannot satisfy both.
+    ("m4_lr_unreservable", "LR_MAIN",
+     ["--expect-trap-cause", "5", "--trap-is-pass"], True,
+     {"reservability": "RsrvNone"}),
+    ("m4_NEG_lr_wrong_cause", "LR_MAIN",
+     ["--expect-trap-cause", "7", "--trap-is-pass"], False,
+     {"reservability": "RsrvNone"}),
+]
+
+
 def generate(name, opcodes, flags, out_dir, xlen):
     env = dict(os.environ, LD_LIBRARY_PATH=Z3_LIB)
     prefix = os.path.join(out_dir, name)
@@ -98,10 +238,14 @@ def generate(name, opcodes, flags, out_dir, xlen):
     return prefix + ".elf", r.returncode == 0
 
 
-def run(elf, xlen):
+def run(elf, xlen, config=None):
     if not os.path.exists(elf):
         return None, None
-    sail_args = ["--rv32"] if xlen == 32 else []
+    # A PMA test is only a PMA test if the simulator is told the region's
+    # attributes; without --config it runs under the build default and the
+    # override has no effect at all -- a pass that means nothing.
+    sail_args = (["--config", config] if config
+                 else (["--rv32"] if xlen == 32 else []))
     s = subprocess.run([SAIL_SIM] + sail_args + [elf], cwd=os.path.dirname(SAIL_SIM),
                        capture_output=True, text=True, timeout=30)
     k = subprocess.run([SPIKE, f"--isa=rv{xlen}imac_zicsr", elf],
@@ -138,6 +282,35 @@ def main():
             verdict = "ok" if passed == expect else "REGRESSION"
             detail = (f"sail={'ok' if sail else 'FAIL'} spike={'ok' if spike else 'FAIL'}"
                       f"  (expected {'pass' if expect else 'FAIL'})")
+        good += verdict == "ok"
+        bad += verdict != "ok"
+        print(f"{verdict:11s} {name:32s} {detail}")
+
+    # --- PMA scenarios: same shape, but each carries a config variant ------
+    for name, seq_name, flags, expect, override in PMA_SCENARIOS:
+        if wanted and name not in wanted:
+            continue
+        if args.xlen == 32:
+            # The sequences use .d (doubleword) AMO/LR forms, which do not
+            # exist on RV32. Skipped rather than silently swapped for .w, so
+            # the gap is visible in the output.
+            print(f"SKIP  {name:32s} PMA sequences use RV64 .d forms")
+            continue
+        opcodes = globals()[seq_name]
+        cfg = (pma_config(args.xlen, out_dir, name, **override) if override
+               else SAIL_CONFIG_BASE.format(args.xlen))
+        elf, gen_ok = generate(name, opcodes, flags, out_dir, args.xlen)
+        sail, spike = run(elf, args.xlen, config=cfg)
+        if sail is None:
+            verdict, detail = "ERROR", "generation produced no ELF"
+        else:
+            # Spike has no way to be told these PMA attributes, so it cannot
+            # agree or disagree -- judge on Sail alone and say so, rather than
+            # counting a Spike mismatch as a divergence it is not.
+            verdict = "ok" if bool(sail) == expect else "REGRESSION"
+            detail = (f"sail={'ok' if sail else 'FAIL'}  (expected "
+                      f"{'pass' if expect else 'FAIL'}; sail-only: PMA is not "
+                      f"expressible in Spike's config)")
         good += verdict == "ok"
         bad += verdict != "ok"
         print(f"{verdict:11s} {name:32s} {detail}")
