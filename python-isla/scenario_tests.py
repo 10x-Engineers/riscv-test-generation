@@ -78,6 +78,34 @@ SCENARIOS = [
     ("m2_NEG_no_violation", LOAD_MAPPED,
      ["--pmp-deny", "0x80028000", "--expect-trap-cause", "5", "--trap-is-pass"], False),
 
+    # ---- M5: interrupt delivery ------------------------------------------
+    # `--pending-interrupt` (m0_wfi above) deliberately leaves mstatus.MIE
+    # clear, so it tests WFI's wake condition and *not* delivery. These take
+    # the trap for real.
+    ("m5_interrupt_delivered", WFI,
+     ["--deliver-interrupt", "--expect-trap-cause", "3", "--trap-is-pass"], True),
+    # Delegated: the same interrupt, but mideleg sends it to S-mode and the
+    # handler reads scause instead of mcause. The pair is the test -- a single
+    # "an interrupt happened" assertion would pass against an implementation
+    # that always trapped to M.
+    # Cause 1, not 3: this has to be a *supervisor* software interrupt, because
+    # legalize_mideleg hardwires the machine-level delegation bits to 0. A
+    # machine software interrupt simply cannot be delegated.
+    ("m5_interrupt_delegated", WFI,
+     ["--deliver-interrupt", "--delegate-interrupt", "--run-in-supervisor",
+      "--pmp-allow-all", "--expect-trap-cause", "1", "--trap-is-pass"], True),
+    # Control: right delivery, wrong cause. Must fail, or the test is only
+    # detecting that *something* trapped.
+    ("m5_NEG_interrupt_wrong_cause", WFI,
+     ["--deliver-interrupt", "--expect-trap-cause", "7", "--trap-is-pass"], False),
+    # An ebreak control was tried here and removed: with delivery enabled the
+    # interrupt fires *before* the ebreak retires, so the test passes on the
+    # interrupt and the ebreak is never reached. It tested nothing. The
+    # sign-bit check that distinguishes an interrupt cause from an identically
+    # numbered exception cause is exercised by m5_interrupt_delivered itself --
+    # cause 3 as an exception is `ebreak`, and without the check the two are
+    # indistinguishable.
+
     # ---- M3: Sv39 page-table walk ----------------------------------------
     ("m3_supervisor_bare", LOAD_MAPPED, ["--run-in-supervisor", "--pmp-allow-all"], True),
     ("m3_sv39_mapped", LOAD_MAPPED, ["--run-in-supervisor", "--pmp-allow-all", "--sv39"], True),
