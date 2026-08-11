@@ -1,0 +1,38 @@
+  ... 200/2135 replayed (51s)
+  ... 400/2135 replayed (63s)
+  ... 600/2135 replayed (73s)
+  ... 800/2135 replayed (81s)
+  ... 1000/2135 replayed (92s)
+  ... 1200/2135 replayed (104s)
+  ... 1400/2135 replayed (116s)
+  ... 1600/2135 replayed (130s)
+  ... 1800/2135 replayed (144s)
+  ... 2000/2135 replayed (158s)
+replayed 2135 ELFs: 1616 reached SUCCESS, 519 did not (167s)
+
+==========================================================================
+Sail model coverage from the generated corpus
+==========================================================================
+span kind      covered     total       %
+functions          533       738   72.2%
+branches          3162      4080   77.5%
+expressions       4798     10331   46.4%
+ALL               8493     15149   56.1%
+
+--------------------------------------------------------------------------
+least-covered model files (of 143 with instrumented spans)
+--------------------------------------------------------------------------
+    0.0%      0/7      prelude/errors.sail
+    0.0%      0/9      core/rvfi_dii_v2.sail
+    0.0%      0/4      extensions/K/zkr_control.sail
+    0.0%      0/44     postlude/device_tree.sail
+    0.0%      0/10     postlude/insts_end.sail
+    0.0%      0/18     extensions/A/aext_types.sail
+    0.0%      0/5      sys/mem_utils.sail
+    0.0%      0/19     core/rvfi_dii.sail
+    0.0%      0/23     postlude/fetch_rvfi.sail
+    0.0%      0/9      unit_tests/test_mstatus.sail
+    0.0%      0/39     sys/simple_interrupt_generator.sail
+    0.0%      0/2      core/types_ext.sail
+
+(excluded from the per-file table: 82/182 spans in the Sail standard library, which measures the library rather than the model)

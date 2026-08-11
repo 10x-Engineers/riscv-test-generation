@@ -1,0 +1,13 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Generated test corpora and sweep output live in ~/.cache/riscv-sweep, not
+# here, but these show up if a sweep is ever pointed at the repo.
+/out/
+*.elf
+*.o
+
+# Sail coverage artefacts
+sail_coverage
+*.branch_info
