@@ -23,6 +23,7 @@ import subprocess
 import sys
 
 import paths
+import test_config
 
 ISLA_DIR = paths.ISLA_DIR
 ISLA_BIN = os.path.join(ISLA_DIR, "target/release/isla-testgen")
@@ -258,14 +259,56 @@ PMA_SCENARIOS = [
 ]
 
 
-def generate(name, opcodes, flags, out_dir, xlen):
+# Which architectural feature each scenario family exercises, so the output can
+# be organised and selected the same way the opcode sweeps are. The milestone
+# prefix already encoded this -- it just wasn't used for anything.
+#
+# `params` are the configuration facts a directory name cannot express: a PMP
+# test is meaningless on a machine with no PMP entries, and selecting it there
+# would report a failure that says nothing about the implementation.
+SCENARIO_GROUP = {
+    "m0": ("privilege", ["I", "Zicsr", "Sm", "S", "U"], {}),
+    "m2": ("PMP", ["I", "Zicsr", "Sm"], {"NUM_PMP_ENTRIES": "'>0'"}),
+    "m3": ("Sv", ["I", "Zicsr", "Sm", "S"], {}),
+    "m4": ("PMA", ["I", "Zicsr", "A", "Sm"], {}),
+    "m5": ("interrupts", ["I", "Zicsr", "Sm", "S"], {}),
+}
+
+
+def scenario_group(name, xlen, flags):
+    """(directory, required extensions, params) for one scenario."""
+    group, exts, params = SCENARIO_GROUP.get(
+        name.split("_", 1)[0], ("other", ["I", "Zicsr"], {}))
+    exts, params = list(exts), dict(params)
+    # Recorded from the flag actually passed rather than from the group, since
+    # the paging scheme is what a configuration selects on and Sv39 vs Sv32 is
+    # exactly the distinction that makes these skip at RV32 today.
+    if "--sv39" in flags:
+        exts.append("Sv39")
+    return group, exts, params
+
+
+def generate(name, opcodes, flags, out_dir, xlen, manifests=None):
     env = dict(os.environ, LD_LIBRARY_PATH=Z3_LIB)
-    prefix = os.path.join(out_dir, name)
+    group, exts, params = scenario_group(name, xlen, flags)
+    group_dir = os.path.join(out_dir, group)
+    os.makedirs(group_dir, exist_ok=True)
+    prefix = os.path.join(group_dir, name)
     cmd = [ISLA_BIN, "-A", f"riscv-ir/riscv{xlen}.ir", "-C", f"riscv-ir/riscv{xlen}.toml",
            "-a", f"riscv{xlen}", "--memory-region", "0x80020000-0x80030000",
            "-o", prefix, "-n", "1", *opcodes, *flags]
     r = subprocess.run(cmd, cwd=ISLA_DIR, env=env, capture_output=True, text=True, timeout=300)
-    return prefix + ".elf", r.returncode == 0
+    elf = prefix + ".elf"
+    if r.returncode == 0 and manifests is not None:
+        march = test_config.march_string(xlen, "zicsr")
+        test_config.annotate(prefix + ".s",
+                             test_config.header(exts, march, xlen, params))
+        m = manifests.setdefault(group, test_config.Manifest(group, xlen, march))
+        # Negative controls are marked, because a runner that silently drops
+        # them keeps the tests and loses the only thing proving they can fail.
+        m.add(name, elf, exts, params,
+              note="negative control: must FAIL" if "_NEG_" in name else None)
+    return elf, r.returncode == 0
 
 
 def run(elf, xlen, config=None):
@@ -296,6 +339,7 @@ def main():
     wanted = set(args.only.split(",")) if args.only else None
 
     good = bad = 0
+    manifests = {}
     for name, opcodes, flags, expect in SCENARIOS:
         if wanted and name not in wanted:
             continue
@@ -303,7 +347,7 @@ def main():
         if args.xlen == 32 and "--sv39" in flags:
             print(f"SKIP  {name:32s} Sv39 is RV64-only")
             continue
-        elf, gen_ok = generate(name, opcodes, flags, out_dir, args.xlen)
+        elf, gen_ok = generate(name, opcodes, flags, out_dir, args.xlen, manifests)
         sail, spike = run(elf, args.xlen)
         if sail is None:
             verdict, detail = "ERROR", "generation produced no ELF"
@@ -329,7 +373,7 @@ def main():
         opcodes = globals()[seq_name]
         cfg = (pma_config(args.xlen, out_dir, name, **override) if override
                else SAIL_CONFIG_BASE.format(args.xlen))
-        elf, gen_ok = generate(name, opcodes, flags, out_dir, args.xlen)
+        elf, gen_ok = generate(name, opcodes, flags, out_dir, args.xlen, manifests)
         sail, spike = run(elf, args.xlen, config=cfg)
         if sail is None:
             verdict, detail = "ERROR", "generation produced no ELF"
@@ -346,6 +390,8 @@ def main():
         print(f"{verdict:11s} {name:32s} {detail}")
 
     print(f"\n{good} as expected, {bad} not, RV{args.xlen}")
+    for g, m in sorted(manifests.items()):
+        m.write(os.path.join(out_dir, g))
     print(f"ELFs in {out_dir} -- pass this to coverage_report.py --elf-dir so the "
           f"scenario tests count toward model coverage")
     return 1 if bad else 0

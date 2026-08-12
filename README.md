@@ -238,6 +238,60 @@ python3 csr_sweep.py --xlen 64 --only mscratch,mepc
 
 ---
 
+# How the output is organised
+
+Tests are grouped by ISA extension, so a configuration can include the ones that
+apply to it and skip the rest.
+
+```
+<out-dir>/Zicond/czero_eqz.elf          opcode sweeps: <extension>/<mnemonic>
+<out-dir>/Smstateen/mstateen0/Zicsr/    CSR sweep: <extension>/<csr>/
+<out-dir>/rv64/PMP/m2_load_denied.elf   scenarios: <xlen>/<feature>/
+```
+
+Ten privileged extensions define no instructions at all and exist only as CSR
+addresses, which is why the CSR sweep groups by extension rather than by
+register name — for those, that directory is the only place the extension
+appears.
+
+## Selecting tests for a configuration
+
+A directory name cannot say "needs at least one PMP entry", so every generated
+test also carries a `riscv-arch-test`-format header, and every directory gets a
+`tests.json`:
+
+```
+##### START_TEST_CONFIG #####
+# REQUIRED_EXTENSIONS: ['I', 'Zicsr', 'Sm']
+# params:
+#   MXLEN: 64
+#   NUM_PMP_ENTRIES: '>0'
+# MARCH: rv64i_zicsr
+##### END_TEST_CONFIG #####
+```
+
+The format is `riscv-arch-test`'s deliberately, so the same runner that selects
+their tests can select ours.
+
+**`MARCH` is the authoritative field.** It is the string the assembler was
+actually given, so it provably encodes these instructions.
+`REQUIRED_EXTENSIONS` is a readable rendering of the same fact.
+
+`tests.json` carries the same information for tooling that consumes ELFs rather
+than sources, and marks negative controls:
+
+```json
+{"name": "m2_NEG_wrong_cause", "elf": "m2_NEG_wrong_cause.elf",
+ "params": {"MXLEN": 64, "NUM_PMP_ENTRIES": "'>0'"},
+ "note": "negative control: must FAIL"}
+```
+
+Do not let a runner silently drop those. A negative control is the test that
+proves the others can fail; keeping the suite and discarding its controls leaves
+you with tests that always pass.
+
+---
+
 # Measuring and reporting
 
 ## Coverage of the Sail model

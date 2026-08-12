@@ -329,7 +329,14 @@ def main():
             out = open(cache, errors="ignore").read()
             resumed += 1
         else:
-            out = run(addr, args.xlen, os.path.join(args.out_dir, name), expect_trap,
+            # Grouped by the *extension* the CSR belongs to, not by the CSR
+            # name alone. The RFP asks for tests organised by extension so a
+            # configuration can select them; ten privileged extensions define
+            # no mnemonics and exist only as CSR addresses, so for those this
+            # directory is the only place the extension appears at all.
+            # `ext` is already the first column of every CSRS row -- it was
+            # known here and simply not used.
+            out = run(addr, args.xlen, os.path.join(args.out_dir, ext, name), expect_trap,
                       isa_suffix, name in SELF_UPDATING, args.timeout,
                       enable_fp=name in FP_CSRS, enable_vector=name in VECTOR_CSRS)
             os.makedirs(os.path.dirname(cache), exist_ok=True)

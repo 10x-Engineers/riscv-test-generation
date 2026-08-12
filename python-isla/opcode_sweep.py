@@ -30,6 +30,7 @@ import sys
 import model_opcodes
 
 import paths
+import test_config
 
 SAIL_RISCV_ROOT = paths.SAIL_RISCV
 ISLA_TESTGEN_DIR = paths.ISLA_DIR
@@ -627,6 +628,9 @@ def main():
     results = []
     skipped = []
     nonexistent = []
+    march = test_config.march_string(args.xlen, march_ext)
+    req_exts = test_config.required_extensions(march_ext, extra=[extension])
+    manifest = test_config.Manifest(extension, args.xlen, march)
     for name, insn in sorted(insns.items()):
         out_prefix = os.path.join(out_dir, name.replace(".", "_"))
 
@@ -698,6 +702,25 @@ def main():
                           or extension in ("V", "vector_crypto", "bfloat16")
                           or any(k[0] == "vreg" for k in insn.operand_kinds))
         elf_path = out_prefix + ".elf"
+        if gen_ok:
+            # Recorded only for tests that actually built. A manifest entry for
+            # an ELF that does not exist would let a runner "select" a test it
+            # cannot run, which is a worse failure than the test being absent.
+            params = {}
+            # `--csr` always has a value (it defaults to mscratch), so it is not
+            # evidence that this test touches a CSR at all -- only the operand
+            # kind is. Keyed off the wrong one, every test in every extension
+            # claimed to require 0x340.
+            if any(k[0] == "csr" for k in insn.operand_kinds):
+                params["CSR"] = args.csr
+            if args.enable_fp or extension in ("V", "vector_crypto", "bfloat16"):
+                params["MSTATUS_FS"] = "enabled"
+            if args.enable_vector or extension in ("V", "vector_crypto", "bfloat16"):
+                params["MSTATUS_VS"] = "enabled"
+                params["VLEN"] = 128  # the only value that works -- findings C8
+            test_config.annotate(out_prefix + ".s",
+                                 test_config.header(req_exts, march, args.xlen, params))
+            manifest.add(name, elf_path, req_exts, params)
         if not gen_ok:
             # Carry isla-testgen's own last line through rather than flattening
             # every generation failure to the same three words: "TIMEOUT
@@ -757,6 +780,8 @@ def main():
         n_fail = sum(1 for v in oks if v is False)
         n_na = sum(1 for v in oks if v is None)
         print(f"  {sim_name:6s} {n_pass} pass, {n_fail} fail, {n_na} not installed")
+    if (m := manifest.write(out_dir)):
+        print(f"  manifest: {m} ({len(manifest.tests)} selectable tests)")
     return results
 
 
