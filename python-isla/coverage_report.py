@@ -65,7 +65,16 @@ DEFAULT_ELF_DIRS = [os.path.join(_CORPUS, "elfs"),
                     # `sys/vmem_ptw.sail` mistake again, one directory over.
                     os.path.join(_CORPUS, "csr-model"),
                     os.path.join(_CORPUS, "scenario-tests"),
-                    os.path.join(_CORPUS, "oracle")]
+                    os.path.join(_CORPUS, "oracle"),
+                    # The sailtest CLI's default --out directory. Left off this
+                    # list it contributed nothing to any reported figure: 220
+                    # ELFs, almost all duplicates of `oracle/`, but 11 spans in
+                    # zbb/mext that nothing else reaches. Same failure mode as
+                    # the `csr-model` and `scenario-tests` omissions above -- a
+                    # directory missing from this list is silently missing from
+                    # the coverage number, and looks identical to code no test
+                    # reaches.
+                    os.path.join(_CORPUS, "out")]
 
 # The two files spell the same span differently, and the three kinds differ
 # again, so the leading fields are all optional and repeatable:
@@ -245,6 +254,15 @@ def main():
                          "deliverable extension list). A model-wide percentage counts "
                          "the Hypervisor and other out-of-scope code we are not "
                          "contracted to cover, which understates delivered coverage.")
+    ap.add_argument("--exclude-spans", metavar="FILE",
+                    help="Remove spans that instruction execution cannot reach, listed "
+                         "as `<file>:<first>-<last>` ranges (generate with "
+                         "derive_span_exclusions.py). Chiefly Sail's bidirectional "
+                         "assembly/mnemonic mappings: real, instrumented code whose "
+                         "disassembly direction no running program reaches. Leaving them "
+                         "in the denominator reports a gap no test can ever close. The "
+                         "report states how many were removed, so the figure stays "
+                         "auditable rather than quietly improved.")
     args = ap.parse_args()
 
     for path, what in ((COVERAGE_SIM, "coverage-instrumented emulator"),
@@ -288,6 +306,36 @@ def main():
         sys.exit("no instrumented spans in scope -- check the --scope prefixes "
                  "against the paths in branch_info")
 
+    # Exclusions are applied after scoping and reported as a count, never folded
+    # silently into the percentage: an exclusion that cannot be seen is
+    # indistinguishable from a coverage claim that was quietly improved.
+    excluded_n = 0
+    if args.exclude_spans:
+        ranges = {}
+        with open(args.exclude_spans) as f:
+            for line in f:
+                entry = line.split("#", 1)[0].strip()
+                if not entry:
+                    continue
+                fname, _, span = entry.rpartition(":")
+                lo, _, hi = span.partition("-")
+                try:
+                    ranges.setdefault(fname, []).append((int(lo), int(hi or lo)))
+                except ValueError:
+                    continue
+
+        def is_excluded(s):
+            # s = (kind, file, l1, c1, l2, c2); a span belongs to the construct
+            # whose range contains its first line.
+            return any(lo <= s[2] <= hi for lo, hi in ranges.get(s[1], ()))
+
+        before = len(total)
+        total = {s for s in total if not is_excluded(s)}
+        covered = {s for s in covered if not is_excluded(s)}
+        excluded_n = before - len(total)
+        if not total:
+            sys.exit("every in-scope span was excluded -- check --exclude-spans")
+
     if args.uncovered:
         # Sorted by file then line so the output reads as a work list, and
         # diffs cleanly between runs to show what a new test actually closed.
@@ -306,6 +354,10 @@ def main():
         t = sum(1 for s in total if s[0] == kind)
         print(f"{label:12s} {c:9d} {t:9d} {100*c/t if t else 0:6.1f}%")
     print(f"{'ALL':12s} {len(covered):9d} {len(total):9d} {100*len(covered)/len(total):6.1f}%")
+    if excluded_n:
+        print(f"\n{excluded_n} span(s) excluded as unreachable by instruction execution "
+              f"({os.path.basename(args.exclude_spans)});\nthe denominator above is "
+              f"reachable spans only. Each exclusion carries its reason in that file.")
 
     # Per-file, model sources only. The Sail *library* (flow.sail, hex_bits.sail
     # and friends, which live under the opam share dir) is instrumented too, but

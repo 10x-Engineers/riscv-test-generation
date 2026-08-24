@@ -1,0 +1,26 @@
+name,cause_code,payload_type,reserved,source
+E_Fetch_Addr_Align,0,unit,False,core/types.sail:209
+E_Fetch_Access_Fault,1,unit,False,core/types.sail:210
+E_Illegal_Instr,2,unit,False,core/types.sail:211
+E_Load_Addr_Align,4,unit,False,core/types.sail:213
+E_Load_Access_Fault,5,unit,False,core/types.sail:214
+E_SAMO_Addr_Align,6,unit,False,core/types.sail:215
+E_SAMO_Access_Fault,7,unit,False,core/types.sail:216
+E_U_EnvCall,8,unit,False,core/types.sail:217
+E_S_EnvCall,9,unit,False,core/types.sail:218
+E_VS_EnvCall,10,unit,False,core/types.sail:219
+E_M_EnvCall,11,unit,False,core/types.sail:220
+E_Fetch_Page_Fault,12,unit,False,core/types.sail:221
+E_Load_Page_Fault,13,unit,False,core/types.sail:222
+E_Reserved_14,14,unit,True,core/types.sail:223
+E_SAMO_Page_Fault,15,unit,False,core/types.sail:224
+E_Reserved_16,16,unit,True,core/types.sail:225
+E_Reserved_17,17,unit,True,core/types.sail:226
+E_Software_Check,18,unit,False,core/types.sail:227
+E_Reserved_19,19,unit,True,core/types.sail:228
+E_Fetch_GPage_Fault,20,unit,False,core/types.sail:229
+E_Load_GPage_Fault,21,unit,False,core/types.sail:230
+E_Virtual_Instr,22,unit,False,core/types.sail:231
+E_SAMO_GPage_Fault,23,unit,False,core/types.sail:232
+E_Breakpoint,Not directly derivable from Sail,breakpoint_cause,False,core/types.sail:212
+E_Extension,Not directly derivable from Sail,ext_exc_type,False,core/types.sail:235

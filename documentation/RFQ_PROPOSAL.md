@@ -222,8 +222,10 @@ omitted.
 
 ## Which privileged extensions, under which configurations
 
-The Golden Model declares **28 privileged-related extensions**. The table reconciles to all 28, so
-what we are *not* committing to is as visible as what we are.
+The Golden Model declares **28 named privileged extensions** — 4 `Sm*`, 12 `Ss*` and 12 `Sv*`. With
+the privilege modes `S`, `U` and `H`, the privileged portion of the model's extension enum totals 31
+of 125 declared extensions. The table below enumerates the 28 named extensions and reconciles to all
+28, so what we are *not* committing to is as visible as what we are.
 
 **Key.** ✅ committed · ○ future within this RFQ (delivered if schedule permits, otherwise deferred
 with recorded justification) · **—** not applicable, enforced by the model.

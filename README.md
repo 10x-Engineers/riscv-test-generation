@@ -7,30 +7,42 @@ original 31 July, and confirmed against the v1.1 document. That date is for the 
 (technical plan + estimated timeline + cost, to `tech-proposals@riscv.org`), not for the
 framework; deliverables 1–5 are post-award.
 
-## Recommended approach
+## The approach
 
-A **Python-first, coverage-directed hybrid**:
+A **coverage-directed hybrid**, with generation routed by what each engine can actually do:
 
-- a config-driven **concrete-oracle backbone** (run the Golden Model, bake expected state into
-  self-checking ELFs) for breadth across the whole **privileged** ISA;
-- an **ISLA symbolic-execution specialist** for the hard privileged corners random stimulus
-  can't reach (specific PMP violations, precise trap-delegation, chosen page-fault causes);
-- both **steered by, and measured against, Sail-code coverage** (`sail-riscv`'s own
-  `COVERAGE`/`--c-coverage`/`sail_coverage`) — exactly the "coverage in terms of the Sail code"
-  the RFP's #1 evaluation criterion asks for.
+- a config-driven **concrete-oracle backbone** — run the Golden Model, bake the resulting state
+  into self-checking ELFs — for breadth across the privileged ISA, and the only viable path for
+  floating point and vector;
+- an **ISLA symbolic-execution specialist** for the corners random stimulus does not reach:
+  a specific PMP violation, a chosen page-fault cause, a precise trap delegation;
+- both **steered by, and measured against, Sail-source coverage**, which is what the RFP's
+  first evaluation criterion asks for.
 
-Full reasoning, RFP compliance mapping, sprint, and post-award roadmap:
+Full reasoning and RFP compliance mapping:
 [`documentation/EXECUTION_PLAN.md`](documentation/EXECUTION_PLAN.md).
 
 ## Where it stands
 
-All three backends are built and running on RV32 and RV64, against both
-`sail_riscv_sim` and Spike:
+Measured **24 August 2026** from one clean run of the whole corpus — 1,878 ELFs,
+1,810 reaching SUCCESS, 107 seconds. Reproduce any row with the command beside it.
+
+| Scope | Branch spans | All spans | Command |
+|---|---|---|---|
+| Whole model | **77.5%** | 60.9% | `coverage_report.py` |
+| Full RFP scope | **77.6%** | 61.0% | `--scope rfp-scope.txt` |
+| Current deliverable | **66.3%** | 48.3% | `--scope rfp-scope-current.txt` |
+| Privileged only | **70.5%** | 44.5% | `--scope rfp-scope-privileged.txt` |
+
+All four apply `--exclude-spans` (see Stage 4). **Always quote the scope with the number** —
+the four differ by up to eleven points and none of them is "the" coverage figure.
 
 | | |
 |---|---|
 | Instructions parsed from the model | 1280, across 23 extensions, zero unparsed clauses |
-| Sail branch coverage | **79.6%** combined; **71.8%** within the current deliverable's declared scope |
+| Corpus | 1,878 ELFs |
+| Testplan items | 2,347 — 1,035 complete, 520 partial, 414 not started |
+| Coverage ceiling | **94.2%** — see [`TESTPLAN.md`](documentation/python-isla/TESTPLAN.md) |
 | Failures in scope | **2** — PMP entry 0, on the model's side |
 | Framework failures in scope | **0** |
 
@@ -41,19 +53,357 @@ That file is the deliverable's real output: defects found by generating and
 a two-part defect that made the Golden Model's shadow-stack code unreachable —
 found here, fixed, and open as a PR on our fork.
 
-To see the current state yourself:
-
-```
-cd python-isla
-python3 regression.py        # what got worse since the baseline (exit 1 if anything did)
-python3 status_report.py     # per-extension pass/fail, split by model fault vs ours
-```
-
 Hypervisor, floating point and the vector extensions are deferred to a follow-up
 RFQ iteration. They are still generated and run — being able to extend to them is
 itself a requirement — but they are reported separately rather than folded into
 the current deliverable's numbers.
 
+---
+
+# The pipeline
+
+Seven stages, and the last one closes the loop back to the first.
+
+```
+   Configuration ──► Generation ──► Simulation ──┬──► Coverage report ──► Feedback & record
+        ▲                                        │
+        │                                        └──► Failure reports ──► Triage & debug
+        │
+        └──────── Coverage scripts identify holes and reconfigure ◄────────┘
+```
+
+| # | Stage | Runs it | Automated |
+|---|---|---|---|
+| 1 | Configuration | Sail JSON configs + two CMake builds | yes |
+| 2 | Generation | `opcode_sweep.py` / `sailtest generate` | yes |
+| 3 | Simulation | `sail_riscv_sim`, Spike, QEMU, CVA6 RTL | yes |
+| 4 | Coverage report | `coverage_report.py` | yes |
+| 5 | Failure reports | `status_report.py`, `regression.py` | yes |
+| 6 | Feedback & record | `testplan.py` | yes |
+| 7 | Identify holes → reconfigure | testplan directives | **manual by design** |
+
+Stage 7 is deliberately a human decision. The uncovered list and its classification are
+produced automatically and published as a machine-readable interface precisely so an
+automatic consumer can be added later without redesigning what produces it; building that
+consumer is not in the committed scope. See §2.8 of the technical plan.
+
+---
+
+## Stage 1 · Configuration
+
+One Golden Model config drives everything downstream — instruction set, register widths,
+which extensions exist, what the assembler is told.
+
+**Two builds, kept separate** so a coverage run can never silently use an uninstrumented
+emulator:
+
+```bash
+# the fast simulator that runs tests
+cmake -B sail-riscv/build -S sail-riscv
+cmake --build sail-riscv/build -j$(nproc)
+
+# the instrumented one, plus the span manifest everything downstream measures against
+cmake -B sail-riscv/build-coverage -S sail-riscv -DCOVERAGE=ON
+cmake --build sail-riscv/build-coverage -j$(nproc)
+```
+
+The coverage build emits `sail-riscv/build-coverage/sail_riscv_model.branch_info` — the
+**15,157-span manifest** that is the denominator for every coverage figure in this repo.
+
+**Configs.** The model's build generates all 16 of its CI configurations:
+
+```bash
+ls sail-riscv/build/config/*.json     # rv{32,64}d × VLEN {64,128,256,512} × ELEN {32,64}
+```
+
+We currently generate against **two** — `rv32d_v128_e64` and `rv64d_v128_e64`. VLEN is pinned
+to 128 because it is a *compile-time* type in Sail (`type vlenbits = bits(vlen)`) and ISLA's
+concrete bitvector caps at 129 bits, so it cannot represent VLEN 256 or 512. The oracle has no
+such limit; widening it across the matrix is the largest open item against RFP Goal 4.
+
+**Check the toolchain resolved correctly:**
+
+```bash
+python3 python-isla/paths.py
+```
+
+Prints where each tool was found and flags anything missing. Every entry is overridable:
+
+```bash
+export SAIL_RISCV=/path/to/sail-riscv
+export SPIKE_BIN=/path/to/spike
+export Z3_LIB_DIR=/path/to/z3/lib
+```
+
+`SAIL_RISCV` prefers whichever checkout is actually **built**, so a fresh clone uses the
+submodule and an existing sibling checkout keeps working — neither needs configuration.
+
+---
+
+## Stage 2 · Generation
+
+Two engines, routed by capability. Both emit the same contract: a `.S` source, a linked
+`.elf`, and a `manifest.json` — self-checking (`a0 == 0` means pass) with
+`riscv-arch-test`-compatible headers and a signature region.
+
+### Symbolic — one instruction, solved
+
+The instruction list comes from the model's own `.sail` sources, so you name a **model file**,
+not a list of instructions:
+
+```bash
+cd python-isla
+python3 opcode_sweep.py extensions/I/base_insts.sail --xlen 64
+```
+
+It parses every instruction that file implements, renders one legal instance as assembly,
+assembles it with the real toolchain to obtain the true opcode word, hands that to
+`isla-testgen` + Z3 to solve for a reachable path, then **runs the result** — generation not
+erroring is not proof, since a self-targeting `jal` "succeeds" at generation and hangs forever
+when executed.
+
+```bash
+--xlen {32,64}                   which XLEN to generate for
+--only add,sub,xor               restrict to specific mnemonics
+--extension Zicsr                label the run; picks the -march/--isa string
+--out-dir DIR                    where the ELFs land
+--boot-fixed-entry               for QEMU / CVA6, which ignore the ELF entry point
+--isla-arg=--run-in-supervisor   pass a flag through to isla-testgen (note the `=`)
+```
+
+The `=` form is required for any pass-through value beginning with `--`; without it argparse
+consumes it as a flag of its own.
+
+**Batch drivers:**
+
+```bash
+python3 sweep_all.py                 # every extension, both XLENs
+python3 sweep_all.py I M A           # just these
+python3 sweep_all.py privileged      # a named group: M5, M6, M7, privileged
+
+# a full sweep takes hours; an interrupted run resumes rather than restarting
+SWEEP_OUT=~/.cache/riscv-sweep/elfs SWEEP_RESUME=1 python3 sweep_all.py
+python3 sweep_status.py              # how far a running sweep has got
+```
+
+**CSR sweep** — all six Zicsr instructions against each CSR in turn, rather than once against
+one register. Roughly ten privileged extensions define no mnemonics at all and exist only as
+CSR addresses; this is the only place they are exercised:
+
+```bash
+python3 csr_sweep.py --xlen 64 --from-model      # every CSR the model defines
+python3 csr_sweep.py --xlen 64 --only mscratch,mepc
+```
+
+**Scenario tests** — architectural *state* rather than a single instruction: privilege
+transitions, PMP violations, Sv39 page-table walks, PMA regions, interrupt delegation:
+
+```bash
+python3 scenario_tests.py --xlen 64
+python3 scenario_tests.py --xlen 64 --only m4_amo_unsupported
+```
+
+**Every scenario carries a negative control that must fail.** The runner checks both
+directions, so a control that stops failing is reported as a regression rather than passing
+quietly.
+
+### Concrete oracle — sequences, observed
+
+Used where the symbolic engine structurally cannot go. It runs a random instruction sequence
+on the Golden Model and records the resulting architectural state as the expectation.
+
+```bash
+cd autotest
+PYTHONPATH=src python3 -m sailtest.cli backends       # list what is available
+
+PYTHONPATH=src python3 -m sailtest.cli generate \
+    --config configs/rv64.json --sail-riscv ../sail-riscv \
+    --backend model-fp --count 8 --out out
+
+PYTHONPATH=src python3 -m sailtest.cli run \
+    --manifest out/rv64/manifest.json --config configs/rv64.json
+```
+
+Backends: `model`, `model-fp`, `model-scalar`, `model-v`, `model-vk`, `model-vk64`,
+`template`. Generation is reproducible — the same `--seed` produces byte-identical `.S`.
+
+### Why two engines
+
+ISLA cannot execute floating-point softfloat calls or represent vector state
+(`Symbolic (bit)vector length in zeros`). The oracle cannot aim — it observes what a random
+sequence happened to do. Vector is oracle-only by necessity; FP is oracle-by-measurement,
+having been benchmarked both ways. See
+[`documentation/python-isla/findings.md`](documentation/python-isla/findings.md).
+
+---
+
+## Stage 3 · Simulation
+
+Generated ELFs run on up to four targets:
+
+| Target | Role |
+|---|---|
+| `sail_riscv_sim` | the reference — but see the circularity warning below |
+| **Spike** | **the independent check**; the only one that is evidence about the model |
+| QEMU | a second independent implementation |
+| CVA6 (Verilator) | RTL, for the ELFs that boot at a fixed entry point |
+
+Most runs happen automatically as part of `opcode_sweep.py` and `sailtest run`. To replay a
+corpus by hand:
+
+```bash
+sail-riscv/build/c_emulator/sail_riscv_sim \
+    --config sail-riscv/build/config/rv64d_v128_e64.json test.elf
+spike --isa=rv64i_zicsr test.elf
+```
+
+QEMU and CVA6 ignore the ELF entry point, which is why `--boot-fixed-entry` exists.
+
+---
+
+## Stage 4 · Coverage report
+
+Replays every ELF on the instrumented simulator, accumulating `sail_coverage`, and ratios it
+against `branch_info`.
+
+```bash
+cd python-isla
+python3 coverage_report.py                                   # replay + report (~107s)
+python3 coverage_report.py --no-replay                       # reuse existing data
+python3 coverage_report.py --scope rfp-scope-privileged.txt  # privileged only
+python3 coverage_report.py --per-elf out.txt                 # each ELF measured alone
+python3 coverage_report.py --uncovered todo.txt              # what is not reached
+python3 coverage_report.py --exclude-spans /tmp/excl.txt     # drop unreachable code
+```
+
+**Spans come in three kinds** and mean different things: `F` a function was entered, `B` a
+branch was taken, `T` a finer-grained per-expression span. Quoting "coverage" without saying
+which inflates or deflates by twenty points — `B` alone is 77.5% where all three together are
+60.9%.
+
+**Exclusions.** The denominator contains code no executing program can reach — chiefly Sail's
+bidirectional `mapping` declarations, whose disassembly direction is real instrumented code
+that nothing runs. Derive them, never hand-list them, because line numbers move:
+
+```bash
+python3 derive_span_exclusions.py -o /tmp/excl.txt --json /tmp/excl.json
+```
+
+Produces 1,050 ranges with a reason each. `coverage_report.py` prints how many it removed, so
+the figure stays auditable rather than quietly improved.
+
+**Scope files** — a coverage number means nothing without saying what it was measured over:
+
+| File | Covers |
+|---|---|
+| `rfp-scope-privileged.txt` | the privileged architecture only — the RFP's #1 criterion |
+| `rfp-scope-current.txt` | the current deliverable (excludes deferred FP/vector) |
+| `rfp-scope.txt` | the full RFP scope |
+
+Each justifies its exclusions in comments.
+
+> **A failing test writes no coverage file at all.** Every negative control is invisible to
+> this stage. Do not read a coverage gap as "no test exists" without checking the failure
+> report too.
+
+---
+
+## Stage 5 · Failure reports
+
+```bash
+cd python-isla
+python3 status_report.py                  # per-extension, with attribution
+python3 status_report.py --extension V
+python3 status_report.py --failures-only
+python3 coverage_matrix.py                # per-instruction, across BOTH generators
+```
+
+Every failure is attributed from its recorded reason:
+
+| | |
+|---|---|
+| **MODEL** | the Golden Model is wrong, or disagrees with Spike — worth reporting upstream |
+| **FRAMEWORK** | our generator cannot produce a valid test — ours to fix |
+| **ROUTED** | the symbolic engine cannot generate it and another backend covers it — not a failure |
+| **EXPECTED** | the test asserts a trap and got one |
+
+This split is the single most useful distinction on the project, and the ratio is easy to get
+backwards. Promote a failure to MODEL only with a written-up reproducer in `findings.md`.
+
+**Regressions:**
+
+```bash
+python3 regression.py            # exits 1 if anything regressed
+python3 regression.py --update   # accept current state as the new baseline
+```
+
+Compares each instruction's *status*, not a pass/fail count. A test moving from *verified* to
+*passes-but-checks-nothing* is a serious regression that a pass/fail count records as no
+change at all — not hypothetical, it happened to 47.7% of this corpus once.
+
+Only `--update` after reading the diff. It makes whatever is on disk the new definition of
+correct, including any regression in it.
+
+---
+
+## Stage 6 · Feedback and record
+
+Turns coverage into a plan: every target the model implements, what stimulus reaches it,
+whether the corpus reaches it, and what to generate for the ones it does not.
+
+```bash
+cd python-isla
+python3 derive_span_exclusions.py -o /tmp/excl.txt
+python3 coverage_report.py                       # refresh status first (~107s)
+
+python3 testplan.py \
+    --coverage \
+    --exclude-spans /tmp/excl.txt \
+    --baseline ../documentation/python-isla/results/testplan.json \
+    -o testplan --html --xlsx --fail-on-new-holes
+```
+
+Outputs `testplan.{md,csv,json,html,xlsx}` plus `testplan-spans.csv` (one row per span, the
+audit trail).
+
+**It refuses stale inputs.** A manifest older than the model describes the *previous* model;
+a coverage log older than the manifest joins status onto spans that have since moved. Both
+produce a plausible-looking plan, which is the dangerous kind, so both stop the run.
+`--allow-stale` overrides deliberately.
+
+**`--baseline` separates new holes from the standing backlog** — new hole, regression, widened,
+closed — and `--fail-on-new-holes` exits non-zero on either, so a model bump fails CI rather
+than quietly enlarging the backlog.
+
+A lighter tool that classifies only the uncovered remainder:
+
+```bash
+python3 coverage_report.py --uncovered uncov.txt
+python3 coverage_analysis.py uncov.txt --model-dir ../sail-riscv/model -o queue --xlsx
+```
+
+Full detail: [`documentation/python-isla/TESTPLAN.md`](documentation/python-isla/TESTPLAN.md).
+
+---
+
+## Stage 7 · Identify holes and reconfigure
+
+The plan names each gap and the command that would close it — for example a helper function
+resolved through the call graph to the instructions that reach it:
+
+```
+carryless_mul    core/arithmetic.sail:20    4 spans, 0 covered
+  execute an instruction that calls this helper: CLMUL, CLMULH, VCLMUL_VV, ...
+  opcode_sweep.py extensions/B/zbc_insts.sail extensions/vector_crypto/zvbc_insts.sail
+```
+
+Working the queue means picking a row, running its `generate` command, and re-measuring —
+back to Stage 2. Not every gap is closed by generating more of the same: a representational
+gap needs a routing change, a never-selected gap needs a suite-selection fix, and only "no
+test generated for it" is closed by generation alone.
+
+**This decision is a human one, by design.** The classification is automatic; acting on it is
+not. The interface is machine-readable so an automatic consumer can be added later.
 
 ---
 
@@ -66,8 +416,7 @@ git clone --recurse-submodules https://github.com/10x-Engineers/riscv-test-gener
 cd riscv-test-generation
 ```
 
-`--recurse-submodules` is required. Without it the submodules arrive empty and
-nothing will run.
+`--recurse-submodules` is required. Without it the submodules arrive empty and nothing runs.
 
 | Folder | Repo | Purpose |
 |---|---|---|
@@ -75,10 +424,7 @@ nothing will run.
 | `isla-gen-extension/` | `isla-testgen` | symbolic engine (carries a nested `isla` submodule) |
 | `autotest/` | `sail-riscv-autotest` | concrete oracle |
 
-The folder names deliberately differ from the repo names — worth knowing before
-you go looking for them on GitHub.
-
-Already cloned without submodules?
+The folder names deliberately differ from the repo names. Already cloned without submodules?
 
 ```bash
 git submodule update --init --recursive
@@ -92,27 +438,13 @@ git submodule update --init --recursive
 | Z3 | the symbolic engine | loaded at runtime via `LD_LIBRARY_PATH` |
 | Rust toolchain | building `isla-testgen` | |
 | CMake | building the model | |
-| Spike | **differential testing** | the independent check — see "Why Spike matters" below |
-| QEMU, Whisper | optional extra targets | |
+| Spike | **differential testing** | the independent check |
+| QEMU, Verilator | optional extra targets | |
+| `openpyxl` | `--xlsx` outputs | optional; skipped with a warning if absent |
 
-## 3. Build the three pieces
+## 3. Build
 
-**The Golden Model simulator**
-
-```bash
-cmake -B sail-riscv/build -S sail-riscv
-cmake --build sail-riscv/build -j$(nproc)
-```
-
-**A coverage-instrumented model**, kept separate so a coverage run can never
-silently use an uninstrumented emulator:
-
-```bash
-cmake -B sail-riscv/build-coverage -S sail-riscv -DCOVERAGE=ON
-cmake --build sail-riscv/build-coverage -j$(nproc)
-```
-
-**The symbolic engine**
+Both model builds as in Stage 1, then the symbolic engine:
 
 ```bash
 cd isla-gen-extension
@@ -120,128 +452,71 @@ LIBRARY_PATH=/path/to/z3/lib cargo build --release --bin isla-testgen
 cd ..
 ```
 
-## 4. Check that everything was found
+## 4. Verify
 
 ```bash
 python3 python-isla/paths.py
 ```
 
-Prints where each tool resolved to and flags anything missing. Every entry can
-be overridden with the environment variable of the same name:
-
-```bash
-export SAIL_RISCV=/path/to/sail-riscv
-export SPIKE_BIN=/path/to/spike
-export Z3_LIB_DIR=/path/to/z3/lib
-```
-
-`SAIL_RISCV` prefers whichever checkout is actually **built**, so a fresh clone
-uses the submodule and an existing sibling checkout keeps working — neither
-needs configuration.
-
 ---
 
-# Running things
+# Script reference
 
-All commands below are run from the repository root unless stated otherwise.
+## `python-isla/` — the symbolic flow, and all measurement
 
-## Generate and run tests for one extension
+| Script | What it does |
+|---|---|
+| `paths.py` | Resolves every tool and directory once, from `$ENV` → repo-relative → `PATH`. Import it rather than hardcoding paths; run it to see what resolved. |
+| `model_opcodes.py` | Gets mnemonics and encodings straight from the Sail model rather than `riscv-opcodes`, so a sweep only ever tests what this model implements. |
+| `model_config.py` | Parses one Golden Model configuration and derives everything downstream from it. |
+| `test_config.py` | Writes what a generated test *requires* into a form a runner can read (`REQUIRED_EXTENSIONS`, `MARCH`, params). |
+| `opcode_sweep.py` | **Stage 2.** Per-file opcode sweep: parse → render → assemble → solve → run. The single-extension tool; use it when debugging one instruction. |
+| `sweep_all.py` | **Stage 2.** Batch driver over extension groups and both XLENs, resumable. |
+| `sweep_status.py` | Reports how far a running `sweep_all.py` has got. |
+| `csr_sweep.py` | **Stage 2.** Zicsr's six instructions × every CSR the model defines. |
+| `scenario_tests.py` | **Stage 2.** Privileged scenarios — state setup, not single instructions. Each carries a negative control. |
+| `coverage_report.py` | **Stage 4.** Replays the corpus, ratios `sail_coverage` against `branch_info`. Scope, exclusions, per-ELF, uncovered list. |
+| `derive_span_exclusions.py` | **Stage 4.** Derives the spans no executing program can reach, with a reason each. Regenerate after any model change; line numbers move. |
+| `status_report.py` | **Stage 5.** Per-extension pass/fail split by MODEL / FRAMEWORK / ROUTED / EXPECTED. |
+| `regression.py` | **Stage 5.** Diffs status against a reviewable baseline; exits 1 on regression. |
+| `coverage_matrix.py` | **Stage 5.** Per-instruction status across *both* generators in one table — neither number is honest alone. |
+| `testplan.py` | **Stage 6.** Derives the full testplan from the model's branch structure; stale-input guard, baseline diff, `--fail-on-new-holes`. |
+| `testplan_html.py` | Presentation only for `testplan.py --html`. Computes nothing; a figure here that is not in the CSV is a bug. |
+| `coverage_analysis.py` | **Stage 6.** Lighter alternative: classifies only the uncovered remainder into a stimulus queue. |
 
-The instruction list comes from the model's own `.sail` sources, so you name a
-model file, not a list of instructions:
+## `autotest/` — the concrete oracle
 
-```bash
-cd python-isla
-python3 opcode_sweep.py extensions/I/base_insts.sail --xlen 64
-```
+| Module | What it does |
+|---|---|
+| `sailtest/cli.py` | Entry point: `generate`, `run`, `backends`. |
+| `sailtest/config.py` | Reads a Golden Model configuration file. |
+| `sailtest/model.py` | Derives the instruction set from the Sail model itself. |
+| `sailtest/oracle.py` | The Golden Model used as a test oracle — runs it, reads back the state. |
+| `sailtest/selfcheck.py` | Shared scaffolding for tests whose expected results come from the model. |
+| `sailtest/program.py` | A generated program, rendered as assembly. Owns the ACT header and signature region. |
+| `sailtest/toolchain.py` | Compiles a generated `.S` into an ELF the same way the Golden Model does. |
+| `sailtest/suite.py` | Generates a suite from a config and organises it by extension. |
+| `sailtest/runner.py` | Runs a generated suite on a simulator and summarises pass/fail. |
+| `sailtest/backends/model_backend.py` | Model-derived generation — the instruction set comes from Sail. |
+| `sailtest/backends/template_backend.py` | Baseline backend: hand-written self-checking tests, capped at what neither engine reaches. |
+| `bisect_probe.py` | Narrows a failing generated test to the instruction responsible. |
 
-This parses every instruction that file implements, generates a self-checking
-test for each, and runs them on every simulator it can find, printing a
-per-instruction verdict.
+## `tools/`
 
-Useful flags:
-
-```bash
---xlen {32,64}          which XLEN to generate for
---only add,sub,xor      restrict to specific mnemonics
---extension Zicsr       label the run and pick the right -march/--isa string
---out-dir DIR           where the ELFs land
---boot-fixed-entry      for QEMU / CVA6, which ignore the ELF entry point
-```
-
-## Sweep everything
-
-```bash
-cd python-isla
-python3 sweep_all.py                 # every extension, both XLENs
-python3 sweep_all.py I M A           # just these
-python3 sweep_all.py privileged      # a named group
-```
-
-Groups: `M5`, `M6`, `M7`, `privileged`.
-
-A full sweep takes hours and writes one result file per target, so an
-interrupted run resumes rather than restarting:
-
-```bash
-SWEEP_OUT=~/.cache/riscv-sweep/elfs SWEEP_RESUME=1 python3 sweep_all.py
-```
-
-## Privileged scenario tests
-
-These construct architectural *state* rather than exercising one instruction —
-PMP violations, Sv39 page-table walks, PMA region attributes, interrupt
-delivery and delegation:
-
-```bash
-cd python-isla
-python3 scenario_tests.py --xlen 64
-python3 scenario_tests.py --xlen 64 --only m4_amo_unsupported
-```
-
-**Every scenario carries a negative control that must fail.** The runner checks
-both directions, so a control that stops failing is reported as a regression
-rather than passing quietly.
-
-## The concrete oracle (FP, vector, scalar crypto)
-
-Used where the symbolic engine structurally cannot go. Run from `autotest/`:
-
-```bash
-cd autotest
-PYTHONPATH=src python3 -m sailtest.cli backends      # list what is available
-
-PYTHONPATH=src python3 -m sailtest.cli generate \
-    --config configs/rv64.json --sail-riscv ../sail-riscv \
-    --backend model-fp --count 8 --out out
-
-PYTHONPATH=src python3 -m sailtest.cli run \
-    --manifest out/rv64/manifest.json --config configs/rv64.json
-```
-
-Backends: `model`, `model-fp`, `model-scalar`, `model-v`, `model-vk`,
-`model-vk64`, `template`.
-
-Generation is reproducible — the same `--seed` produces byte-identical `.S`
-sources.
-
-## CSR sweep
-
-Runs all six Zicsr instructions against each CSR in turn, rather than once
-against one register:
-
-```bash
-cd python-isla
-python3 csr_sweep.py --xlen 64 --from-model    # all 172 CSRs the model defines
-python3 csr_sweep.py --xlen 64 --only mscratch,mepc
-```
+| Script | What it does |
+|---|---|
+| `inventory/extract_inventory.py` | Derives the complete architectural inventory from the model — 1,255 targets across instructions, CSRs, exceptions, interrupts, modes, PMP. |
+| `inventory/csv_to_xlsx.py` | Combines the inventory CSVs into one filterable workbook. |
+| `md2pdf.py` | Renders the technical plan to PDF. |
+| `mk_docx.py` | Renders to DOCX. |
+| `proof.py` | Evidence helper for claims made in the plan. |
 
 ---
 
 # How the output is organised
 
-Tests are grouped by ISA extension, so a configuration can include the ones that
-apply to it and skip the rest.
+Tests are grouped by ISA extension, so a configuration can include the ones that apply and
+skip the rest.
 
 ```
 <out-dir>/Zicond/czero_eqz.elf          opcode sweeps: <extension>/<mnemonic>
@@ -249,16 +524,14 @@ apply to it and skip the rest.
 <out-dir>/rv64/PMP/m2_load_denied.elf   scenarios: <xlen>/<feature>/
 ```
 
-Ten privileged extensions define no instructions at all and exist only as CSR
-addresses, which is why the CSR sweep groups by extension rather than by
-register name — for those, that directory is the only place the extension
-appears.
+Ten privileged extensions define no instructions at all and exist only as CSR addresses, which
+is why the CSR sweep groups by extension rather than by register name — for those, that
+directory is the only place the extension appears.
 
 ## Selecting tests for a configuration
 
-A directory name cannot say "needs at least one PMP entry", so every generated
-test also carries a `riscv-arch-test`-format header, and every directory gets a
-`tests.json`:
+A directory name cannot say "needs at least one PMP entry", so every generated test carries a
+`riscv-arch-test`-format header, and every directory gets a `tests.json`:
 
 ```
 ##### START_TEST_CONFIG #####
@@ -270,15 +543,12 @@ test also carries a `riscv-arch-test`-format header, and every directory gets a
 ##### END_TEST_CONFIG #####
 ```
 
-The format is `riscv-arch-test`'s deliberately, so the same runner that selects
-their tests can select ours.
+The format is `riscv-arch-test`'s deliberately, so the same runner that selects their tests can
+select ours.
 
-**`MARCH` is the authoritative field.** It is the string the assembler was
-actually given, so it provably encodes these instructions.
-`REQUIRED_EXTENSIONS` is a readable rendering of the same fact.
-
-`tests.json` carries the same information for tooling that consumes ELFs rather
-than sources, and marks negative controls:
+**`MARCH` is the authoritative field.** It is the string the assembler was actually given, so
+it provably encodes these instructions. `REQUIRED_EXTENSIONS` is a readable rendering of the
+same fact.
 
 ```json
 {"name": "m2_NEG_wrong_cause", "elf": "m2_NEG_wrong_cause.elf",
@@ -286,99 +556,40 @@ than sources, and marks negative controls:
  "note": "negative control: must FAIL"}
 ```
 
-Do not let a runner silently drop those. A negative control is the test that
-proves the others can fail; keeping the suite and discarding its controls leaves
-you with tests that always pass.
+Do not let a runner silently drop those. A negative control is the test that proves the others
+can fail; keeping the suite and discarding its controls leaves you with tests that always pass.
 
 ---
 
-# Measuring and reporting
-
-## Coverage of the Sail model
-
-The RFP's own metric — how much of the Golden Model's source the tests actually
-reach. Needs the coverage build from step 3.
-
-```bash
-cd python-isla
-python3 coverage_report.py                                  # replay + report
-python3 coverage_report.py --no-replay                      # reuse existing data
-python3 coverage_report.py --scope rfp-scope-privileged.txt # privileged only
-python3 coverage_report.py --per-elf out.txt                # per individual ELF
-python3 coverage_report.py --uncovered todo.txt             # what is not reached
-```
-
-Three scope files, because a coverage number means nothing without saying what
-it was measured over:
-
-| File | Covers |
-|---|---|
-| `rfp-scope-privileged.txt` | the privileged architecture only — the RFP's #1 criterion |
-| `rfp-scope-current.txt` | the current deliverable (excludes deferred FP/vector) |
-| `rfp-scope.txt` | the full RFP scope |
-
-Each file justifies its exclusions in comments. **Always report the scope with
-the number.**
-
-## Did anything get worse?
-
-```bash
-cd python-isla
-python3 regression.py            # exits 1 if anything regressed
-python3 regression.py --update   # accept current state as the new baseline
-```
-
-Compares each instruction's *status* against a baseline, not a pass/fail count.
-A test moving from *verified* to *passes-but-checks-nothing* is a serious
-regression that a pass/fail count records as no change at all — that is not
-hypothetical, it happened to 47.7% of this corpus once.
-
-Only `--update` after reading the diff. It makes whatever is on disk the new
-definition of correct, including any regression in it.
-
-## What passed, what failed, and whose fault is it
-
-```bash
-cd python-isla
-python3 status_report.py
-python3 status_report.py --extension V
-python3 status_report.py --failures-only
-```
-
-Every failure is attributed from its recorded reason:
-
-| | |
-|---|---|
-| **MODEL** | the Golden Model is wrong, or disagrees with Spike — a finding worth reporting upstream |
-| **FRAMEWORK** | our generator cannot produce a valid test — ours to fix |
-| **ROUTED** | the symbolic engine cannot generate it and another backend covers it — not a failure |
-| **EXPECTED** | the test asserts a trap and got one |
-
-This split is the single most useful distinction on the project, and the ratio
-is easy to get backwards.
-
----
-
-# Two things to understand before quoting results
+# Three things to understand before quoting results
 
 ## Why Spike matters
 
-For oracle-generated tests, the expected values **come from** running the model.
-Checking them again on the model is circular — that run passes by construction.
-It still catches harness bugs, but it says nothing about the model.
+For oracle-generated tests the expected values **come from** running the model. Checking them
+again on the model is circular — that run passes by construction. It still catches harness
+bugs, but it says nothing about the model.
 
-**Only the Spike run is independent evidence.** The runner labels both columns
-for exactly this reason. The symbolic flow does not have this problem, because
-there the expected values come from symbolic execution.
+**Only the Spike run is independent evidence.** The runner labels both columns for exactly this
+reason. The symbolic flow does not have this problem, because there the expected values come
+from symbolic execution.
 
 ## A passing test is not evidence that anything was checked
 
-47.7% of this corpus once passed while comparing **empty** expected-state
-tables. Every test was green. The defect was invisible precisely because the
-suite was passing.
+47.7% of this corpus once passed while comparing **empty** expected-state tables. Every test
+was green. The defect was invisible precisely because the suite was passing.
 
-That is why negative controls are mandatory, and why `documentation/python-isla/findings.md`
-records the reproducer for every claim.
+That is why negative controls are mandatory, and why `findings.md` records the reproducer for
+every claim.
+
+## A coverage number is meaningless without its scope and span kind
+
+Four scopes and three span kinds give twelve different true answers for "our coverage".
+Whole-model branch coverage is 77.5%; all-span coverage within the current deliverable is
+48.3%. Both are correct. Quote the scope, the span kind, and the corpus size together, or the
+number is not reproducible.
+
+A directory missing from `coverage_report.py`'s `DEFAULT_ELF_DIRS` is silently missing from
+every figure, and looks identical to code no test reaches. That has happened three times.
 
 ---
 
@@ -386,8 +597,12 @@ records the reproducer for every claim.
 
 | Document | What |
 |---|---|
-| [`EXECUTION_ROADMAP.md`](documentation/EXECUTION_ROADMAP.md) | architecture, the 0→100 plan, gap analysis, validation strategy |
+| [`EXECUTION_PLAN.md`](documentation/EXECUTION_PLAN.md) | architecture, the 0→100 plan, gap analysis, validation strategy |
 | [`findings.md`](documentation/python-isla/findings.md) | every defect found, each with an executed reproducer |
+| [`TESTPLAN.md`](documentation/python-isla/TESTPLAN.md) | how the testplan is derived, the ceiling, and how new holes are detected |
+| [`METHODOLOGY.md`](documentation/METHODOLOGY.md) | why this generation methodology was selected, and against what alternatives |
+| [`TECHNICAL_PLAN.md`](documentation/TECHNICAL_PLAN.md) | the pipeline, stage by stage, in the proposal's own terms |
+| [`GAP_ANALYSIS.md`](documentation/GAP_ANALYSIS.md) | what is committed, what is deferred, and on what reasoning |
 | [`QUICKSTART.md`](documentation/QUICKSTART.md) | shorter task-oriented walkthrough |
 | [`DELIVERY_PLAN.md`](documentation/DELIVERY_PLAN.md) | two-horizon delivery plan |
 

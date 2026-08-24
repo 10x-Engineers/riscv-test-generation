@@ -108,7 +108,10 @@ ISLA_BIN = _tool("ISLA_TESTGEN_BIN", "isla-testgen",
 Z3_LIB = _dir("Z3_LIB_DIR", os.path.expanduser("~/.cache/udb/z3/z3-4.16.0/x64"))
 
 # --- Third-party simulators and toolchain ----------------------------------
-SPIKE = _tool("SPIKE_BIN", "spike", "/home/jk/Documents/riscv/bin/spike")
+# No hardcoded fallback: a path under one developer's home directory is not a
+# location any other clone has, and leaving it here made the resolution order
+# look machine-specific to anyone reading it. $SPIKE_BIN, then PATH.
+SPIKE = _tool("SPIKE_BIN", "spike")
 RISCV_TOOLCHAIN_DIR = _dir("RISCV_TOOLCHAIN_DIR",
                            os.path.dirname(SPIKE) if os.path.dirname(SPIKE) else "")
 
