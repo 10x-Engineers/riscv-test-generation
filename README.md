@@ -99,11 +99,11 @@ emulator:
 
 ```bash
 # the fast simulator that runs tests
-cmake -B sail-riscv/build -S sail-riscv
+cmake -B sail-riscv/build -S sail-riscv -DCMAKE_BUILD_TYPE=Release
 cmake --build sail-riscv/build -j$(nproc)
 
 # the instrumented one, plus the span manifest everything downstream measures against
-cmake -B sail-riscv/build-coverage -S sail-riscv -DCOVERAGE=ON
+cmake -B sail-riscv/build-coverage -S sail-riscv -DCMAKE_BUILD_TYPE=Release -DCOVERAGE=ON
 cmake --build sail-riscv/build-coverage -j$(nproc)
 ```
 
@@ -434,6 +434,7 @@ git submodule update --init --recursive
 
 | Tool | Needed for | Notes |
 |---|---|---|
+| **Sail compiler** | **building the model at all** | via opam; see below — the model will not configure without it |
 | RISC-V cross-compiler | everything | `riscv64-unknown-elf-gcc`, or Clang with a RISC-V target |
 | Z3 | the symbolic engine | loaded at runtime via `LD_LIBRARY_PATH` |
 | Rust toolchain | building `isla-testgen` | |
@@ -441,6 +442,21 @@ git submodule update --init --recursive
 | Spike | **differential testing** | the independent check |
 | QEMU, Verilator | optional extra targets | |
 | `openpyxl` | `--xlsx` outputs | optional; skipped with a warning if absent |
+
+### Sail, and the step that is easy to miss
+
+The Golden Model is written in Sail and is compiled by the Sail compiler, so
+`sail` must be **on `PATH` in the shell you build from**:
+
+```bash
+opam install sail          # first time only
+eval $(opam env)           # every new shell -- this is the step that gets missed
+sail --version             # must print a version before you continue
+```
+
+Without it, `cmake` fails at configure time with *"Sail not found"* and nothing
+downstream exists. Verified by building a genuinely fresh clone, where this was
+the first thing to break.
 
 ## 3. Build
 
