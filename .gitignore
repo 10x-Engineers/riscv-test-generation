@@ -17,3 +17,9 @@ python-isla/span-exclusions.txt
 out/
 build/
 build-coverage/
+
+# Generated test artefacts. The .s files are the reviewable form and are
+# committed; .elf/.o are toolchain output and are rebuilt by the runners.
+demo/**/*.elf
+demo/**/*.o
+demo/**/*.ld

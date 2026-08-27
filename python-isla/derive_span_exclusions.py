@@ -56,6 +56,13 @@ _ASSEMBLY_CLAUSE = re.compile(r"^mapping clause assembly\b")
 _STRING_MAPPING = re.compile(r"^mapping\s+(\w+)\s*:\s*[^<]*<->\s*string\b")
 _ENCDEC_MAPPING = re.compile(r"^mapping\s+(encdec\w*)\s*:")
 _ENCDEC_CLAUSE = re.compile(r"^mapping clause (encdec\w*)\b")
+# A naming clause: `mapping clause csr_name_map = 0x3A0 <-> "pmpcfg0"`. Same
+# argument as `mapping clause assembly` and the same shape, but the rule above
+# only matched the mapping's *declaration* (`mapping X : ... <-> string`), and
+# these tables are declared in one file and extended by clauses in twenty
+# others. In pmp/pmp_regs.sail alone that is 76 of 99 uncovered spans -- three
+# quarters of the apparent PMP gap is the CSR-name table.
+_STRING_CLAUSE = re.compile(r'^mapping clause (\w+)\s*=.*<->\s*"')
 
 REASONS = {
     "assembly_clause": "bidirectional `mapping clause assembly`; renders/parses "
@@ -64,6 +71,8 @@ REASONS = {
                       "direction is disassembly, not execution",
     "encdec_mapping": "bidirectional encode/decode mapping; decoding is performed by "
                       "generated decode functions, not by executing this mapping",
+    "string_clause": "bidirectional naming clause (`<-> \"text\"`); renders a CSR or "
+                     "enum as text and is never consulted by instruction execution",
 }
 
 
@@ -105,6 +114,9 @@ def derive(model_dir):
                 elif _STRING_MAPPING.match(line):
                     kind = "string_mapping"
                     name = _STRING_MAPPING.match(line).group(1)
+                elif _STRING_CLAUSE.match(line):
+                    kind = "string_clause"
+                    name = _STRING_CLAUSE.match(line).group(1)
                 elif _ENCDEC_MAPPING.match(line):
                     kind = "encdec_mapping"
                     name = _ENCDEC_MAPPING.match(line).group(1)
