@@ -1,0 +1,565 @@
+<title>From Sail to Report</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --surface:#fff; --sunk:#eaeef2;
+  --ink:#14181d; --body:#333c47; --muted:#647082;
+  --rule:#d6dce4; --rule-firm:#b6bfcb;
+  --accent:#3b5bb5; --accent-bg:#e6ecfa;
+  --ok:#0f7368; --ok-bg:#dff0ed;
+  --warn:#9a6114; --warn-bg:#f7efe0;
+  --alert:#a5372b; --alert-bg:#fae9e6;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:940px;margin:0 auto;padding:0 26px 80px}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.9rem,3.8vw,2.5rem);font-weight:600;letter-spacing:-.02em;line-height:1.12}
+h2{font-size:1.32rem;font-weight:600;letter-spacing:-.012em}
+h3{font-size:1.02rem;font-weight:600;margin-top:24px}
+p{margin:0 0 12px;max-width:76ch}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.85em;background:var(--sunk);padding:.08em .32em;border-radius:2px;overflow-wrap:anywhere}
+header{padding:50px 0 20px;border-bottom:2px solid var(--ink);margin-bottom:30px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px}
+.standfirst{font-size:1.04rem;color:var(--muted);max-width:66ch;margin-top:11px}
+section{margin-top:48px;border-top:1px solid var(--rule);padding-top:24px}
+section:first-of-type{border-top:none;padding-top:0}
+.secnum{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);margin:12px 0 16px}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.65rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.a{white-space:nowrap;font-weight:600;color:var(--ink)}
+td.m{font-family:"IBM Plex Mono",monospace;font-size:.79rem;color:var(--ink)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.neg td{background:var(--alert-bg)}
+.key{border-left:3px solid var(--accent);background:var(--accent-bg);padding:12px 16px;margin:14px 0}
+.key b{color:var(--ink)}
+.warn{border-left:3px solid var(--warn);background:var(--warn-bg);padding:12px 16px;margin:14px 0}
+.warn b{color:var(--ink)}
+.gap{border-left:3px solid var(--alert);background:var(--alert-bg);padding:12px 16px;margin:14px 0}
+.gap b{color:var(--ink)}
+pre{background:var(--surface);border:1px solid var(--rule);padding:12px 15px;overflow-x:auto;
+  font-size:.78rem;line-height:1.6;margin:12px 0;font-family:"IBM Plex Mono",monospace}
+pre b{color:var(--accent)}
+figure{margin:16px 0}
+figcaption{font-size:.85rem;color:var(--muted);margin-top:11px;max-width:72ch}
+svg{max-width:100%;height:auto;display:block}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-size:.82rem;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Pipeline map</div>
+  <h1>From Sail to Report</h1>
+  <p class="standfirst">Every file the work passes through, in order, from the unmodified Sail
+  sources to a coverage number. Each arrow says what that step actually does.</p>
+</header>
+
+<section>
+<figure>
+<svg viewBox="-14 0 978 1370" role="img" aria-label="The full generation pipeline. The Sail model is compiled to Isla IR, which forks into two routes: a symbolic route through testgen.rs, execution.rs, Z3, extract_state.rs and generate_object_riscv.rs, and an oracle route through sailtest's cli.py, model.py, oracle.py, program.py and toolchain.py. Both produce a .s and .ld pair, which is assembled and linked into a self-checking ELF, run on four simulators, and measured by coverage_report.py against the model's branch_info manifest. A control layer acts at four numbered points - configure, route, execute and judge, measure and re-plan - and feeds the uncovered remainder back to the routing decision.">
+  <defs>
+    <marker id="pm" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7.5" markerHeight="7.5" orient="auto">
+      <polygon points="0,1 8,4 0,7" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <!-- ============ boxes ============ -->
+  <!-- R1 -->
+  <rect x="250" y="24" width="300" height="46" fill="var(--surface)" stroke="var(--rule-firm)" stroke-width="1.6"/>
+  <text x="400" y="44" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">sail-riscv/model/*.sail</text>
+  <text x="400" y="59" text-anchor="middle" font-size="10" fill="var(--muted)">the unmodified Golden Model — the only source of truth</text>
+
+  <rect x="620" y="24" width="310" height="46" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="775" y="44" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">python-isla/*_sweep.py</text>
+  <text x="775" y="59" text-anchor="middle" font-size="10" fill="var(--muted)">the control layer’s generation driver</text>
+
+  <!-- R2 -->
+  <rect x="250" y="114" width="300" height="46" fill="var(--surface)" stroke="var(--rule-firm)" stroke-width="1.6"/>
+  <text x="400" y="134" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">riscv64.ir + riscv64.toml</text>
+  <text x="400" y="149" text-anchor="middle" font-size="10" fill="var(--muted)">XLEN and VLEN are frozen here, not at run time</text>
+
+  <!-- R3 -->
+  <rect x="150" y="222" width="200" height="46" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="250" y="242" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">testgen.rs</text>
+  <text x="250" y="257" text-anchor="middle" font-size="10" fill="var(--muted)">parses argv, builds RiscV{}</text>
+
+  <rect x="550" y="222" width="200" height="46" fill="var(--surface)" stroke="var(--ok)" stroke-width="1.6"/>
+  <text x="650" y="242" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">sailtest/cli.py</text>
+  <text x="650" y="257" text-anchor="middle" font-size="10" fill="var(--muted)">config.py reads the model config</text>
+
+  <!-- R4 -->
+  <rect x="150" y="312" width="200" height="46" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="250" y="332" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">execution.rs</text>
+  <text x="250" y="347" text-anchor="middle" font-size="10" fill="var(--muted)">symbolic execution over the IR</text>
+
+  <rect x="550" y="312" width="200" height="46" fill="var(--surface)" stroke="var(--ok)" stroke-width="1.6"/>
+  <text x="650" y="332" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">sailtest/model.py</text>
+  <text x="650" y="347" text-anchor="middle" font-size="10" fill="var(--muted)">parses encodings from the .sail</text>
+
+  <!-- R5 -->
+  <rect x="150" y="402" width="200" height="46" fill="var(--sunk)" stroke="var(--rule-firm)" stroke-width="1.6"/>
+  <text x="250" y="422" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">Z3</text>
+  <text x="250" y="437" text-anchor="middle" font-size="10" fill="var(--muted)">external SMT solver</text>
+
+  <rect x="550" y="402" width="200" height="46" fill="var(--surface)" stroke="var(--ok)" stroke-width="1.6"/>
+  <text x="650" y="422" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">sailtest/oracle.py</text>
+  <text x="650" y="437" text-anchor="middle" font-size="10" fill="var(--muted)">runs a probe ELF on the model</text>
+
+  <!-- R6 -->
+  <rect x="150" y="492" width="200" height="46" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="250" y="512" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">extract_state.rs</text>
+  <text x="250" y="527" text-anchor="middle" font-size="10" fill="var(--muted)">interrogate_model() → PrePostStates</text>
+
+  <rect x="550" y="492" width="200" height="46" fill="var(--surface)" stroke="var(--ok)" stroke-width="1.6"/>
+  <text x="650" y="512" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">sailtest/program.py</text>
+  <text x="650" y="527" text-anchor="middle" font-size="10" fill="var(--muted)">assembles the final test body</text>
+
+  <!-- R7 -->
+  <rect x="150" y="582" width="200" height="46" fill="var(--surface)" stroke="var(--accent)" stroke-width="2"/>
+  <text x="250" y="602" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">generate_object_riscv.rs</text>
+  <text x="250" y="617" text-anchor="middle" font-size="10" fill="var(--muted)">writes the preamble as assembly</text>
+
+  <rect x="550" y="582" width="200" height="46" fill="var(--surface)" stroke="var(--ok)" stroke-width="1.6"/>
+  <text x="650" y="602" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">sailtest/toolchain.py</text>
+  <text x="650" y="617" text-anchor="middle" font-size="10" fill="var(--muted)">drives as / ld directly</text>
+
+  <!-- R8 -->
+  <rect x="250" y="684" width="300" height="46" fill="var(--surface)" stroke="var(--rule-firm)" stroke-width="1.6"/>
+  <text x="400" y="704" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">&lt;test&gt;.s &nbsp;+&nbsp; &lt;test&gt;.ld</text>
+  <text x="400" y="719" text-anchor="middle" font-size="10" fill="var(--muted)">preamble, test bytes, expected-state tables, trap handler</text>
+
+  <!-- R9 -->
+  <rect x="250" y="774" width="300" height="46" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.8"/>
+  <text x="400" y="794" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">&lt;test&gt;.elf</text>
+  <text x="400" y="809" text-anchor="middle" font-size="10" fill="var(--muted)">self-checking: it decides its own pass or fail</text>
+
+  <!-- R10 -->
+  <rect x="170" y="864" width="460" height="46" fill="var(--surface)" stroke="var(--rule-firm)" stroke-width="1.6"/>
+  <text x="400" y="884" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">sail_riscv_sim &nbsp;│&nbsp; spike &nbsp;│&nbsp; qemu &nbsp;│&nbsp; cva6 RTL</text>
+  <text x="400" y="899" text-anchor="middle" font-size="10" fill="var(--muted)">only the non-Sail simulators are independent evidence</text>
+
+  <!-- R11 -->
+  <rect x="250" y="954" width="300" height="46" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="400" y="974" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">coverage_report.py</text>
+  <text x="400" y="989" text-anchor="middle" font-size="10" fill="var(--muted)">every span reconciled: hit, missed, or excluded-with-reason</text>
+
+  <!-- R12 -->
+  <rect x="170" y="1044" width="460" height="46" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.8"/>
+  <text x="400" y="1064" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">regression.py &nbsp;│&nbsp; status_report.py &nbsp;│&nbsp; testplan.py</text>
+  <text x="400" y="1079" text-anchor="middle" font-size="10" fill="var(--muted)">what got worse, what failed and whose fault, what to build next</text>
+
+  <rect x="259" y="33" width="9" height="9" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
+  <rect x="629" y="33" width="9" height="9" fill="var(--ink)"/>
+  <rect x="259" y="123" width="9" height="9" fill="var(--ink)"/>
+  <rect x="159" y="231" width="9" height="9" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
+  <rect x="559" y="231" width="9" height="9" fill="var(--ink)"/>
+  <rect x="159" y="321" width="9" height="9" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
+  <rect x="559" y="321" width="9" height="9" fill="var(--ink)"/>
+  <rect x="559" y="411" width="9" height="9" fill="var(--ink)"/>
+  <rect x="159" y="501" width="9" height="9" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="2 1.6"/>
+  <rect x="559" y="501" width="9" height="9" fill="var(--ink)"/>
+  <rect x="159" y="591" width="9" height="9" fill="var(--ink)"/>
+  <rect x="559" y="591" width="9" height="9" fill="var(--ink)"/>
+  <rect x="259" y="963" width="9" height="9" fill="var(--ink)"/>
+  <rect x="179" y="1053" width="9" height="9" fill="var(--ink)"/>
+
+  <!-- ============ arrows ============ -->
+  <g stroke="currentColor" fill="none" stroke-width="1.5">
+    <!-- R1 -> R2 -->
+    <line x1="400" y1="72" x2="400" y2="112" marker-end="url(#pm)"/>
+    <!-- into the fork bar -->
+    <line x1="400" y1="162" x2="400" y2="196"/>
+    <line x1="775" y1="72" x2="775" y2="196"/>
+    <line x1="250" y1="196" x2="775" y2="196"/>
+    <line x1="250" y1="196" x2="250" y2="220" marker-end="url(#pm)"/>
+    <line x1="650" y1="196" x2="650" y2="220" marker-end="url(#pm)"/>
+    <!-- left chain -->
+    <line x1="250" y1="270" x2="250" y2="310" marker-end="url(#pm)"/>
+    <line x1="250" y1="360" x2="250" y2="400" marker-end="url(#pm)"/>
+    <line x1="250" y1="450" x2="250" y2="490" marker-end="url(#pm)"/>
+    <line x1="250" y1="540" x2="250" y2="580" marker-end="url(#pm)"/>
+    <!-- right chain -->
+    <line x1="650" y1="270" x2="650" y2="310" marker-end="url(#pm)"/>
+    <line x1="650" y1="360" x2="650" y2="400" marker-end="url(#pm)"/>
+    <line x1="650" y1="450" x2="650" y2="490" marker-end="url(#pm)"/>
+    <line x1="650" y1="540" x2="650" y2="580" marker-end="url(#pm)"/>
+    <!-- the flag elbow: testgen.rs -> generate_object_riscv.rs -->
+    <polyline points="148,245 90,245 90,605 148,605" marker-end="url(#pm)" stroke-dasharray="5 3"/>
+    <!-- converge bar -->
+    <line x1="250" y1="630" x2="250" y2="652"/>
+    <line x1="650" y1="630" x2="650" y2="652"/>
+    <line x1="250" y1="652" x2="650" y2="652"/>
+    <line x1="400" y1="652" x2="400" y2="682" marker-end="url(#pm)"/>
+    <!-- spine -->
+    <line x1="400" y1="732" x2="400" y2="772" marker-end="url(#pm)"/>
+    <line x1="400" y1="822" x2="400" y2="862" marker-end="url(#pm)"/>
+    <line x1="400" y1="912" x2="400" y2="952" marker-end="url(#pm)"/>
+    <line x1="400" y1="1002" x2="400" y2="1042" marker-end="url(#pm)"/>
+  </g>
+
+  <!-- ============ arrow labels ============ -->
+  <!-- R1 -> R2 -->
+  <text x="412" y="88" font-size="10" fill="var(--body)">isla-sail, a Sail plugin, with --isla-preserve on the entry points</text>
+  <text x="412" y="100" font-size="10" fill="var(--body)">— without it they are pruned as dead code and nothing decodes</text>
+  <!-- ir -> bar -->
+  <text x="412" y="180" font-size="10" fill="var(--body)">the same IR feeds both routes</text>
+  <!-- drivers -> bar -->
+  <text x="787" y="104" font-size="10" fill="var(--body)">choose which opcodes to</text>
+  <text x="787" y="116" font-size="10" fill="var(--body)">generate, supply preamble</text>
+  <text x="787" y="128" font-size="10" fill="var(--body)">flags, then run and score</text>
+  <text x="787" y="140" font-size="10" fill="var(--body)">the ELF each route makes</text>
+  <!-- fork branch labels -->
+  <text x="250" y="176" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--accent)">symbolic route — solve for operands that</text>
+  <text x="250" y="188" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--accent)">reach a chosen branch</text>
+  <text x="650" y="176" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--ok)">oracle route — run the real model and</text>
+  <text x="650" y="188" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--ok)">record what it actually did</text>
+
+  <!-- left chain labels -->
+  <text x="262" y="286" font-size="10" fill="var(--body)">hands over the parsed flags and the opcode to execute</text>
+  <text x="262" y="298" font-size="10" fill="var(--body)">symbolically, one instruction at a time</text>
+
+  <text x="262" y="376" font-size="10" fill="var(--body)">the accumulated path condition — every constraint the</text>
+  <text x="262" y="388" font-size="10" fill="var(--body)">model imposed to reach this point — as an SMT query</text>
+
+  <text x="262" y="466" font-size="10" fill="var(--body)">a satisfying assignment, or UNSAT proving the path is</text>
+  <text x="262" y="478" font-size="10" fill="var(--body)">unreachable and can be excluded with justification</text>
+
+  <text x="262" y="556" font-size="10" fill="var(--body)">concrete registers and memory, before and after —</text>
+  <text x="262" y="568" font-size="10" fill="var(--body)">nothing symbolic is left past this line</text>
+
+  <!-- elbow label -->
+  <text x="82" y="374" text-anchor="end" font-size="9" fill="var(--body)">CLI flags become</text>
+  <text x="82" y="386" text-anchor="end" font-size="9" fill="var(--body)">the RiscV struct</text>
+  <text x="82" y="398" text-anchor="end" font-size="9" fill="var(--body)">— sv39, pmp_deny</text>
+  <text x="82" y="410" text-anchor="end" font-size="9" fill="var(--body)">supervisor entry</text>
+  <text x="82" y="422" text-anchor="end" font-size="9" fill="var(--body)">— the machine</text>
+  <text x="82" y="434" text-anchor="end" font-size="9" fill="var(--body)">state to build,</text>
+  <text x="82" y="446" text-anchor="end" font-size="9" fill="var(--body)">never the values</text>
+
+  <!-- right chain labels -->
+  <text x="662" y="286" font-size="10" fill="var(--body)">the config decides which</text>
+  <text x="662" y="298" font-size="10" fill="var(--body)">extensions exist at all</text>
+
+  <text x="662" y="376" font-size="10" fill="var(--body)">an encoding the model</text>
+  <text x="662" y="388" font-size="10" fill="var(--body)">itself declares</text>
+
+  <text x="662" y="466" font-size="10" fill="var(--body)">the model's own final state,</text>
+  <text x="662" y="478" font-size="10" fill="var(--body)">read back from a probe run</text>
+
+  <text x="662" y="556" font-size="10" fill="var(--body)">expected values baked in</text>
+  <text x="662" y="568" font-size="10" fill="var(--body)">as compare-and-branch</text>
+
+  <!-- converge labels -->
+  <text x="250" y="644" text-anchor="middle" font-size="10" fill="var(--body)">from PrePostStates + the flags</text>
+  <text x="650" y="644" text-anchor="middle" font-size="10" fill="var(--body)">from the probe's observed result</text>
+  <text x="412" y="672" font-size="10" fill="var(--body)">both routes end at the same file pair</text>
+
+  <!-- spine labels -->
+  <text x="412" y="748" font-size="10" fill="var(--body)">build_elf_file() runs the real riscv64-unknown-elf-as and -ld;</text>
+  <text x="412" y="760" font-size="10" fill="var(--body)">the .ld places every section at a fixed, non-overlapping address</text>
+
+  <text x="412" y="838" font-size="10" fill="var(--body)">executed unmodified — no wrapper, no host stub. Pass or fail is</text>
+  <text x="412" y="850" font-size="10" fill="var(--body)">signalled by an HTIF write to tohost, which halts the simulator</text>
+
+  <text x="412" y="928" font-size="10" fill="var(--body)">SAILCOV makes sail_riscv_sim append every executed span to</text>
+  <text x="412" y="940" font-size="10" fill="var(--body)">sail_coverage; the corpus is replayed to accumulate the union</text>
+
+  <text x="412" y="1018" font-size="10" fill="var(--body)">compared against sail_riscv_model.branch_info, the manifest of</text>
+  <text x="412" y="1030" font-size="10" fill="var(--body)">every instrumented span the build emitted</text>
+
+
+  <!-- ============ control layer: four points it acts on ============ -->
+  <g font-family="IBM Plex Mono, monospace" font-size="11" font-weight="600">
+    <circle cx="580" cy="137" r="11" fill="var(--accent)"/><text x="580" y="141" text-anchor="middle" fill="var(--paper)">1</text>
+    <circle cx="228" cy="196" r="11" fill="var(--accent)"/><text x="228" y="200" text-anchor="middle" fill="var(--paper)">2</text>
+    <circle cx="660" cy="887" r="11" fill="var(--accent)"/><text x="660" y="891" text-anchor="middle" fill="var(--paper)">3</text>
+    <circle cx="580" cy="977" r="11" fill="var(--accent)"/><text x="580" y="981" text-anchor="middle" fill="var(--paper)">4</text>
+  </g>
+
+  <!-- the loop that makes it a control system: coverage decides the next batch -->
+  <path d="M 594 977 L 950 977 L 950 210 L 786 196" fill="none" stroke="var(--accent)"
+        stroke-width="1.8" stroke-dasharray="7 4" marker-end="url(#pm)"/>
+  <text x="944" y="560" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--accent)">what was NOT covered</text>
+  <text x="944" y="574" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--accent)">becomes the next batch</text>
+  <text x="944" y="588" text-anchor="end" font-size="10.5" font-weight="600" fill="var(--accent)">of targets to route</text>
+
+  <!-- ============ what the control layer decides at each point ============ -->
+  <rect x="150" y="1174" width="780" height="172" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="6 3"/>
+  <text x="164" y="1196" font-size="10.5" font-family="IBM Plex Mono, monospace" font-weight="600" fill="var(--accent)" letter-spacing="1.4">CONTROL LAYER &mdash; WHAT IT DECIDES, AND WHERE</text>
+  <g font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600">
+    <circle cx="178" cy="1224" r="9" fill="var(--accent)"/><text x="178" y="1228" text-anchor="middle" fill="var(--paper)">1</text>
+    <circle cx="373" cy="1224" r="9" fill="var(--accent)"/><text x="373" y="1228" text-anchor="middle" fill="var(--paper)">2</text>
+    <circle cx="568" cy="1224" r="9" fill="var(--accent)"/><text x="568" y="1228" text-anchor="middle" fill="var(--paper)">3</text>
+    <circle cx="763" cy="1224" r="9" fill="var(--accent)"/><text x="763" y="1228" text-anchor="middle" fill="var(--paper)">4</text>
+  </g>
+  <text x="196" y="1228" font-size="11.5" font-weight="600" fill="var(--ink)">CONFIGURE</text>
+  <text x="164" y="1246" font-size="9.5" fill="var(--body)">One config, parsed once. The IR,</text>
+  <text x="164" y="1259" font-size="9.5" fill="var(--body)">the -march and the ISA string</text>
+  <text x="164" y="1272" font-size="9.5" fill="var(--body)">all derive from it - they used</text>
+  <text x="164" y="1285" font-size="9.5" fill="var(--body)">to be set in four places, and</text>
+  <text x="164" y="1298" font-size="9.5" fill="var(--body)">drifted apart.</text>
+  <text x="391" y="1228" font-size="11.5" font-weight="600" fill="var(--ink)">ROUTE</text>
+  <text x="359" y="1246" font-size="9.5" fill="var(--body)">Sends each target to the</text>
+  <text x="359" y="1259" font-size="9.5" fill="var(--body)">generator that can reach it.</text>
+  <text x="359" y="1272" font-size="9.5" fill="var(--body)">FP and wide vectors go to the</text>
+  <text x="359" y="1285" font-size="9.5" fill="var(--body)">oracle because isla cannot</text>
+  <text x="359" y="1298" font-size="9.5" fill="var(--body)">represent them, not by guess.</text>
+  <text x="586" y="1228" font-size="11.5" font-weight="600" fill="var(--ink)">EXECUTE &amp; JUDGE</text>
+  <text x="554" y="1246" font-size="9.5" fill="var(--body)">Runs every ELF on the model</text>
+  <text x="554" y="1259" font-size="9.5" fill="var(--body)">and on an independent</text>
+  <text x="554" y="1272" font-size="9.5" fill="var(--body)">simulator, then splits each</text>
+  <text x="554" y="1285" font-size="9.5" fill="var(--body)">failure: model fault,</text>
+  <text x="554" y="1298" font-size="9.5" fill="var(--body)">framework fault, or routed.</text>
+  <text x="781" y="1228" font-size="11.5" font-weight="600" fill="var(--ink)">MEASURE &amp; RE-PLAN</text>
+  <text x="749" y="1246" font-size="9.5" fill="var(--body)">Reconciles every span to hit,</text>
+  <text x="749" y="1259" font-size="9.5" fill="var(--body)">missed, or excluded-with-</text>
+  <text x="749" y="1272" font-size="9.5" fill="var(--body)">reason, then turns the misses</text>
+  <text x="749" y="1285" font-size="9.5" fill="var(--body)">into a queue that names the</text>
+  <text x="749" y="1298" font-size="9.5" fill="var(--body)">missing stimulus.</text>
+  <text x="540" y="1324" text-anchor="middle" font-size="10" font-style="italic" fill="var(--muted)">Without step 4 feeding step 2 this is a pipeline. With it, the loop closes &mdash;</text>
+  <text x="540" y="1338" text-anchor="middle" font-size="10" font-style="italic" fill="var(--muted)">which is what makes coverage a steering signal rather than a report.</text>
+
+  <!-- ============ provenance legend ============ -->
+  <line x1="150" y1="1120" x2="800" y2="1120" stroke="var(--rule)" stroke-width="1"/>
+  <rect x="152" y="1134" width="9" height="9" fill="var(--ink)"/>
+  <text x="168" y="1143" font-size="10" fill="var(--body)">written from scratch</text>
+  <rect x="312" y="1134" width="9" height="9" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
+  <text x="328" y="1143" font-size="10" fill="var(--body)">modified for RISC-V</text>
+  <rect x="470" y="1134" width="9" height="9" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-dasharray="2 1.6"/>
+  <text x="486" y="1143" font-size="10" fill="var(--body)">upstream, used unchanged</text>
+  <text x="656" y="1143" font-size="10" fill="var(--muted)">unmarked = external tool or generated file</text>
+</svg>
+<figcaption>The whole pipeline, and the control layer that drives it. The four numbered
+points are where it decides something; the long dashed arrow up the right-hand side is the loop
+that closes &mdash; what the corpus failed to cover becomes the next set of targets to route.
+Solid arrows carry data; the short dashed arrow on the left carries
+<em>policy</em> — the preamble flags never touch the solver, which is why machine state and
+instruction operands are produced by different halves of the diagram. The square in each box
+marks where that file came from; the section below gives the line counts.</figcaption>
+</figure>
+</section>
+
+<section>
+<div class="secnum">Provenance</div>
+<h2>What we wrote, what we changed, what we left alone</h2>
+<p>Five repositories, three categories. Every figure below comes from
+<code>git diff</code> against the upstream base commit each fork was taken from, not from an
+estimate.</p>
+
+<h3>Written from scratch</h3>
+<div class="scroll"><table>
+<thead><tr><th>File or group</th><th>Repository</th><th class="n">Lines</th><th>What it is</th></tr></thead><tbody>
+<tr><td class="m">src/generate_object_riscv.rs</td><td>isla-testgen</td><td class="n">+1204</td><td>The RISC-V ELF emitter &mdash; a new backend beside the existing Arm and CHERIoT ones</td></tr>
+<tr><td class="m">isla-lib/src/primop/softfloat.rs</td><td>isla</td><td class="n">+431</td><td>A symbolic SoftFloat interface, so FP primops exist in the IR at all</td></tr>
+<tr><td class="m">riscv-ir/riscv{32,64}.{ir,toml}</td><td>isla-testgen</td><td class="n">4 files</td><td>The compiled IR and the tool-path config it needs</td></tr>
+<tr><td class="m">autotest/ &mdash; the whole oracle</td><td>autotest</td><td class="n">13 modules</td><td><code>cli</code>, <code>config</code>, <code>model</code>, <code>oracle</code>, <code>program</code>, <code>toolchain</code>, plus two backends. No upstream: its first commit is ours</td></tr>
+<tr><td class="m">python-isla/</td><td>riscv-test-generation</td><td class="n">17 scripts</td><td>Sweeps, scenarios, coverage, regression, status, testplan</td></tr>
+<tr><td class="m">tools/, documentation/, PROPOSAL/</td><td>riscv-test-generation</td><td class="n">&mdash;</td><td>Clone verification, PDF conversion, these pages</td></tr>
+</tbody></table></div>
+
+<h3>Modified for RISC-V</h3>
+<div class="scroll"><table>
+<thead><tr><th>File</th><th>Repository</th><th class="n">Added</th><th class="n">Removed</th><th>Why</th></tr></thead><tbody>
+<tr><td class="m">src/target.rs</td><td>isla-testgen</td><td class="n">+809</td><td class="n">&minus;0</td><td>The <code>RiscV</code> target and its 17 policy accessors &mdash; purely additive</td></tr>
+<tr><td class="m">src/testgen.rs</td><td>isla-testgen</td><td class="n">+68</td><td class="n">&minus;0</td><td>The CLI flags that become that struct</td></tr>
+<tr><td class="m">src/execution.rs</td><td>isla-testgen</td><td class="n">+52</td><td class="n">&minus;2</td><td>The only upstream lines changed in the entire fork</td></tr>
+<tr><td class="m">src/lib.rs</td><td>isla-testgen</td><td class="n">+1</td><td class="n">&minus;0</td><td>One module declaration</td></tr>
+<tr><td class="m">isla-lib/src/primop.rs</td><td>isla</td><td class="n">+181</td><td class="n">&minus;1</td><td><b>The blocker.</b> Struct-typed vector elements, without which any symbolic PMP access crashes</td></tr>
+<tr><td class="m">isla-sail/sail_plugin_isla.ml</td><td>isla</td><td class="n">+19</td><td class="n">&minus;6</td><td>Keeping up with current Sail</td></tr>
+<tr><td class="m">&hellip; 10 more in isla-lib / isla-sail</td><td>isla</td><td class="n">&mdash;</td><td class="n">&mdash;</td><td><code>memory.rs</code>, <code>executor.rs</code>, <code>ir.rs</code>, <code>smt.rs</code>, <code>b129.rs</code>, <code>b64.rs</code> &hellip;</td></tr>
+<tr><td class="m">model/ &mdash; 36 .sail files</td><td>sail-riscv</td><td class="n">+683</td><td class="n">&minus;456</td><td>Two commits, <b>zero new files</b> &mdash; see the qualification below</td></tr>
+</tbody></table></div>
+
+<h3>Upstream, used unchanged</h3>
+<div class="key"><b><code>extract_state.rs</code> needed no RISC-V work at all.</b> It is 1 of the
+5 files in <code>isla-testgen/src/</code> the pipeline touches, and it is not in the diff. The
+stage that turns a solved SMT model into concrete registers and memory was already
+architecture-neutral &mdash; which is a small piece of evidence that the seam upstream chose was
+the right one, and part of why a new target could be added additively.</div>
+
+<h3>The number worth quoting, and the one that misleads</h3>
+<div class="scroll"><table>
+<thead><tr><th>Repository</th><th class="n">Upstream lines deleted or rewritten</th></tr></thead><tbody>
+<tr><td class="a">isla-testgen</td><td class="n"><b>2</b> &nbsp;<span style="opacity:.6">(the fork is +2,134 / &minus;2)</span></td></tr>
+<tr><td class="a">isla</td><td class="n"><b>17</b></td></tr>
+<tr><td class="a">sail-riscv</td><td class="n"><b>456</b></td></tr>
+</tbody></table></div>
+<div class="warn"><b>That 456 reads far worse than what happened, and should not be quoted
+bare &mdash; most of it is a <em>move</em>.</b> About 205 CSR clauses were lifted out of 17
+extension files and put into one. The arithmetic shows it plainly:
+<code>csr_end.sail</code> gains <b>+408</b>, and every other file together loses <b>&minus;446</b>.
+Nothing was deleted; it changed address. <code>ctest</code> was 664/664 afterwards.</div>
+<p>The genuinely behavioural model changes are small and countable:</p>
+<div class="scroll"><table>
+<thead><tr><th>Change</th><th>Size</th><th>Effect</th></tr></thead><tbody>
+<tr><td class="m">pmp/pmp_regs.sail &mdash; reset_pmp()</td><td class="m">a few lines</td><td>Builds a concrete <code>Mk_Pmpcfg_ent(zeros())</code> per entry. Architecturally equivalent; it is what lets PMP be read symbolically at all</td></tr>
+<tr><td class="m">sys/vmem_pte.sail</td><td class="m">+12 / &minus;2</td><td><b>A real model defect (A4)</b> &mdash; the assertion, and step 8 re-denying what the shadow-stack branch just permitted</td></tr>
+<tr><td class="m">main/main.sail</td><td class="m">+48 / &minus;0</td><td>isla-testgen entry points. Adds nothing to the executed model</td></tr>
+<tr><td class="m">postlude/csr_end.sail</td><td class="m">+408 / &minus;10</td><td>Refactor only &mdash; no behaviour change</td></tr>
+</tbody></table></div>
+<div class="key"><b>Say it as three behaviours and one refactor, not as 456 lines.</b> The RFP asks
+that the framework not fork the model, and the honest version of this record supports that claim
+&mdash; one of the changes is a defect fix we are offering back, one is a
+behaviour-preserving equivalence, and one adds entry points that never execute. Quoting the raw
+diff total invites exactly the objection the detail refutes.</div>
+</section>
+
+<section>
+<div class="secnum">File by file</div>
+<h2>What we added to each file, and why</h2>
+<p>Plain English, one row per file. Every &ldquo;why&rdquo; below is the reason recorded in the
+code at the time, not one reconstructed afterwards.</p>
+
+<h3>isla-testgen &mdash; the generator</h3>
+<div class="scroll"><table>
+<thead><tr><th>File</th><th class="n">Lines</th><th>What we added</th><th>Why</th></tr></thead><tbody>
+<tr><td class="m">generate_object_riscv.rs<br><span style="opacity:.6">new file</span></td><td class="n">+1204</td>
+    <td>The whole RISC-V test writer: the preamble, the test bytes, the expected-value tables, the trap handler, the pass/fail signal and the linker script</td>
+    <td>There was an Arm writer and a CHERIoT writer. There was no RISC-V one</td></tr>
+<tr><td class="m">target.rs</td><td class="n">+809<br>&minus;0</td>
+    <td>A description of the machine &mdash; register names, how many, how wide, where the PC lives &mdash; plus 17 on/off switches for machine state</td>
+    <td>The generator asks the target these questions. Answering them <em>is</em> what adding a target means. No existing line changed</td></tr>
+<tr><td class="m">testgen.rs</td><td class="n">+68<br>&minus;0</td>
+    <td>Sixteen command-line flags, and the code that turns them into that description</td>
+    <td>So a person can say &ldquo;build a page table&rdquo; or &ldquo;deny this address&rdquo; from the command line</td></tr>
+<tr><td class="m">execution.rs</td><td class="n">+52<br>&minus;2</td>
+    <td>Three fixes &mdash; see the next table</td>
+    <td>The only upstream lines changed in the entire fork</td></tr>
+<tr><td class="m">lib.rs</td><td class="n">+1</td>
+    <td>One line naming the new file</td>
+    <td>Rust has to be told the module exists</td></tr>
+</tbody></table></div>
+
+<h3>The three fixes in execution.rs</h3>
+<p>This is the only place we rewrote someone else's working code, so it is worth spelling out.</p>
+<div class="scroll"><table>
+<thead><tr><th>Fix</th><th>What was wrong</th><th>What it does now</th></tr></thead><tbody>
+<tr><td class="a">Setting the start PC</td>
+    <td>The old code <em>asked the solver</em> to agree that the PC equals the start address. If the PC is already a fixed number, that does nothing at all &mdash; and ours is fixed, because our init calls the model's own <code>reset()</code>, which sets a real boot PC. The test then began from the wrong address, quietly</td>
+    <td>Writes the value straight in. Works whether the old value was fixed or still symbolic</td></tr>
+<tr><td class="a">Fetching on RV32</td>
+    <td>The model's memory interface uses 64-bit addresses whatever XLEN is. On RV32 the PC is 32 bits, so the fetch address was the wrong width</td>
+    <td>Widens the PC to the memory's address width before the read, and hands the natural-width PC back to callers unchanged</td></tr>
+<tr><td class="a">Picking scratch registers</td>
+    <td>The free-register list started at register 0 and included registers the harness itself needs</td>
+    <td>Counts from the target's own first register index, then removes anything the harness reserves</td></tr>
+</tbody></table></div>
+
+<h3>isla &mdash; the symbolic engine</h3>
+<div class="scroll"><table>
+<thead><tr><th>File</th><th class="n">Lines</th><th>What we added</th><th>Why</th></tr></thead><tbody>
+<tr><td class="m">isla-lib/primop.rs</td><td class="n">+181<br>&minus;1</td>
+    <td>Reading and writing a vector whose elements are <b>structs</b>, by building the choice one field at a time</td>
+    <td><b>The blocker.</b> RISC-V keeps PMP config in <code>vector(64, Pmpcfg_ent)</code> &mdash; 64 bitfield structs. The engine only knew vectors of plain numbers, so every symbolic PMP access crashed outright. Vectors of plain numbers keep the original, faster path</td></tr>
+<tr><td class="m">isla-lib/primop/softfloat.rs<br><span style="opacity:.6">new file</span></td><td class="n">+431</td>
+    <td>A symbolic version of the model's floating-point helper functions</td>
+    <td>The model declares <code>riscv_f32Add</code> and friends with no body at all. Without an implementation, every FP instruction was a dead end</td></tr>
+<tr><td class="m">isla-lib/executor.rs</td><td class="n">+17</td>
+    <td>Catches those SoftFloat calls at the point where an unknown function would normally raise an error</td>
+    <td>It is the only place with the symbol table needed to build their <code>(flags, result)</code> return value</td></tr>
+<tr><td class="m">isla-lib/ir.rs</td><td class="n">+10</td>
+    <td>Reserved names for those functions, with a note</td>
+    <td>They are caught in the executor, not dispatched like ordinary primops. The note stops the next person hunting for them in the wrong table</td></tr>
+<tr><td class="m">isla-lib/smtlib.rs, smt.rs</td><td class="n">+13</td>
+    <td><code>FpToIEEE</code> &mdash; turning a float back into raw bits</td>
+    <td>Every FP operation in the RISC-V model returns <code>bits(32)</code> or <code>bits(64)</code>, not a float. Without this, a result computed in the solver's float theory cannot be handed back to the model</td></tr>
+<tr><td class="m">isla-lib/memory.rs</td><td class="n">+14<br>&minus;8</td>
+    <td>Use the address's own width instead of assuming 64</td>
+    <td>The assumption was safe while every target was 64-bit. RV32 broke it</td></tr>
+<tr><td class="m">isla-lib/b129.rs, b64.rs,<br>bitvector.rs</td><td class="n">+22</td>
+    <td><code>trailing_zeros</code> on both bitvector types</td>
+    <td>It implements Sail's <code>count_trailing_zeros</code> builtin, which the model uses and the engine could not evaluate</td></tr>
+<tr><td class="m">isla-sail/sail_plugin_isla.ml</td><td class="n">+19<br>&minus;6</td>
+    <td>Treat <code>bit</code> as a one-bit type; handle <code>sail_cons</code> (list building)</td>
+    <td>Keeping up with current Sail. Without these the model does not compile to IR at all</td></tr>
+<tr><td class="m">isla-sail/jib_ir.ml</td><td class="n">+2<br>&minus;2</td>
+    <td>A small compatibility fix</td>
+    <td>Same reason</td></tr>
+</tbody></table></div>
+
+<h3>sail-riscv &mdash; the model</h3>
+<div class="scroll"><table>
+<thead><tr><th>File</th><th class="n">Lines</th><th>What we added</th><th>Why</th></tr></thead><tbody>
+<tr><td class="m">main/main.sail</td><td class="n">+48<br>&minus;0</td>
+    <td>Two new entry points, <code>isla_testgen_init</code> and <code>isla_testgen_step</code></td>
+    <td>isla-testgen initialises once, injects its own symbolic values, then steps many times. The existing entry point resets registers on every step, which would wipe those values. Adds nothing to the executed model</td></tr>
+<tr><td class="m">postlude/csr_end.sail<br>core/csr_begin.sail<br><span style="opacity:.6">+ 17 extension files</span></td><td class="n">+428<br>&minus;446<br><span style="opacity:.6">elsewhere</span></td>
+    <td>About 205 CSR clauses, scattered across 17 files, consolidated by hand into three plain functions with an explicit <code>match</code></td>
+    <td><b>Two real reasons.</b> Sail's scattered-clause merging synthesises a tuple for any merged function with two or more parameters, and isla-sail miscompiles it. And a consolidated <code>read_CSR</code> lets the solver take a fixed CSR address straight to one arm instead of joining paths &mdash; which is what unblocked PMP CSR reads. Clause order was preserved, so first-match-wins behaviour is unchanged</td></tr>
+<tr><td class="m">pmp/pmp_regs.sail</td><td class="n">+6<br>&minus;25</td>
+    <td><code>reset_pmp()</code> builds each entry from zero</td>
+    <td>The old version used a <code>with</code>-update that set only A and L. X, W and R stayed symbolic, and reading <code>.bits</code> in that half-set state hit the same engine gap from the other side. Building from zero is equally correct architecturally</td></tr>
+<tr><td class="m">sys/vmem_pte.sail</td><td class="n">+12<br>&minus;2</td>
+    <td>Fixed the shadow-stack assertion, and stopped step 8 re-denying what step 7 had just permitted</td>
+    <td><b>A real model defect (A4)</b>, found by a generated test. Fixed and filed as a PR on the fork</td></tr>
+<tr><td class="m">pmp/pmp_control.sail</td><td class="n">+16<br>&minus;3</td>
+    <td>Takes the physical address apart inside the function body rather than in the parameter list</td>
+    <td>The same isla-sail miscompilation as the callbacks below</td></tr>
+<tr><td class="m">core/callbacks.sail</td><td class="n">+15<br>&minus;7</td>
+    <td>Gave unused parameters real names instead of writing <code>_</code></td>
+    <td>isla-sail miscompiles the code Sail generates for <code>_</code> bound to a tuple of two or more elements &mdash; the parameter and the generated reference end up with different names, and symbolic execution fails with &ldquo;variable not found&rdquo;. Naming them stops that code being generated at all</td></tr>
+<tr><td class="m">sys/callbacks.sail</td><td class="n">+4<br>&minus;4</td>
+    <td>Default do-nothing page-table-walk callbacks</td>
+    <td>So a walk can be traced without the C backend attached</td></tr>
+</tbody></table></div>
+
+<div class="key"><b>A pattern worth naming.</b> Five of these changes &mdash; the CSR consolidation,
+<code>core/callbacks.sail</code>, <code>pmp/pmp_control.sail</code>, <code>reset_pmp()</code>, and
+<code>primop.rs</code> &mdash; are not RISC-V work at all. They are places where the model uses a
+Sail feature the symbolic tooling could not yet handle. Each was fixed on whichever side was
+cheaper and least invasive, and every one is written up in the code where the next person will
+hit it. That is the real shape of &ldquo;making the Golden Model symbolically executable&rdquo;:
+mostly not new features, mostly closing gaps between two existing tools.</div>
+</section>
+
+<section>
+<div class="secnum">Reference</div>
+<h2>Where each box lives</h2>
+<div class="scroll"><table>
+<thead><tr><th>Box</th><th>Path</th><th>Repository</th></tr></thead><tbody>
+<tr><td class="a">Sail sources</td><td class="m">model/*.sail</td><td>sail-riscv</td></tr>
+<tr><td class="a">Drivers</td><td class="m">python-isla/scenario_tests.py, opcode_sweep.py, sweep_all.py</td><td>riscv-test-generation</td></tr>
+<tr><td class="a">IR + config</td><td class="m">isla-gen-extension/riscv-ir/riscv{32,64}.{ir,toml}</td><td>riscv-test-generation</td></tr>
+<tr><td class="a">testgen.rs</td><td class="m">isla-gen-extension/src/testgen.rs</td><td>isla-testgen</td></tr>
+<tr><td class="a">execution.rs</td><td class="m">isla-gen-extension/src/execution.rs</td><td>isla-testgen</td></tr>
+<tr><td class="a">extract_state.rs</td><td class="m">isla-gen-extension/src/extract_state.rs</td><td>isla-testgen</td></tr>
+<tr><td class="a">generate_object_riscv.rs</td><td class="m">isla-gen-extension/src/generate_object_riscv.rs</td><td>isla-testgen</td></tr>
+<tr><td class="a">target.rs <span style="opacity:.6">(the dashed arrow)</span></td><td class="m">isla-gen-extension/src/target.rs</td><td>isla-testgen</td></tr>
+<tr><td class="a">Oracle</td><td class="m">autotest/src/sailtest/{cli,config,model,oracle,program,toolchain}.py</td><td>autotest</td></tr>
+<tr><td class="a">Coverage</td><td class="m">python-isla/coverage_report.py</td><td>riscv-test-generation</td></tr>
+<tr><td class="a">Reports</td><td class="m">python-isla/{regression,status_report,testplan}.py</td><td>riscv-test-generation</td></tr>
+<tr><td class="a">Span manifest</td><td class="m">build-coverage/sail_riscv_model.branch_info</td><td>sail-riscv</td></tr>
+</tbody></table></div>
+</section>
+
+<footer>Chain traced from the call sites: <code>testgen.rs:650</code> &rarr;
+<code>target.rs:1087</code> &rarr; <code>generate_object_riscv.rs:380</code>, and
+<code>generate_object_riscv.rs:1188</code> for the assembler and linker invocation.</footer>
+</div>

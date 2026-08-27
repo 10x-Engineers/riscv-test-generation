@@ -1,0 +1,229 @@
+<title>PMP, End to End</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --surface:#fff; --sunk:#eaeef2;
+  --ink:#14181d; --body:#333c47; --muted:#647082;
+  --rule:#d6dce4; --rule-firm:#b6bfcb;
+  --accent:#3b5bb5; --accent-bg:#e6ecfa;
+  --ok:#0f7368; --ok-bg:#dff0ed;
+  --warn:#9a6114; --warn-bg:#f7efe0;
+  --alert:#a5372b; --alert-bg:#fae9e6;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:940px;margin:0 auto;padding:0 26px 80px}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.9rem,3.8vw,2.5rem);font-weight:600;letter-spacing:-.02em;line-height:1.12}
+h2{font-size:1.32rem;font-weight:600;letter-spacing:-.012em}
+h3{font-size:1.02rem;font-weight:600;margin-top:24px}
+p{margin:0 0 12px;max-width:76ch}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.85em;background:var(--sunk);padding:.08em .32em;border-radius:2px;overflow-wrap:anywhere}
+header{padding:50px 0 20px;border-bottom:2px solid var(--ink);margin-bottom:30px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px}
+.standfirst{font-size:1.04rem;color:var(--muted);max-width:66ch;margin-top:11px}
+section{margin-top:48px;border-top:1px solid var(--rule);padding-top:24px}
+section:first-of-type{border-top:none;padding-top:0}
+.secnum{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);margin:12px 0 16px}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.65rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.a{white-space:nowrap;font-weight:600;color:var(--ink)}
+td.m{font-family:"IBM Plex Mono",monospace;font-size:.79rem;color:var(--ink)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.neg td{background:var(--alert-bg)}
+.key{border-left:3px solid var(--accent);background:var(--accent-bg);padding:12px 16px;margin:14px 0}
+.key b{color:var(--ink)}
+.warn{border-left:3px solid var(--warn);background:var(--warn-bg);padding:12px 16px;margin:14px 0}
+.warn b{color:var(--ink)}
+.gap{border-left:3px solid var(--alert);background:var(--alert-bg);padding:12px 16px;margin:14px 0}
+.gap b{color:var(--ink)}
+pre{background:var(--surface);border:1px solid var(--rule);padding:12px 15px;overflow-x:auto;
+  font-size:.78rem;line-height:1.6;margin:12px 0;font-family:"IBM Plex Mono",monospace}
+pre b{color:var(--accent)}
+figure{margin:16px 0}
+figcaption{font-size:.85rem;color:var(--muted);margin-top:11px;max-width:72ch}
+svg{max-width:100%;height:auto;display:block}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-size:.82rem;color:var(--muted)}
+</style>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Feature walkthrough &middot; 1 of 6</div>
+  <h1>PMP, End to End</h1>
+  <p class="standfirst">How the PMP case space is derived from the model rather than curated,
+  what one generated test actually reaches, and what it takes to stop choosing the
+  configurations by hand.</p>
+</header>
+
+<section>
+<h2>The case space is derived, not chosen</h2>
+<p>PMP's architectural state is <code>pmpcfg_n</code> (512 bits) plus <code>pmpaddr_n</code>
+(4,096 bits) &mdash; <b>2<sup>4608</sup></b> configurations. It cannot be enumerated, sampled or
+fuzzed. But <code>pmpCheck</code> does not distinguish 2<sup>4608</sup> cases; it distinguishes
+about <b>44</b>, because it composes three stages that read disjoint state, so the counts
+<b>add</b> rather than multiply.</p>
+<div class="scroll"><table>
+<thead><tr><th>Stage</th><th>Reads</th><th class="n">Cases</th></tr></thead><tbody>
+<tr><td class="a">Address match</td><td>the address and <code>pmpaddr</code></td><td class="n">17</td></tr>
+<tr><td class="a">Permission check</td><td>the access kind and R/W/X</td><td class="n">18</td></tr>
+<tr><td class="a">Privilege override</td><td>privilege and the lock bit</td><td class="n">4</td></tr>
+<tr><td class="a">Structural</td><td>entry 0, priority, fall-through, zero entries</td><td class="n">5</td></tr>
+<tr><td class="a">Total</td><td>&nbsp;</td><td class="n"><b>44</b>, not 1,224</td></tr>
+</tbody></table></div>
+
+<p>The address collapse is the part worth proving. <code>pmpRangeMatch</code> asks exactly two
+questions, so every address in 2<sup>64</sup> lands in one of five positions:</p>
+
+<figure>
+<svg viewBox="0 0 760 250" role="img" aria-label="Five positions an access can occupy relative to a PMP region: entirely below and entirely above give NoMatch, straddling either edge gives PartialMatch and an immediate access fault, and lying wholly inside gives Match.">
+  <rect x="250" y="30" width="230" height="190" fill="var(--sunk)"/>
+  <line x1="250" y1="26" x2="250" y2="228" stroke="var(--rule-firm)" stroke-width="1.5"/>
+  <line x1="480" y1="26" x2="480" y2="228" stroke="var(--rule-firm)" stroke-width="1.5"/>
+  <text x="250" y="18" text-anchor="middle" font-size="12" font-family="IBM Plex Mono, monospace" fill="var(--ink)">begin</text>
+  <text x="480" y="18" text-anchor="middle" font-size="12" font-family="IBM Plex Mono, monospace" fill="var(--ink)">end_</text>
+  <line x1="120" y1="228" x2="700" y2="228" stroke="var(--rule)"/>
+  <rect x="150" y="38" width="76" height="18" fill="none" stroke="var(--muted)" stroke-width="1.5"/>
+  <text x="132" y="51" text-anchor="middle" font-size="12" fill="var(--muted)">1</text>
+  <text x="620" y="51" font-size="12" fill="var(--muted)">NoMatch &mdash; try next entry</text>
+  <rect x="212" y="78" width="76" height="18" fill="var(--alert-bg)" stroke="var(--alert)" stroke-width="1.5"/>
+  <text x="132" y="91" text-anchor="middle" font-size="12" fill="var(--alert)">2</text>
+  <text x="620" y="91" font-size="12" fill="var(--alert)">PartialMatch &mdash; fault</text>
+  <rect x="327" y="118" width="76" height="18" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.5"/>
+  <text x="132" y="131" text-anchor="middle" font-size="12" fill="var(--ok)">3</text>
+  <text x="620" y="131" font-size="12" fill="var(--ok)">Match &mdash; check permissions</text>
+  <rect x="442" y="158" width="76" height="18" fill="var(--alert-bg)" stroke="var(--alert)" stroke-width="1.5"/>
+  <text x="132" y="171" text-anchor="middle" font-size="12" fill="var(--alert)">4</text>
+  <text x="620" y="171" font-size="12" fill="var(--alert)">PartialMatch &mdash; fault</text>
+  <rect x="504" y="198" width="76" height="18" fill="none" stroke="var(--muted)" stroke-width="1.5"/>
+  <text x="132" y="211" text-anchor="middle" font-size="12" fill="var(--muted)">5</text>
+  <text x="620" y="211" font-size="12" fill="var(--muted)">NoMatch &mdash; try next entry</text>
+  <text x="365" y="242" text-anchor="middle" font-size="11" fill="var(--muted)">the PMP region</text>
+</svg>
+<figcaption>Boundary-value analysis, but derived rather than conventional: the model states which
+edges are edges, and no other address distinction changes the outcome. Positions 2 and 4 fault
+<em>regardless of permissions</em> &mdash; the two a hand-written suite omits.</figcaption>
+</figure>
+<div class="warn"><b>One case no branch can see.</b> NAPOT computes its bounds with mask
+arithmetic, so a bug there gives wrong bounds without changing any branch. Several region sizes
+are tested anyway, with that reason recorded: <b>coverage-guided where branches exist,
+value-guided where the code is arithmetic</b>.</div>
+</section>
+
+<section>
+<h2>The access side, and what it costs</h2>
+<p><code>pmpCheckRWX</code> has <b>19 arms</b>. Three are <code>internal_error</code> &mdash;
+unreachable by construction, recorded as exclusions. The prefetch arm expands to three leaves, so
+there are <b>18 distinct permission checks</b> across five patterns: R, W, X, R&amp;W (atomics and
+shadow stack) and R|W (cache management &mdash; the only disjunction).</p>
+<div class="scroll"><table>
+<thead><tr><th>Group</th><th class="n">Checks</th><th>Reachable only with</th></tr></thead><tbody>
+<tr><td class="a">Ordinary load / store / LR / SC / AMO / fetch</td><td class="n">6</td><td>&mdash;</td></tr>
+<tr><td class="a">Page-table walker &mdash; <code>Load/Store(PageTableEntry)</code></td><td class="n">2</td><td><b>Sv39 enabled and a walk in progress</b> &mdash; PMP and virtual memory tested together</td></tr>
+<tr><td class="a">Vector, Zicfiss, Zicbom, Zicboz, Zicbop</td><td class="n">10</td><td>The extension enabled &mdash; config-dependent targets</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<h2>What one test actually reaches</h2>
+<p>Measured 27 August 2026. A <code>lw</code> against a region with no read permission,
+generated with <code>--pmp-deny 0x80020000 --expect-trap-cause 5 --trap-is-pass</code>, then four
+more varying only the instruction.</p>
+<div class="scroll"><table>
+<thead><tr><th>&nbsp;</th><th class="n">1 test</th><th class="n">5 tests</th><th class="n">delta</th></tr></thead><tbody>
+<tr><td class="m">pmp_control.sail &mdash; enforcement</td><td class="n">38/77 &nbsp;49.4%</td><td class="n">42/77 &nbsp;54.5%</td><td class="n">+4</td></tr>
+<tr><td class="m">pmp_regs.sail &mdash; register semantics</td><td class="n">43/149 &nbsp;28.9%</td><td class="n">43/149 &nbsp;28.9%</td><td class="n"><b>+0</b></td></tr>
+<tr><td class="a">pmp/ total</td><td class="n">81/226 &nbsp;35.8%</td><td class="n">85/226 &nbsp;37.6%</td><td class="n">+4</td></tr>
+<tr><td class="a">pmpCheckRWX arms</td><td class="n">4 of 19</td><td class="n">7 of 19</td><td class="n">+3</td></tr>
+</tbody></table></div>
+<p>Both negative controls &mdash; wrong cause, and denying a region the test never touches
+&mdash; fail as required, so the passes mean what they say.</p>
+<div class="gap"><b><code>pmp_regs.sail</code> did not move by one span, and that is the
+finding.</b> Two thirds of the instrumented PMP code is register semantics &mdash; WARL
+legalisation, grain, lock behaviour &mdash; and no enforcement test will ever touch it. Nothing
+yet writes a <code>pmpcfg</code> and reads it back to check what the model <em>kept</em>. That is
+the larger, less covered half, and it needs a different kind of test.</div>
+</section>
+
+<section>
+<h2>The methodology: two steps</h2>
+<p>Today the configuration is a flag &mdash; <code>--pmp-deny &lt;addr&gt;</code>, with the NAPOT
+encoding hardcoded in Rust &mdash; so TOR, NA4, read-only, unlocked and priority cases would each
+need a new flag. The proposed method removes the human from both halves:</p>
+<pre><b>Step 1</b>  derive the case space from the model   &rarr;  pmp_cases.json
+         one row per case: pmpaddr, pmpcfg, access address, expected outcome
+
+<b>Step 2</b>  cross each case with the memory operations the
+         instruction sweep <em>already solves</em>            &rarr;  one ELF per pair</pre>
+<div class="scroll"><table>
+<thead><tr><th>Step</th><th>What it does, and what it must get right</th></tr></thead><tbody>
+<tr><td class="a">1 &mdash; cases</td><td>Modes from <code>enum pmpAddrMatchType</code>, fields from <code>bitfield Pmpcfg_ent</code>, positions from <code>pmpRangeMatch</code>, legality bounds from <code>memory.pmp</code>. It must emit the <b>address as well as the config</b>: &ldquo;inside the region&rdquo; is a relation between the two, not a property of either</td></tr>
+<tr><td class="a">2 &mdash; cross</td><td>Only <b>Match</b> cases are worth crossing &mdash; NoMatch never reaches <code>pmpCheckRWX</code> and PartialMatch faults before it &mdash; which keeps this at tens of tests, not 17&times;18. And the expectation must be <b>recomputed per access kind</b> from <code>pmpCheckRWX</code>, not inherited: a config with <code>R=1 W=0</code> permits a load and denies a store</td></tr>
+</tbody></table></div>
+<p>The join is cheap because the access address arrives via <code>lui</code>/<code>slli</code>/
+<code>srli</code> in the preamble, so pointing a solved memory operation at the case's address is
+arithmetic, not a re-solve. PMA takes the same shape, with one difference: <code>pma_regions</code>
+comes from <code>config memory.regions</code>, so its step 1 emits <b>config JSON variants</b>
+rather than preamble writes.</p>
+
+<h3>How step 1 gets built &mdash; three routes, two now ruled out</h3>
+<div class="scroll"><table>
+<thead><tr><th>Route</th><th>Result</th></tr></thead><tbody>
+<tr><td class="a">Static enumeration from the model</td>
+    <td><b>Works, and is cheapest.</b> <code>testplan.py</code> already names the deciding expression (<code>match pmpAddrMatchType_encdec(ent[A])</code>); expanding it into concrete cases is an extension to it, not a new tool</td></tr>
+<tr class="neg"><td class="a">Write PMP via <code>csrw</code> in the opcode sequence</td>
+    <td><b>Does not enumerate &mdash; measured.</b> Unconstrained, killed at 12&nbsp;GB: one <code>csrw pmpcfg0</code> on RV64 runs <code>pmpWriteCfg</code> eight times, each forking. Masked to one entry it completes but yields <b>one</b> path, because isla-testgen solves instruction by instruction and the write concretises the value before the load can branch on it</td></tr>
+<tr><td class="a">Symbolic at init</td>
+    <td><b>The route for the cases arithmetic alone cannot give.</b> Make <code>pmpcfg_n</code>/<code>pmpaddr_n</code> symbolic <em>after</em> <code>isla_testgen_init</code> returns &mdash; the mechanism <code>execution.rs</code> already uses for the PC. Before init is pointless: <code>reset_pmp()</code> would zero them. Bound it to one entry, or the eight-fold legalisation explodes however the value arrives</td></tr>
+</tbody></table></div>
+<div class="key"><b>What the solver buys that a table cannot.</b> The write passes through
+<code>pmpWriteCfg</code>'s WARL legalisation, so it physically cannot return a configuration the
+model would refuse &mdash; and it returns non-obvious legal ones. In the run above it chose
+<code>W=1 R=0</code>, the reserved encoding, which survives only because this configuration
+permits it. It also answers UNSAT, which is what turns an untested span into a justified
+exclusion rather than a gap.</div>
+</section>
+
+<section>
+<h2>Where it stands</h2>
+<div class="scroll"><table>
+<thead><tr><th class="n">&nbsp;</th><th>Gap</th><th>Cost</th></tr></thead><tbody>
+<tr><td class="n">1</td><td>11 of 18 permission checks unexercised &mdash; vary the instruction under test; the machinery exists</td><td>Low</td></tr>
+<tr><td class="n">2</td><td><code>pmp_regs.sail</code> at 28.9% &mdash; needs CSR write/read-back assertions</td><td>Medium</td></tr>
+<tr><td class="n">3</td><td><code>PMP_PartialMatch</code> unreached &mdash; one address whose <code>addr + width</code> crosses a region edge</td><td>Low</td></tr>
+<tr><td class="n">4</td><td>Unmatched fall-through &mdash; needs <code>--pmp-allow-range lo-hi</code></td><td>Low</td></tr>
+<tr><td class="n">5</td><td>Derived configurations &mdash; static enumeration, then symbolic-at-init</td><td>1&ndash;2 weeks</td></tr>
+</tbody></table></div>
+</section>
+
+<footer>Span counts from <code>build-coverage/sail_riscv_model.branch_info</code>; coverage and
+the three automation results measured 27 August 2026 against
+<code>build-coverage/c_emulator/sail_riscv_sim</code>, with independent runs on Spike
+<code>--isa=rv64imac_zicsr</code>. Case space read from <code>model/pmp/pmp_control.sail</code>
+and <code>pmp_regs.sail</code>.</footer>
+</div>

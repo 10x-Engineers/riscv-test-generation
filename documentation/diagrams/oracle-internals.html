@@ -1,0 +1,296 @@
+<title>Inside the Concrete Oracle</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --surface:#fff; --sunk:#eaeef2;
+  --ink:#14181d; --body:#333c47; --muted:#647082;
+  --rule:#d6dce4; --rule-firm:#b6bfcb;
+  --accent:#0f7368; --accent-bg:#dff0ed;
+  --alt:#3b5bb5; --alt-bg:#e6ecfa;
+  --warn:#9a6114; --warn-bg:#f7efe0;
+  --alert:#a5372b; --alert-bg:#fae9e6;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#5cbdb0; --accent-bg:#0f2b28;
+  --alt:#8fa7e8; --alt-bg:#1a2340;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#5cbdb0; --accent-bg:#0f2b28;
+  --alt:#8fa7e8; --alt-bg:#1a2340;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:15px;line-height:1.58;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:0 26px 80px}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.9rem,3.8vw,2.5rem);font-weight:600;letter-spacing:-.02em;line-height:1.12}
+h2{font-size:1.3rem;font-weight:600;letter-spacing:-.012em}
+h3{font-size:1rem;font-weight:600;margin-top:20px}
+p{margin:0 0 11px;max-width:74ch}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.85em;background:var(--sunk);padding:.08em .32em;border-radius:2px;overflow-wrap:anywhere}
+header{padding:50px 0 20px;border-bottom:2px solid var(--ink);margin-bottom:30px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px}
+.standfirst{font-size:1.04rem;color:var(--muted);max-width:66ch;margin-top:11px}
+section{margin-top:42px}
+figure{margin:16px 0}
+figcaption{font-size:.85rem;color:var(--muted);margin-top:11px;max-width:72ch}
+svg{max-width:100%;height:auto;display:block}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);margin:12px 0 16px}
+table{border-collapse:collapse;width:100%;font-size:.87rem}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.a{white-space:nowrap;font-weight:600;color:var(--ink)}
+td.f{white-space:nowrap;font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--ink)}
+.key{border-left:3px solid var(--accent);background:var(--accent-bg);padding:12px 16px;margin:14px 0}
+.key b{color:var(--ink)}
+.warn{border-left:3px solid var(--warn);background:var(--warn-bg);padding:12px 16px;margin:14px 0}
+.warn b{color:var(--ink)}
+pre{background:var(--surface);border:1px solid var(--rule);padding:12px 15px;overflow-x:auto;
+  font-size:.79rem;line-height:1.55;margin:12px 0;font-family:"IBM Plex Mono",monospace}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-size:.82rem;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">RISC-V Sail test generation &middot; internals</div>
+  <h1>Inside the Concrete Oracle</h1>
+  <p class="standfirst">The model is both the thing under test and the source of the answer. A
+  probe program runs on the Golden Model, prints its own result registers, and those values are
+  baked into a second program that asserts them.</p>
+</header>
+
+<section style="margin-top:0">
+<h2>The whole flow</h2>
+<figure>
+<svg viewBox="0 0 920 480" role="img" aria-label="The Sail model's assembly mappings are parsed into an instruction set. A backend draws a random body from it. The body is wrapped in a probe that prints its result registers; the probe is assembled and run on the Golden Model, which emits SIG lines. Those values are parsed back and baked into a final self-checking program, which is assembled into an ELF and run on the model and an independent simulator.">
+<defs><marker id="oa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor">
+
+  <text x="12" y="16" font-size="10.5" font-weight="600" fill="var(--muted)" font-family="IBM Plex Mono, monospace">INSTRUCTION SET, FROM THE MODEL</text>
+  <rect x="12" y="26" width="168" height="52" fill="var(--surface)" stroke="currentColor"/>
+  <text x="96" y="46" text-anchor="middle" font-weight="600">Sail sources</text>
+  <text x="96" y="61" text-anchor="middle" font-size="9.8" opacity=".78">mapping clause assembly</text>
+  <text x="96" y="72" text-anchor="middle" font-size="9.8" opacity=".78">+ mnemonic tables</text>
+  <line x1="180" y1="52" x2="216" y2="52" stroke="currentColor" marker-end="url(#oa)"/>
+  <rect x="218" y="26" width="150" height="52" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <text x="293" y="46" text-anchor="middle" font-weight="600">model.py</text>
+  <text x="293" y="62" text-anchor="middle" font-size="9.8" opacity=".8">mnemonics, operand</text>
+  <text x="293" y="73" text-anchor="middle" font-size="9.8" opacity=".8">kinds and order</text>
+  <line x1="368" y1="52" x2="404" y2="52" stroke="currentColor" marker-end="url(#oa)"/>
+  <rect x="406" y="26" width="150" height="52" fill="var(--surface)" stroke="currentColor"/>
+  <text x="481" y="46" text-anchor="middle" font-weight="600">backend</text>
+  <text x="481" y="62" text-anchor="middle" font-size="9.8" opacity=".8">seed + random body</text>
+  <text x="481" y="73" text-anchor="middle" font-size="9.8" opacity=".8">of (mnem, ops)</text>
+  <line x1="556" y1="52" x2="592" y2="52" stroke="currentColor" marker-end="url(#oa)"/>
+  <rect x="594" y="26" width="150" height="52" fill="var(--surface)" stroke="currentColor"/>
+  <text x="669" y="52" text-anchor="middle" font-weight="600">body</text>
+  <text x="669" y="68" text-anchor="middle" font-size="9.8" opacity=".8">not yet a test</text>
+
+  <line x1="12" y1="100" x2="908" y2="100" stroke="currentColor" opacity=".2"/>
+  <text x="12" y="120" font-size="10.5" font-weight="600" fill="var(--muted)" font-family="IBM Plex Mono, monospace">PASS 1 &mdash; ASK THE MODEL</text>
+
+  <path d="M669 78 L669 88 L120 88 L120 132" fill="none" stroke="currentColor" marker-end="url(#oa)"/>
+
+  <rect x="30" y="136" width="180" height="60" fill="var(--surface)" stroke="currentColor"/>
+  <text x="120" y="156" text-anchor="middle" font-weight="600">probe program</text>
+  <text x="120" y="172" text-anchor="middle" font-size="9.8" opacity=".8">body + a loop that prints</text>
+  <text x="120" y="184" text-anchor="middle" font-size="9.8" opacity=".8">each result register</text>
+  <line x1="210" y1="166" x2="246" y2="166" stroke="currentColor" marker-end="url(#oa)"/>
+
+  <rect x="248" y="136" width="150" height="60" fill="var(--surface)" stroke="currentColor"/>
+  <text x="323" y="162" text-anchor="middle" font-weight="600">real toolchain</text>
+  <text x="323" y="180" text-anchor="middle" font-size="9.8" opacity=".8">as + ld &rarr; probe.elf</text>
+  <line x1="398" y1="166" x2="434" y2="166" stroke="currentColor" marker-end="url(#oa)"/>
+
+  <rect x="436" y="130" width="176" height="72" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.4"/>
+  <text x="524" y="152" text-anchor="middle" font-weight="600" fill="var(--accent)">Golden Model</text>
+  <text x="524" y="169" text-anchor="middle" font-size="9.8" opacity=".85">sail_riscv_sim runs it</text>
+  <text x="524" y="182" text-anchor="middle" font-size="9.8" opacity=".85">under the same config</text>
+  <text x="524" y="195" text-anchor="middle" font-size="9.8" opacity=".85">the suite targets</text>
+  <line x1="612" y1="166" x2="648" y2="166" stroke="currentColor" marker-end="url(#oa)"/>
+
+  <rect x="650" y="136" width="160" height="60" fill="var(--surface)" stroke="currentColor"/>
+  <text x="730" y="156" text-anchor="middle" font-weight="600">HTIF output</text>
+  <text x="730" y="174" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace">SIG 000000000000002a</text>
+  <text x="730" y="188" text-anchor="middle" font-size="9.8" opacity=".8">one line per register</text>
+
+  <line x1="12" y1="222" x2="908" y2="222" stroke="currentColor" opacity=".2"/>
+  <text x="12" y="242" font-size="10.5" font-weight="600" fill="var(--muted)" font-family="IBM Plex Mono, monospace">PASS 2 &mdash; BAKE THE ANSWER IN</text>
+
+  <path d="M810 166 L860 166 L860 232 L120 232 L120 258" fill="none" stroke="var(--accent)" stroke-width="1.4" marker-end="url(#oa)" color="var(--accent)"/>
+  <rect x="300" y="224" width="300" height="16" fill="var(--paper)"/>
+  <text x="450" y="236" text-anchor="middle" font-size="10" fill="var(--accent)" font-weight="600">parsed back as the expected state</text>
+
+  <rect x="30" y="262" width="180" height="62" fill="var(--surface)" stroke="currentColor"/>
+  <text x="120" y="282" text-anchor="middle" font-weight="600">final program</text>
+  <text x="120" y="298" text-anchor="middle" font-size="9.8" opacity=".8">same body, then</text>
+  <text x="120" y="310" text-anchor="middle" font-size="9.8" opacity=".8">bne against each value</text>
+  <line x1="210" y1="293" x2="246" y2="293" stroke="currentColor" marker-end="url(#oa)"/>
+
+  <rect x="248" y="262" width="150" height="62" fill="var(--surface)" stroke="currentColor"/>
+  <text x="323" y="288" text-anchor="middle" font-weight="600">same toolchain</text>
+  <text x="323" y="306" text-anchor="middle" font-size="9.8" opacity=".8">&rarr; test.elf</text>
+  <line x1="398" y1="293" x2="434" y2="293" stroke="currentColor" marker-end="url(#oa)"/>
+
+  <rect x="436" y="256" width="176" height="74" fill="var(--surface)" stroke="currentColor"/>
+  <text x="524" y="278" text-anchor="middle" font-weight="600">run on two targets</text>
+  <text x="524" y="296" text-anchor="middle" font-size="9.8" opacity=".85">Sail &mdash; self-consistency</text>
+  <text x="524" y="312" text-anchor="middle" font-size="9.8" opacity=".85">Spike &mdash; independent</text>
+  <line x1="612" y1="293" x2="648" y2="293" stroke="currentColor" marker-end="url(#oa)"/>
+
+  <rect x="650" y="262" width="160" height="62" fill="var(--alt-bg)" stroke="var(--alt)"/>
+  <text x="730" y="288" text-anchor="middle" font-weight="600">verdict</text>
+  <text x="730" y="306" text-anchor="middle" font-size="9.8" opacity=".85">a0 = 0 &rarr; pass</text>
+
+  <line x1="12" y1="356" x2="908" y2="356" stroke="currentColor" opacity=".2"/>
+  <text x="12" y="378" font-size="11" opacity=".85">Two ELFs, one body. The probe and the final test contain the same instruction sequence &mdash; the probe reports</text>
+  <text x="12" y="394" font-size="11" opacity=".85">what happened, the final test asserts it. Nothing in the body may depend on the link address, because the two</text>
+  <text x="12" y="410" font-size="11" opacity=".85">ELFs link at different sizes: that is why branches, jumps and <tspan font-family="IBM Plex Mono, monospace" font-size="10.5">auipc</tspan> are excluded from the instruction pool.</text>
+  <text x="12" y="440" font-size="11" opacity=".85" font-weight="600">The Sail run proves only self-consistency &mdash; the expectation came from that model. Only Spike is evidence.</text>
+</g></svg>
+<figcaption>The oracle never predicts anything. It observes, then asserts what it observed.</figcaption>
+</figure>
+</section>
+
+<section>
+<h2>The scripts, and what each owns</h2>
+<div class="scroll"><table>
+<thead><tr><th>File</th><th>Owns</th></tr></thead><tbody>
+<tr><td class="f">model.py</td><td>Parses the model's <code>mapping clause assembly</code> definitions and the mnemonic tables they reference, so mnemonics, operand kinds and operand <em>order</em> all come from the model. ~500 lines &mdash; the largest single piece</td></tr>
+<tr><td class="f">oracle.py</td><td>Compiles a probe, runs it on <code>sail_riscv_sim</code>, parses <code>SIG &lt;hex&gt;</code> back out of stdout. 51 lines &mdash; the whole oracle is this small</td></tr>
+<tr><td class="f">selfcheck.py</td><td>Turns a body into probe &rarr; oracle call &rarr; self-checking program. Owns the seeding rule and the three probe variants (integer, +FP, +vector)</td></tr>
+<tr><td class="f">program.py</td><td>Renders assembly. Owns the ACT header, the signature region and <code>rvtest_entry_point</code></td></tr>
+<tr><td class="f">toolchain.py</td><td>Assembles and links exactly as the Golden Model does, reusing its <code>crt0.S</code> and linker script</td></tr>
+<tr><td class="f">config.py</td><td>Reads one Golden Model configuration; everything downstream derives from it</td></tr>
+<tr><td class="f">suite.py</td><td>Organises output by extension, writes the manifest</td></tr>
+<tr><td class="f">runner.py</td><td>Runs a suite on a simulator, summarises, labels which column is independent</td></tr>
+<tr><td class="f">backends/</td><td>Decides <em>which instructions go in the body</em> &mdash; and nothing else</td></tr>
+</tbody></table></div>
+<div class="key"><b>A backend is deliberately tiny.</b> Everything around it &mdash; compiling,
+running, organising, checking &mdash; is identical regardless of backend, so adding a generation
+strategy means writing one class. That is why there are seven of them.</div>
+
+<h3>The seven backends</h3>
+<div class="scroll"><table>
+<thead><tr><th>Backend</th><th>Parses</th><th>Exists because</th></tr></thead><tbody>
+<tr><td class="f">model</td><td><code>extensions/I/base_insts.sail</code></td><td>The base integer set &mdash; the reference implementation of the approach</td></tr>
+<tr><td class="f">model-fp</td><td>FD sources</td><td>The symbolic engine cannot execute SoftFloat</td></tr>
+<tr><td class="f">model-scalar</td><td>B and scalar-crypto sources</td><td>Bit-manipulation the symbolic path cannot reach</td></tr>
+<tr><td class="f">model-v</td><td>V sources</td><td>Vector length is runtime state the solver cannot fix</td></tr>
+<tr><td class="f">model-vk</td><td>vector-crypto sources</td><td>Needs a wider register group than plain V</td></tr>
+<tr><td class="f">model-vk64</td><td>Zvbc</td><td><code>vclmul</code>/<code>vclmulh</code> have no legal SEW other than 64</td></tr>
+<tr><td class="f">template</td><td>&mdash;</td><td>Hand-written, for what neither engine reaches. Capped at 4</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<h2>Three rules that make it correct</h2>
+
+<h3>Seed every output register first</h3>
+<p>Before the body runs, every result register is set to a known constant.</p>
+<pre>li t0, 0x3f21c   # seed
+li t1, -0x91a4   # seed
+...</pre>
+<p>Without this, a sequence could read a register before writing it and inherit whatever
+<code>crt0</code> left there &mdash; which is PC-relative and therefore layout-dependent. The
+probe ELF and the final ELF link at different sizes, so the two runs would disagree and the test
+would fail for a reason that has nothing to do with the instruction under test.</p>
+
+<h3>Exclude anything that depends on the link address</h3>
+<p>Branches, jumps and <code>auipc</code> are pruned from the instruction pool for the same
+reason. This mirrors the <code>unsupported</code> denylist in the REMS generator's
+<code>generators.ml</code>, arrived at independently and for the same cause.</p>
+
+<h3>The assembler is the encoding source of truth</h3>
+<p>Nothing constructs an instruction encoding. Assembly text is rendered and handed to the real
+RISC-V assembler, so the bytes under test are the bytes the toolchain produces.</p>
+<div class="key"><b>Together these make a parsing mistake safe.</b> If the model parser gets an
+operand order wrong, the assembler rejects it or the Golden Model produces a different result
+&mdash; so the test is rejected or fails. It cannot silently become a wrong test that passes.</div>
+</section>
+
+<section>
+<h2>What can go wrong, and how it surfaces</h2>
+<div class="scroll"><table>
+<thead><tr><th>Failure</th><th>How it appears</th></tr></thead><tbody>
+<tr><td class="a">Probe traps before printing</td><td>The oracle returns zero values. One illegal instruction anywhere in the body does this, so the error message says so explicitly and the failed probe is saved for inspection</td></tr>
+<tr><td class="a">Wrong value count</td><td>Checked against the expected count before the test is built &mdash; a partial parse of the simulator output cannot become a partially-checked test</td></tr>
+<tr><td class="a">FP probe clobbering</td><td>An earlier FP probe moved results into the integer output registers before printing, overwriting them. Now all 14 values go to a memory buffer first, because there are more results than callee-saved GPRs and <code>printf</code> may clobber FP registers</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<h2>How this differs from the REMS generator</h2>
+<p><code>rems-project/sail-riscv-test-generation</code> is the closest prior art &mdash; an OCaml
+random instruction generator used with the isla-testgen flow. The approach is the same; the
+sourcing is not.</p>
+<div class="scroll"><table>
+<thead><tr><th>Area</th><th>REMS generator</th><th>This framework</th></tr></thead><tbody>
+<tr><td class="a">Instruction source</td>
+    <td>A generator-side instruction description, maintained alongside the generator</td>
+    <td>Parsed from the model's <code>mapping clause assembly</code> at generation time</td></tr>
+<tr><td class="a">Following the model</td>
+    <td>The description must be updated when the model's source assumptions change</td>
+    <td>An instruction added upstream is generated with no edit here; one the model does not implement cannot be generated at all</td></tr>
+<tr><td class="a">Encodings</td>
+    <td>Generator-defined</td>
+    <td>Rendered as assembly and encoded by the real toolchain</td></tr>
+<tr><td class="a">Configuration</td>
+    <td>Architecture-general</td>
+    <td>Every candidate filtered against the selected configuration's predicates first</td></tr>
+<tr><td class="a">Privileged state</td>
+    <td>Not the primary mechanism &mdash; a random stream does not place the machine in a chosen state</td>
+    <td>Built directly by the preamble builder</td></tr>
+<tr><td class="a">Fault sensitivity</td>
+    <td>A random stream is not, by itself, a test that can fail</td>
+    <td>Validation gate plus mandatory negative controls before a test joins the suite</td></tr>
+<tr><td class="a">Output format</td>
+    <td>Its own</td>
+    <td>Both the self-checking profile and the riscv-arch-test profile, from one format layer</td></tr>
+</tbody></table></div>
+<div class="key"><b>The first row is the one that matters.</b> A generator carrying its own
+instruction list drifts from the model the moment the model changes, and the drift is silent
+&mdash; a missing instruction looks exactly like one that passes. Reading the instruction set
+from the model's declarations is what makes &ldquo;tests and coverage may change as the model
+evolves&rdquo; a property of the design rather than a maintenance promise.</div>
+<div class="warn"><b>Where the two agree.</b> The link-address denylist is the clearest case:
+both exclude branches, jumps and <code>auipc</code> from a no-setup random body, for exactly the
+same reason. Prior art was right about that, and this framework inherits the conclusion rather
+than rediscovering it.</div>
+</section>
+
+<section>
+<h2>Running it</h2>
+<pre>cd autotest
+PYTHONPATH=src python3 -m sailtest.cli backends
+
+PYTHONPATH=src python3 -m sailtest.cli generate \
+    --config configs/rv64.json --sail-riscv ../sail-riscv \
+    --backend model-fp --count 8 --out out
+
+PYTHONPATH=src python3 -m sailtest.cli run \
+    --manifest out/rv64/manifest.json --config configs/rv64.json \
+    --simulator spike</pre>
+<p>Generation is reproducible: the same <code>--seed</code> produces byte-identical
+<code>.S</code> sources. Cost is one model run per test &mdash; milliseconds, against seconds or
+longer for the symbolic path.</p>
+</section>
+
+<footer>Behaviour and file sizes read from <code>autotest/src/sailtest/</code>; backend list from
+<code>sailtest.cli backends</code>.</footer>
+</div>

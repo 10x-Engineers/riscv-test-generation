@@ -1,0 +1,277 @@
+<title>Foundation Plan</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --surface:#fff; --sunk:#eaeef2;
+  --ink:#14181d; --body:#333c47; --muted:#647082;
+  --rule:#d6dce4; --rule-firm:#b6bfcb;
+  --accent:#3b5bb5; --accent-bg:#e6ecfa;
+  --ok:#0f7368; --ok-bg:#dff0ed;
+  --warn:#9a6114; --warn-bg:#f7efe0;
+  --alert:#a5372b; --alert-bg:#fae9e6;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:15px;line-height:1.58;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;padding:0 26px 80px}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.9rem,3.8vw,2.5rem);font-weight:600;letter-spacing:-.02em;line-height:1.12}
+h2{font-size:1.3rem;font-weight:600;letter-spacing:-.012em}
+h3{font-size:1.02rem;font-weight:600;margin-top:24px}
+p{margin:0 0 11px;max-width:74ch}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.85em;background:var(--sunk);padding:.08em .32em;border-radius:2px;overflow-wrap:anywhere}
+header{padding:50px 0 20px;border-bottom:2px solid var(--ink);margin-bottom:30px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px}
+.standfirst{font-size:1.04rem;color:var(--muted);max-width:66ch;margin-top:11px}
+section{margin-top:44px}
+figure{margin:16px 0}
+figcaption{font-size:.85rem;color:var(--muted);margin-top:11px;max-width:72ch}
+svg{max-width:100%;height:auto;display:block}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);margin:12px 0 16px}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.65rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.a{white-space:nowrap;font-weight:600;color:var(--ink)}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.repo{border:1px solid var(--rule);background:var(--surface);margin:16px 0}
+.repo .hd{background:var(--sunk);padding:10px 15px;display:flex;justify-content:space-between;
+  gap:14px;align-items:baseline;flex-wrap:wrap;border-bottom:1px solid var(--rule)}
+.repo .hd .nm{font-weight:600;color:var(--ink)}
+.repo .hd .meta{font-family:"IBM Plex Mono",monospace;font-size:.74rem;color:var(--muted)}
+.repo .bd{padding:0}
+.repo table{font-size:.85rem}
+.key{border-left:3px solid var(--accent);background:var(--accent-bg);padding:12px 16px;margin:14px 0}
+.key b{color:var(--ink)}
+.warn{border-left:3px solid var(--warn);background:var(--warn-bg);padding:12px 16px;margin:14px 0}
+.warn b{color:var(--ink)}
+.gate{border:1.5px solid var(--ink);background:var(--surface);padding:14px 17px;margin:18px 0}
+.gate .t{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.gate p{margin:0 0 7px;color:var(--ink)}
+.gate p:last-child{margin-bottom:0}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-size:.82rem;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">RISC-V Sail test generation &middot; stage 1</div>
+  <h1>Foundation, Repository by Repository</h1>
+  <p class="standfirst">Everything needed before one instruction can be generated and pass on two
+  simulators. The list is specific because each item has already been hit once &mdash; this is
+  scoping, not estimating.</p>
+</header>
+
+<section style="margin-top:0">
+<h2>Schedule</h2>
+<figure>
+<svg viewBox="0 0 920 320" role="img" aria-label="Five repository lanes over three weeks. The model, the symbolic library and the oracle start together in week one. The generator target starts in week two once the library and model are ready. The orchestration layer starts late in week two. The critical path runs from the symbolic library through the generator target to the exit gate at the end of week three.">
+<defs><marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor">
+  <line x1="246" y1="26" x2="246" y2="252" stroke="currentColor" opacity=".16"/>
+  <line x1="466" y1="26" x2="466" y2="252" stroke="currentColor" opacity=".16"/>
+  <line x1="686" y1="26" x2="686" y2="252" stroke="currentColor" opacity=".16"/>
+  <text x="136" y="20" text-anchor="middle" font-size="10" opacity=".7">week 1</text>
+  <text x="356" y="20" text-anchor="middle" font-size="10" opacity=".7">week 2</text>
+  <text x="576" y="20" text-anchor="middle" font-size="10" opacity=".7">week 3</text>
+
+  <text x="12" y="48" font-size="10.5" font-weight="600">sail-riscv</text>
+  <rect x="26" y="56" width="200" height="24" fill="var(--warn-bg)" stroke="var(--warn)"/>
+  <text x="126" y="72" text-anchor="middle" font-size="10">entry points, de-scatter, builds</text>
+  <text x="232" y="72" font-size="9.5" opacity=".7">1.0 wk</text>
+
+  <text x="12" y="106" font-size="10.5" font-weight="600">isla</text>
+  <rect x="26" y="114" width="330" height="24" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="191" y="130" text-anchor="middle" font-size="10">primops, address width, struct vectors</text>
+  <text x="362" y="130" font-size="9.5" opacity=".7">1.5 wk</text>
+
+  <text x="12" y="164" font-size="10.5" font-weight="600">isla-testgen</text>
+  <rect x="360" y="172" width="330" height="24" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="525" y="188" text-anchor="middle" font-size="10">Target impl, ELF emitter, portability fixes</text>
+  <text x="696" y="188" font-size="9.5" opacity=".7">1.5 wk</text>
+  <path d="M356 126 L358 126 L358 172" fill="none" stroke="var(--accent)" marker-end="url(#fa)" color="var(--accent)"/>
+  <path d="M226 68 L340 68 L340 168 L358 168" fill="none" stroke="currentColor" opacity=".55" marker-end="url(#fa)"/>
+
+  <text x="12" y="222" font-size="10.5" font-weight="600">autotest</text>
+  <rect x="26" y="230" width="440" height="24" fill="var(--ok-bg)" stroke="var(--ok)"/>
+  <text x="246" y="246" text-anchor="middle" font-size="10">model parser, oracle, self-check, one backend</text>
+  <text x="472" y="246" font-size="9.5" opacity=".7">1.0 wk</text>
+
+  <text x="12" y="284" font-size="10.5" font-weight="600">framework</text>
+  <rect x="576" y="264" width="114" height="24" fill="var(--surface)" stroke="currentColor"/>
+  <text x="633" y="280" text-anchor="middle" font-size="10">sweep, verify</text>
+  <text x="696" y="280" font-size="9.5" opacity=".7">0.5 wk</text>
+  <path d="M690 184 L706 184 L706 276 L694 276" fill="none" stroke="currentColor" opacity=".55" marker-end="url(#fa)"/>
+
+  <rect x="716" y="56" width="14" height="232" fill="var(--ink)" opacity=".08"/>
+  <text x="723" y="176" text-anchor="middle" font-size="10.5" font-weight="600" transform="rotate(-90 723 176)">EXIT GATE</text>
+
+  <text x="12" y="308" font-size="10.5" opacity=".85">Critical path &mdash; highlighted &mdash; is isla &rarr; isla-testgen &rarr; gate. The model and the oracle are not on it.</text>
+</g></svg>
+<figcaption><b>3 calendar weeks, 5.5 engineering-weeks.</b> Three lanes start on day one and
+need nothing from each other.</figcaption>
+</figure>
+</section>
+
+<section>
+<h2>1 &middot; sail-riscv &mdash; the Golden Model</h2>
+<div class="repo">
+  <div class="hd"><span class="nm">Expose the entry points the generator needs</span>
+    <span class="meta">1.0 wk &middot; week 1 &middot; not on critical path</span></div>
+  <div class="bd"><table>
+  <thead><tr><th>Task</th><th>Detail</th><th class="n">Days</th></tr></thead><tbody>
+  <tr><td class="a">Two entry points</td><td><code>isla_testgen_init</code> and <code>isla_testgen_step</code> in <code>main.sail</code>, modelled on the existing <code>isla_footprint</code> pair. <code>fetch()</code> made non-private so the second can call it</td><td class="n">1</td></tr>
+  <tr><td class="a">Codegen workaround</td><td>Functions destructuring a &ge;2-tuple parameter get inconsistent synthetic names in the IR. Destructure in the body instead &mdash; mechanical, ~50 functions across <code>core/</code>, <code>sys/</code>, <code>extensions/</code>, <code>pmp/</code></td><td class="n">1</td></tr>
+  <tr><td class="a">De-scatter 4 CSR accessors</td><td><code>read_CSR</code>, <code>write_CSR</code>, <code>is_CSR_accessible</code>, <code>is_CSR_exception_virtual</code> hit the same limitation in the scattered-function <em>merging</em> step. ~302 clauses across ~17 files, consolidated one function each, first-match-wins order preserved</td><td class="n">2</td></tr>
+  <tr><td class="a">Concrete PMP reset</td><td><code>reset_pmp()</code> builds a concrete entry per <code>pmpcfg</code> rather than updating the prior symbolic value</td><td class="n">0.5</td></tr>
+  <tr><td class="a">Two builds</td><td>Ordinary simulator, plus <code>-DCOVERAGE=ON</code> for the span manifest. Kept separate so a coverage run cannot use an uninstrumented emulator</td><td class="n">0.5</td></tr>
+  </tbody></table></div>
+</div>
+<div class="warn"><b>The de-scatter is the largest single diff of the whole foundation</b> and
+touches the most files. It is proposed upstream as its own commit so it can be reviewed on its
+merits, separately from the entry points. Nothing in it changes architectural behaviour.</div>
+</section>
+
+<section>
+<h2>2 &middot; isla &mdash; the symbolic library</h2>
+<div class="repo">
+  <div class="hd"><span class="nm">Make the engine able to run this model</span>
+    <span class="meta">1.5 wk &middot; weeks 1&ndash;2 &middot; <b>critical path</b></span></div>
+  <div class="bd"><table>
+  <thead><tr><th>Task</th><th>Detail</th><th class="n">Days</th></tr></thead><tbody>
+  <tr><td class="a">Track the Sail release</td><td>The Sail plugin consumes Sail's Jib IR, whose type definitions and rewrite-pass ordering change between releases. Update against the version pinned at project start</td><td class="n">1.5</td></tr>
+  <tr><td class="a">Missing primitives</td><td>The reservation set (<code>load</code>, <code>match</code>, <code>valid</code>, <code>cancel</code>), <code>count_trailing_zeros</code> with its <code>BV</code> support, <code>vector_init</code>, <code>sys_enable_experimental_extensions</code>. Each small; the risk is finding a further one late</td><td class="n">2</td></tr>
+  <tr><td class="a">Address width</td><td>The memory overlap check assumes 64-bit addresses. Take the width from the address's own solver-tracked value, so RV32 reads are not mis-sized</td><td class="n">0.5</td></tr>
+  <tr><td class="a"><b>Struct-typed vector elements</b></td><td>PMP configuration is <code>vector(64, Pmpcfg_ent)</code> &mdash; a vector of bitfield <em>structs</em>. The value encoding has no case for them, so any symbolic PMP access fails. Vector read and update build a per-field conditional instead</td><td class="n">3</td></tr>
+  </tbody></table></div>
+</div>
+<div class="key"><b>The last row is why PMP is reachable at all.</b> Without it there is no symbolic
+PMP testing, and PMP is a required RFP item. It is the single highest-value fix in the
+foundation, and it is why this lane sits on the critical path.</div>
+</section>
+
+<section>
+<h2>3 &middot; isla-testgen &mdash; the generator</h2>
+<div class="repo">
+  <div class="hd"><span class="nm">Teach the generator about RISC-V</span>
+    <span class="meta">1.5 wk &middot; weeks 2&ndash;3 &middot; <b>critical path</b> &middot; needs 1 and 2</span></div>
+  <div class="bd"><table>
+  <thead><tr><th>Task</th><th>Detail</th><th class="n">Days</th></tr></thead><tbody>
+  <tr><td class="a">Target implementation</td><td>The generator's target interface &mdash; around thirty methods covering register naming, PC alignment, entry points, exception stop functions, ELF emission</td><td class="n">3</td></tr>
+  <tr><td class="a">ELF emitter</td><td>Preamble, initial register loads, the instruction under test, the final-state comparison, the trap vector, the HTIF <code>tohost</code> write</td><td class="n">2.5</td></tr>
+  <tr><td class="a">Concrete boot PC</td><td>The engine sets the initial PC by asserting equality at the solver level, which does nothing when the PC is already concrete &mdash; as it is here, since init calls <code>reset()</code>. Write the value directly</td><td class="n">0.5</td></tr>
+  <tr><td class="a">PC width vs address width</td><td>RV32's PC is 32 bits; the model's memory interface uses 64-bit addresses regardless of XLEN. Zero-extend for the fetch</td><td class="n">0.5</td></tr>
+  <tr><td class="a">GPR numbering</td><td>Registers are assumed to start at zero. <code>x0</code> is hardwired and not general-purpose, so the interface gains a first-GPR index</td><td class="n">0.5</td></tr>
+  <tr><td class="a">IR and ISA config</td><td>Build <code>riscv{32,64}.ir</code> with the preserve flags, and the <code>.toml</code> naming the toolchain, PC register and memory regions</td><td class="n">0.5</td></tr>
+  </tbody></table></div>
+</div>
+</section>
+
+<section>
+<h2>4 &middot; autotest &mdash; the concrete oracle</h2>
+<div class="repo">
+  <div class="hd"><span class="nm">The second path, which depends on none of the above</span>
+    <span class="meta">1.0 wk &middot; weeks 1&ndash;2 &middot; parallel</span></div>
+  <div class="bd"><table>
+  <thead><tr><th>Task</th><th>Detail</th><th class="n">Days</th></tr></thead><tbody>
+  <tr><td class="a">Config reader</td><td>One Golden Model configuration becomes one validated object</td><td class="n">0.5</td></tr>
+  <tr><td class="a">Model parser</td><td>Parse <code>mapping clause assembly</code> and the mnemonic tables it references, so mnemonics, operand kinds and operand order all come from the model</td><td class="n">2</td></tr>
+  <tr><td class="a">Oracle</td><td>Build a probe that prints its result registers, run it on <code>sail_riscv_sim</code>, parse the values back</td><td class="n">1</td></tr>
+  <tr><td class="a">Self-check scaffolding</td><td>Seed the output registers, wrap a body in a probe, bake the captured values into an asserting test</td><td class="n">1</td></tr>
+  <tr><td class="a">Toolchain layer</td><td>Assemble and link exactly as the Golden Model does, reusing its <code>crt0.S</code> and linker script</td><td class="n">0.5</td></tr>
+  </tbody></table></div>
+</div>
+<div class="key"><b>This lane is the schedule's insurance.</b> It needs no solver, no IR and no
+upstream change, so it cannot be blocked by lanes 1&ndash;3. If the symbolic path slips, a
+working generator still exists.</div>
+</section>
+
+<section>
+<h2>5 &middot; framework &mdash; orchestration</h2>
+<div class="repo">
+  <div class="hd"><span class="nm">Drive it, and prove it works</span>
+    <span class="meta">0.5 wk &middot; week 3 &middot; needs a working generator</span></div>
+  <div class="bd"><table>
+  <thead><tr><th>Task</th><th>Detail</th><th class="n">Days</th></tr></thead><tbody>
+  <tr><td class="a">Path resolution</td><td>Every tool and directory resolved once, from environment then repo-relative then <code>PATH</code>, so a fresh clone needs no edits</td><td class="n">0.5</td></tr>
+  <tr><td class="a">Opcode sourcing</td><td>Mnemonics and encodings from the model rather than an external opcode list</td><td class="n">1</td></tr>
+  <tr><td class="a">Single-file sweep</td><td>Parse one Sail file, render a legal instance, assemble it for the true encoding, generate, then <em>run</em> the result</td><td class="n">1</td></tr>
+  </tbody></table></div>
+</div>
+<div class="warn"><b>The sweep runs the ELF, it does not just generate it.</b> Generation not
+erroring is not proof &mdash; a self-targeting <code>jal</code> &ldquo;succeeds&rdquo; at
+generation time and hangs forever when executed.</div>
+</section>
+
+<section>
+<h2>Totals and the gate</h2>
+<div class="scroll"><table>
+<thead><tr><th>Repository</th><th>Weeks</th><th>Starts</th><th>Blocked by</th><th>On critical path</th></tr></thead><tbody>
+<tr><td class="a">sail-riscv</td><td class="n">1.0</td><td>week 1</td><td>nothing</td><td>no</td></tr>
+<tr><td class="a">isla</td><td class="n">1.5</td><td>week 1</td><td>nothing</td><td><b>yes</b></td></tr>
+<tr><td class="a">isla-testgen</td><td class="n">1.5</td><td>week 2</td><td>isla, sail-riscv</td><td><b>yes</b></td></tr>
+<tr><td class="a">autotest</td><td class="n">1.0</td><td>week 1</td><td>the model build only</td><td>no</td></tr>
+<tr><td class="a">framework</td><td class="n">0.5</td><td>week 3</td><td>either generator</td><td>yes</td></tr>
+<tr><td class="a" style="border-top:2px solid var(--rule-firm)"><b>Total</b></td>
+    <td class="n" style="border-top:2px solid var(--rule-firm)"><b>5.5</b></td>
+    <td style="border-top:2px solid var(--rule-firm)" colspan="3"><b>3 calendar weeks</b> with three lanes running in parallel</td></tr>
+</tbody></table></div>
+
+<div class="gate">
+  <div class="t">Exit gate &mdash; end of week 3</div>
+  <p><code>addi x1, x0, 1</code> generates from <b>both</b> backends, assembles with the real
+  toolchain, and <b>passes</b> on <code>sail_riscv_sim</code> and on Spike.</p>
+  <p>Plus: the entry points survive an <code>isla-sail</code> rebuild, verified by a post-build
+  check rather than assumed; and a symbolic PMP register read completes without crashing the
+  engine, which is what proves the struct-typed vector fix landed.</p>
+</div>
+
+<div class="key"><b>Why the gate is a passing test rather than a working pipeline.</b> Generation
+completing proves nothing &mdash; the failure mode this project keeps meeting is a test that runs
+and checks nothing. The gate is the narrowest artefact that could not be produced by a broken
+pipeline.</div>
+</section>
+
+<section>
+<h2>What this de-risks</h2>
+<p>Every technical unknown in the engagement resolves in these three weeks, on one instruction,
+before any breadth is attempted:</p>
+<div class="scroll"><table>
+<thead><tr><th>Unknown</th><th>Resolved by</th></tr></thead><tbody>
+<tr><td class="a">Does the engine run this model at all?</td><td>Lane 2 &mdash; primitives and the Sail release</td></tr>
+<tr><td class="a">Will upstream accept the entry points?</td><td>Lane 1 &mdash; submitted in week 1, so review starts as early as possible</td></tr>
+<tr><td class="a">Can PMP be tested symbolically?</td><td>Lane 2 &mdash; the struct-typed vector fix, checked at the gate</td></tr>
+<tr><td class="a">Does the emitter produce a loadable ELF?</td><td>Lane 3 &mdash; run on two simulators, not just linked</td></tr>
+<tr><td class="a">Does the oracle path work independently?</td><td>Lane 4 &mdash; it never touches lanes 1&ndash;3</td></tr>
+<tr><td class="a">Is a generated test capable of failing?</td><td>The gate &mdash; a passing test on an independent simulator</td></tr>
+</tbody></table></div>
+<div class="warn"><b>If something here is going to be impossible, it becomes visible in week
+three</b> rather than in week ten. That is the whole reason the foundation is built as one narrow
+slice instead of one layer at a time.</div>
+</section>
+
+<footer>Task lists and file names reflect work already carried out once to de-risk this proposal;
+durations are estimates for repeating it against the model revision agreed at project start.</footer>
+</div>

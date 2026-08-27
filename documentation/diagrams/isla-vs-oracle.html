@@ -1,0 +1,291 @@
+<title>ISLA vs Oracle Routing</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --surface:#fff; --sunk:#eaeef2;
+  --ink:#14181d; --body:#333c47; --muted:#647082;
+  --rule:#d6dce4; --rule-firm:#b6bfcb;
+  --symbolic:#3b5bb5; --symbolic-bg:#e6ecfa;
+  --oracle:#0f7368; --oracle-bg:#dff0ed;
+  --template:#9a6114; --template-bg:#f7efe0;
+  --alert:#a5372b; --alert-bg:#fae9e6;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --symbolic:#8fa7e8; --symbolic-bg:#1a2340;
+  --oracle:#5cbdb0; --oracle-bg:#0f2b28;
+  --template:#d8a75a; --template-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --symbolic:#8fa7e8; --symbolic-bg:#1a2340;
+  --oracle:#5cbdb0; --oracle-bg:#0f2b28;
+  --template:#d8a75a; --template-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px 80px}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.8rem,3.6vw,2.5rem);font-weight:600;letter-spacing:-.018em;line-height:1.12}
+h2{font-size:1.28rem;font-weight:600;letter-spacing:-.01em}
+h3{font-size:.98rem;font-weight:600}
+p{margin:0}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.86em;background:var(--sunk);padding:.08em .32em;border-radius:2px}
+header{padding:48px 0 20px;border-bottom:1px solid var(--rule-firm);margin-bottom:34px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--symbolic);font-weight:500;margin-bottom:10px}
+.standfirst{font-size:1.03rem;color:var(--muted);max-width:64ch;margin-top:10px}
+section{margin-top:44px}
+figure{margin:0}
+figcaption{font-size:.85rem;color:var(--muted);margin-top:12px;max-width:70ch}
+svg{max-width:100%;height:auto;display:block}
+.panel{border:1px solid var(--rule);background:var(--surface);padding:18px 20px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.tt{white-space:nowrap;font-weight:600;color:var(--ink)}
+.route{font-family:"IBM Plex Mono",monospace;font-size:.78rem;white-space:nowrap;font-weight:500}
+.r-sym{color:var(--symbolic)} .r-orc{color:var(--oracle)} .r-tpl{color:var(--template)}
+.backend{border:1px solid var(--rule);background:var(--surface);padding:15px 17px;
+  border-top:3px solid var(--rule-firm)}
+.backend.sym{border-top-color:var(--symbolic)}
+.backend.orc{border-top-color:var(--oracle)}
+.backend.tpl{border-top-color:var(--template)}
+.backend h3{margin-bottom:6px}
+.backend .why{font-size:.88rem;color:var(--body)}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:14px}
+.measures{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.measures>div{background:var(--surface);padding:11px 15px}
+.measures .m{font-weight:600;color:var(--ink);font-size:.9rem}
+.measures .q{font-size:.85rem;color:var(--muted)}
+.callout{border-left:3px solid var(--symbolic);background:var(--symbolic-bg);
+  padding:13px 17px;margin:16px 0}
+.callout b{color:var(--ink)}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);
+  font-size:.8rem;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">RISC-V Sail test generation &middot; §2.3</div>
+  <h1>ISLA vs Oracle</h1>
+  <p class="standfirst">Two generation backends with opposite limitations, beneath one
+  control loop. Which one serves a target is a routing decision, not a preference —
+  and for two ISA surfaces it is not a decision at all.</p>
+</header>
+
+<section>
+<h2>The difference, on one instruction</h2>
+<figure>
+<svg viewBox="0 0 900 340" role="img" aria-label="Symbolic execution leaves operands unknown and asks a solver which values reach each path through the model; the concrete oracle chooses operands, runs the model, and records whatever state resulted.">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-family="IBM Plex Sans, sans-serif" font-size="12.5" fill="currentColor">
+
+    <!-- SYMBOLIC -->
+    <text x="20" y="24" font-size="13.5" font-weight="600" fill="var(--symbolic)">SYMBOLIC — the solver derives the operands</text>
+    <rect x="20" y="40" width="180" height="46" fill="var(--symbolic-bg)" stroke="var(--symbolic)"/>
+    <text x="110" y="60" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12">div x12, x10, x11</text>
+    <text x="110" y="77" text-anchor="middle" font-size="11.5" opacity=".75">operands UNKNOWN</text>
+
+    <line x1="200" y1="63" x2="252" y2="63" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="226" y="55" text-anchor="middle" font-size="10.5" opacity=".75">execute</text>
+
+    <rect x="254" y="34" width="188" height="58" fill="none" stroke="currentColor" opacity=".55"/>
+    <text x="348" y="55" text-anchor="middle" font-size="12">model branches on</text>
+    <text x="348" y="72" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" opacity=".8">divisor==0? overflow?</text>
+
+    <line x1="442" y1="63" x2="494" y2="63" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="468" y="55" text-anchor="middle" font-size="10.5" opacity=".75">solve</text>
+
+    <rect x="496" y="28" width="200" height="34" fill="var(--symbolic-bg)" stroke="var(--symbolic)"/>
+    <text x="596" y="49" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">x11 = 0</text>
+    <rect x="496" y="66" width="200" height="34" fill="var(--symbolic-bg)" stroke="var(--symbolic)"/>
+    <text x="596" y="87" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">x10 = INT_MIN, x11 = -1</text>
+
+    <line x1="696" y1="45" x2="742" y2="45" stroke="currentColor" marker-end="url(#ar)"/>
+    <line x1="696" y1="83" x2="742" y2="83" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="748" y="49" font-size="11.5">one test per</text>
+    <text x="748" y="87" font-size="11.5">feasible path</text>
+
+    <text x="20" y="118" font-size="11.5" opacity=".8">Aims: derives inputs that provably reach a named behaviour.</text>
+    <text x="20" y="135" font-size="11.5" opacity=".8">Signed overflow is one pair in 2^128 — nothing stumbles on it.</text>
+
+    <line x1="20" y1="160" x2="880" y2="160" stroke="currentColor" opacity=".22"/>
+
+    <!-- ORACLE -->
+    <text x="20" y="192" font-size="13.5" font-weight="600" fill="var(--oracle)">ORACLE — the model reports what happened</text>
+    <rect x="20" y="208" width="180" height="46" fill="var(--oracle-bg)" stroke="var(--oracle)"/>
+    <text x="110" y="228" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12">add x12, x10, x11</text>
+    <text x="110" y="245" text-anchor="middle" font-size="11.5" opacity=".75">x10 = 1, x11 = 1</text>
+
+    <line x1="200" y1="231" x2="252" y2="231" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="226" y="223" text-anchor="middle" font-size="10.5" opacity=".75">run</text>
+
+    <rect x="254" y="208" width="188" height="46" fill="none" stroke="currentColor" opacity=".55"/>
+    <text x="348" y="236" text-anchor="middle" font-size="12">Golden Model executes</text>
+
+    <line x1="442" y1="231" x2="494" y2="231" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="468" y="223" text-anchor="middle" font-size="10.5" opacity=".75">observe</text>
+
+    <rect x="496" y="208" width="200" height="46" fill="var(--oracle-bg)" stroke="var(--oracle)"/>
+    <text x="596" y="230" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">x12 = 2</text>
+    <text x="596" y="246" text-anchor="middle" font-size="10.5" opacity=".75">state IS the expectation</text>
+
+    <line x1="696" y1="231" x2="742" y2="231" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="748" y="228" font-size="11.5">one test</text>
+    <text x="748" y="244" font-size="11.5">per run</text>
+
+    <text x="20" y="286" font-size="11.5" opacity=".8">Cannot aim — reports what the chosen values did.</text>
+    <text x="20" y="303" font-size="11.5" opacity=".8">But executes anything the model runs, including FP and vector.</text>
+    <text x="20" y="326" font-size="11.5" opacity=".8">No solver, so no representational bound.</text>
+  </g>
+</svg>
+<figcaption>The limitations are opposites, which is what makes combining them worthwhile rather
+than choosing between them. Privileged behaviour needs the machine in a specific state
+<em>and</em> an instruction executed there: the oracle executes anything but cannot construct
+state; the solver constructs state but cannot execute FP or vector.</figcaption>
+</figure>
+</section>
+
+<section>
+<h2>Generation backends</h2>
+<div class="grid3">
+  <div class="backend sym">
+    <h3 style="color:var(--symbolic)">ISLA + Z3</h3>
+    <p class="why">Derives operands that provably reach a named behaviour; solves for
+    privileged machine state.</p>
+  </div>
+  <div class="backend orc">
+    <h3 style="color:var(--oracle)">Concrete oracle</h3>
+    <p class="why">Executes anything the model can run, including FP and vector.
+    No solver, so no solver limits.</p>
+  </div>
+  <div class="backend tpl">
+    <h3 style="color:var(--template)">Templates</h3>
+    <p class="why">Branch and jump only; capped at 4 builders — growth is a defect
+    signal, reported in the suite summary.</p>
+  </div>
+</div>
+</section>
+
+<section>
+<h2>Generation routing</h2>
+<p style="max-width:70ch;margin-bottom:14px">Which backend serves a target is a declarative
+table, not hard-coded dispatch. Most of the ISA surface is reachable by either engine, so
+routing is a genuine choice; where it is not, the reason is a stated representational limit
+recorded with the decision.</p>
+<div class="scroll"><table>
+<thead><tr><th>ISA surface</th><th>Symbolic</th><th>Oracle</th><th>Routed to</th></tr></thead>
+<tbody>
+<tr><td class="tt">I, M, A, B, C, Zicsr, <code>Zb*</code>/<code>Zc*</code>/<code>Za*</code>/<code>Zk*</code></td>
+    <td>Yes</td><td>Yes</td><td class="route r-sym">Symbolic, oracle as fallback</td></tr>
+<tr><td class="tt">CSR-only privileged extensions<br><span style="font-weight:400;color:var(--muted)"><code>Sstc</code>, <code>Sscofpmf</code>, state-enable, pointer masking</span></td>
+    <td>Where expressible as constraints</td><td>Yes</td><td class="route">Either</td></tr>
+<tr><td class="tt">F, D, <code>Zf*</code>/<code>Zd*</code>/<code>Zh*</code></td>
+    <td><b>No</b> — 45 soft-float primitives absent from the engine</td><td>Yes</td>
+    <td class="route r-orc">Oracle only</td></tr>
+<tr><td class="tt">V, <code>Zv*</code>, vector crypto</td>
+    <td><b>No</b> — vector length is runtime state; value representation bounded at 129 bits</td><td>Yes</td>
+    <td class="route r-orc">Oracle only</td></tr>
+<tr><td class="tt">Branch, jump</td>
+    <td>Partial</td><td>Partial</td><td class="route r-tpl">Template — capped at 4</td></tr>
+</tbody></table></div>
+<div class="callout"><b>The 129-bit bound is a configuration fact, not only an ISA one.</b>
+Configurations 5 to 7 of the committed matrix run VLEN 256 and 512, which exceeds the
+engine's value representation. They are generated and measured by the oracle like any other
+configuration — a routing consequence, not a coverage gap.</div>
+</section>
+
+<section>
+<h2>What each target type needs from a generator</h2>
+<div class="scroll"><table>
+<thead><tr><th>Target type</th><th>What it covers</th><th>Best suited for</th></tr></thead>
+<tbody>
+<tr><td class="tt">Instruction sequences</td><td>ALU ops, loads and stores</td><td>Functional execution and corner cases</td></tr>
+<tr><td class="tt">CSRs / state</td><td><code>Zicsr</code>, counters, state enable, privilege state</td><td>CSR access, privilege transitions, machine-state scenarios</td></tr>
+<tr><td class="tt">Traps / exceptions</td><td>Illegal instruction, page faults, <code>ecall</code>/<code>ebreak</code></td><td>Exception handling, trap entry and return, fault scenarios</td></tr>
+<tr><td class="tt">Interrupts</td><td>Timer, external, software</td><td>Delivery, priority, delegation</td></tr>
+<tr><td class="tt">Translation / memory</td><td>Page tables, Sv modes, PMP/PMA</td><td>Virtual memory, access faults, protection</td></tr>
+<tr><td class="tt">Privileged features</td><td>M/S/U modes, counters, state-enable, QoS</td><td>Mode transitions, delegation, feature enablement</td></tr>
+</tbody></table></div>
+<figcaption style="margin-top:10px">Routing is stated once, in the table above — this one says what the
+work <em>is</em>, not which engine does it.</figcaption>
+</section>
+
+<section>
+<h2>What the framework does with the result</h2>
+<figure>
+<svg viewBox="0 0 900 250" role="img" aria-label="One materialised ELF runs on the instrumented Sail model and on an independent simulator. The two verdicts are compared: agreement passes, disagreement is triaged into model, simulator, framework or implementation-defined, and only one target available is reported inconclusive.">
+  <g font-family="IBM Plex Sans, sans-serif" font-size="12.5" fill="currentColor">
+    <rect x="20" y="96" width="150" height="52" fill="var(--sunk)" stroke="currentColor" opacity=".9"/>
+    <text x="95" y="118" text-anchor="middle" font-weight="600">materialised ELF</text>
+    <text x="95" y="135" text-anchor="middle" font-size="11" opacity=".75">unmodified everywhere</text>
+
+    <line x1="170" y1="110" x2="238" y2="66" stroke="currentColor" marker-end="url(#ar)"/>
+    <line x1="170" y1="134" x2="238" y2="178" stroke="currentColor" marker-end="url(#ar)"/>
+
+    <rect x="240" y="40" width="205" height="52" fill="none" stroke="currentColor"/>
+    <text x="342" y="61" text-anchor="middle">Sail, instrumented</text>
+    <text x="342" y="78" text-anchor="middle" font-size="11" opacity=".75">verdict + coverage spans</text>
+
+    <rect x="240" y="152" width="205" height="52" fill="none" stroke="currentColor"/>
+    <text x="342" y="173" text-anchor="middle">independent simulator</text>
+    <text x="342" y="190" text-anchor="middle" font-size="11" opacity=".75">not derived from the model</text>
+
+    <line x1="445" y1="66" x2="512" y2="110" stroke="currentColor" marker-end="url(#ar)"/>
+    <line x1="445" y1="178" x2="512" y2="134" stroke="currentColor" marker-end="url(#ar)"/>
+
+    <polygon points="590,90 660,122 590,154 520,122" fill="none" stroke="currentColor"/>
+    <text x="590" y="118" text-anchor="middle" font-size="11.5">verdicts</text>
+    <text x="590" y="133" text-anchor="middle" font-size="11.5">agree?</text>
+
+    <line x1="660" y1="112" x2="722" y2="78" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="686" y="84" font-size="10.5" opacity=".8">yes</text>
+    <rect x="724" y="56" width="150" height="40" fill="var(--oracle-bg)" stroke="var(--oracle)"/>
+    <text x="799" y="81" text-anchor="middle" fill="var(--oracle)" font-weight="600">pass</text>
+
+    <line x1="660" y1="132" x2="722" y2="164" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="686" y="162" font-size="10.5" opacity=".8">no</text>
+    <rect x="724" y="140" width="150" height="66" fill="var(--alert-bg)" stroke="var(--alert)"/>
+    <text x="799" y="160" text-anchor="middle" fill="var(--alert)" font-weight="600">triage</text>
+    <text x="799" y="177" text-anchor="middle" font-size="10.5">model / simulator /</text>
+    <text x="799" y="192" text-anchor="middle" font-size="10.5">framework / impl-defined</text>
+
+    <text x="520" y="234" font-size="11.5" opacity=".85">Only one target available → INCONCLUSIVE, never scored as a pass.</text>
+  </g>
+</svg>
+<figcaption>The independent simulator is the only component not derived from the Sail model,
+which is what stops a suite that agrees with itself from being mistaken for a suite that is
+correct.</figcaption>
+</figure>
+</section>
+
+<section>
+<div class="more" style="border:1px solid var(--rule);background:var(--surface);padding:16px 20px">
+  <b style="color:var(--ink)">The rest of the pipeline</b>
+  <p style="margin-top:6px;font-size:.92rem">What counts as 100% coverage, how the privileged
+  architecture becomes measurable targets, the committed scope and the seven configurations
+  are on the companion page — <em>Sail Model to Coverage Report</em>.</p>
+</div>
+</section>
+
+<footer>Content traces to the technical plan, sections 1.2, 1.4, 2.3 and 2.5. Routing is stated
+once, in Generation routing.</footer>
+</div>

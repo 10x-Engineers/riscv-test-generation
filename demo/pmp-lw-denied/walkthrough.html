@@ -1,0 +1,273 @@
+<title>PMP Coverage Walkthrough</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --surface:#fff; --sunk:#eaeef2;
+  --ink:#14181d; --body:#333c47; --muted:#647082;
+  --rule:#d6dce4; --rule-firm:#b6bfcb;
+  --accent:#3b5bb5; --accent-bg:#e6ecfa;
+  --ok:#0f7368; --ok-bg:#dff0ed;
+  --warn:#9a6114; --warn-bg:#f7efe0;
+  --alert:#a5372b; --alert-bg:#fae9e6;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:940px;margin:0 auto;padding:0 26px 80px}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.9rem,3.8vw,2.5rem);font-weight:600;letter-spacing:-.02em;line-height:1.12}
+h2{font-size:1.32rem;font-weight:600;letter-spacing:-.012em}
+h3{font-size:1.02rem;font-weight:600;margin-top:24px}
+p{margin:0 0 12px;max-width:76ch}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.85em;background:var(--sunk);padding:.08em .32em;border-radius:2px;overflow-wrap:anywhere}
+header{padding:50px 0 20px;border-bottom:2px solid var(--ink);margin-bottom:30px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px}
+.standfirst{font-size:1.04rem;color:var(--muted);max-width:66ch;margin-top:11px}
+section{margin-top:48px;border-top:1px solid var(--rule);padding-top:24px}
+section:first-of-type{border-top:none;padding-top:0}
+.secnum{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);margin:12px 0 16px}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.65rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.a{white-space:nowrap;font-weight:600;color:var(--ink)}
+td.m{font-family:"IBM Plex Mono",monospace;font-size:.79rem;color:var(--ink)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.neg td{background:var(--alert-bg)}
+.key{border-left:3px solid var(--accent);background:var(--accent-bg);padding:12px 16px;margin:14px 0}
+.key b{color:var(--ink)}
+.warn{border-left:3px solid var(--warn);background:var(--warn-bg);padding:12px 16px;margin:14px 0}
+.warn b{color:var(--ink)}
+.gap{border-left:3px solid var(--alert);background:var(--alert-bg);padding:12px 16px;margin:14px 0}
+.gap b{color:var(--ink)}
+pre{background:var(--surface);border:1px solid var(--rule);padding:12px 15px;overflow-x:auto;
+  font-size:.78rem;line-height:1.6;margin:12px 0;font-family:"IBM Plex Mono",monospace}
+pre b{color:var(--accent)}
+figure{margin:16px 0}
+figcaption{font-size:.85rem;color:var(--muted);margin-top:11px;max-width:72ch}
+svg{max-width:100%;height:auto;display:block}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-size:.82rem;color:var(--muted)}
+</style>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Live demonstration &middot; 27 August 2026</div>
+  <h1>PMP Coverage Walkthrough</h1>
+  <p class="standfirst">One <code>lw</code> against a PMP region with no read permission &mdash;
+  generated, run, measured, planned against, and then regenerated to close the gap the plan
+  found. Every number below came from a command run today.</p>
+</header>
+
+<section>
+<div class="secnum">Step 1</div>
+<h2>Generate the test</h2>
+<p>One command. The instruction is a plain <code>lw</code>; the PMP configuration is a flag.</p>
+<pre>isla-testgen -A riscv-ir/riscv64.ir -C riscv-ir/riscv64.toml -a riscv64 \
+  --memory-region 0x80020000-0x80030000 -o lw_pmp_read_denied -n 1 \
+  0x80020137 0x02011113 0x02015113 <b>0x00012083</b> \
+  <b>--pmp-deny 0x80020000</b> --expect-trap-cause <b>5</b> --trap-is-pass</pre>
+<div class="scroll"><table>
+<thead><tr><th>Part</th><th>What it is</th></tr></thead><tbody>
+<tr><td class="m">0x80020137 0x02011113 0x02015113</td><td><code>lui</code> / <code>slli</code> / <code>srli</code> &mdash; put <code>0x80020000</code> in <code>x2</code></td></tr>
+<tr><td class="m">0x00012083</td><td><b><code>lw x1, 0(x2)</code></b> &mdash; the instruction under test</td></tr>
+<tr><td class="m">--pmp-deny 0x80020000</td><td>Entry 0 denies all access to the 4&nbsp;KiB region there; entry 1 permits everything else</td></tr>
+<tr><td class="m">--expect-trap-cause 5</td><td>Load access fault &mdash; from <code>accessFaultFromAccessType</code>, <code>Load(Data) =&gt; E_Load_Access_Fault()</code></td></tr>
+<tr><td class="m">--trap-is-pass</td><td>Taking that trap <em>is</em> the result. Without it the harness resumes into a comparison that fails by construction</td></tr>
+</tbody></table></div>
+
+<h3>What the generator emitted</h3>
+<pre>/* PMP entry 0: deny *all* access to the 4KiB region at 0x80020000;
+   entry 1: permit everything else. PMP is first-match, so the
+   denying entry has to be entry 0 &mdash; reversed, the catch-all matches
+   first, nothing is ever denied, and the test would pass while
+   proving the opposite of what it claims. */
+li   x31, <b>0x200081ff</b>          <span style="opacity:.6">(0x80020000 &gt;&gt; 2) | 0x1ff &mdash; 4 KiB NAPOT</span>
+csrw pmpaddr0, x31
+li   x31, -1
+csrw pmpaddr1, x31
+li   x31, <b>0x1f98</b>              <span style="opacity:.6">[0]=L|NAPOT|no perms, [1]=NAPOT|RWX</span>
+csrw pmpcfg0, x31</pre>
+<p>And the handler that decides the verdict:</p>
+<pre>trap_vector:
+  csrr x30, mcause
+  li   x31, 5
+  bne  x30, x31, comparison_fail   <span style="opacity:.6">wrong cause &rarr; fail</span>
+  csrr x30, mepc
+  la   x31, test_start
+  bltu x30, x31, comparison_fail   <span style="opacity:.6">trap came from the preamble &rarr; fail</span>
+  li   t5, 1
+  j    write_tohost                <span style="opacity:.6">the trap IS the pass</span></pre>
+<div class="key"><b>That second check is the one people miss.</b> <code>mtvec</code> is armed by the
+preamble's first instruction, so a fault raised while programming PMP would carry cause 5 too and
+report success having never reached the <code>lw</code>. Right cause, entirely wrong reason.</div>
+</section>
+
+<section>
+<div class="secnum">Step 2</div>
+<h2>Run it &mdash; and prove the pass is real</h2>
+<div class="scroll"><table>
+<thead><tr><th>Test</th><th>Sail Golden Model</th><th>Spike (independent)</th><th>Expected</th></tr></thead><tbody>
+<tr><td class="m">lw_pmp_read_denied</td><td class="a">SUCCESS</td><td class="a">pass</td><td>pass</td></tr>
+<tr class="neg"><td class="m">NEG_wrong_address</td><td class="a">FAILURE</td><td class="a">FAIL</td><td><b>must fail</b></td></tr>
+<tr class="neg"><td class="m">NEG_wrong_cause</td><td class="a">FAILURE</td><td class="a">FAIL</td><td><b>must fail</b></td></tr>
+</tbody></table></div>
+<div class="warn"><b>A passing test proves nothing on its own.</b> The first control denies a
+region the test never touches &mdash; if it still passed, the fault was coming from somewhere
+else. The second expects cause 7 instead of 5 &mdash; if it still passed, the handler was
+noticing <em>a</em> trap rather than <em>the</em> trap. Both fail, so the pass means what it
+says.</div>
+</section>
+
+<section>
+<div class="secnum">Step 3</div>
+<h2>Measure the coverage</h2>
+<pre>SAILCOV=1 build-coverage/c_emulator/sail_riscv_sim --config rv64.json lw_pmp_read_denied.elf</pre>
+<p>That appends every executed span to <code>sail_coverage</code> &mdash; <b>2,162 lines</b> from
+this one test. Reconciled against the model's own span manifest:</p>
+<div class="scroll"><table>
+<thead><tr><th>File</th><th class="n">covered</th><th class="n">total</th><th class="n">%</th></tr></thead><tbody>
+<tr><td class="m">pmp/pmp_control.sail</td><td class="n">38</td><td class="n">77</td><td class="n">49.4%</td></tr>
+<tr><td class="m">pmp/pmp_regs.sail</td><td class="n">43</td><td class="n">149</td><td class="n">28.9%</td></tr>
+<tr><td class="a">pmp/ total</td><td class="n"><b>81</b></td><td class="n"><b>226</b></td><td class="n"><b>35.8%</b></td></tr>
+<tr><td class="a">whole model</td><td class="n">2,152</td><td class="n">15,157</td><td class="n">14.2%</td></tr>
+</tbody></table></div>
+<div class="key"><b>One test reaches a third of the PMP enforcement code.</b> That is not because
+the test is clever &mdash; it is because a denied access runs the whole decision path: address
+match, permission check, privilege override, fault construction.</div>
+
+<h3>Which access kinds it reached</h3>
+<p><code>pmpCheckRWX</code> has 19 arms. This single test reached <b>4</b>:</p>
+<div class="scroll"><table>
+<thead><tr><th>Arm</th><th>Reached?</th><th>By what</th></tr></thead><tbody>
+<tr><td class="m">Load(Data)</td><td class="a">HIT</td><td>The <code>lw</code> under test</td></tr>
+<tr><td class="m">Store(Data)</td><td class="a">HIT</td><td>The harness's own <code>tohost</code> write</td></tr>
+<tr><td class="m">InstructionFetch()</td><td class="a">HIT</td><td>Every fetch is PMP-checked</td></tr>
+<tr class="neg"><td class="m">LoadReserved / StoreConditional / Atomic</td><td>miss</td><td>No such instruction in the test</td></tr>
+<tr class="neg"><td class="m">Load/Store(Vector), Load/Store(PageTableEntry)</td><td>miss</td><td>Needs V enabled; needs a page-table walk</td></tr>
+<tr class="neg"><td class="m">ShadowStack &times;3, CacheAccess &times;3, prefetch &times;3</td><td>miss</td><td>Needs Zicfiss, Zicbom, Zicboz, Zicbop</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="secnum">Step 4</div>
+<h2>What the testplan says to do next</h2>
+<p><code>testplan.py</code> enumerates the model's whole span manifest as plan items, then joins
+coverage in as a status column. The plan does not shrink when tests are added &mdash; it fills
+in.</p>
+<pre>14,975 spans &rarr; 2,347 plan items (2,347 reachable, 0 held unreachable)
+
+state           items
+not started      1934
+partial           198
+complete          155
+out of reach       60</pre>
+<div class="key"><b><code>pmpCheck</code> was listed <em>out of reach</em>.</b> That is the plan
+telling us something specific: with only this one test, the item cannot be completed &mdash; not
+that it is impossible, but that no stimulus in the corpus can finish it. That is the line that
+drove step 5.</div>
+</section>
+
+<section>
+<div class="secnum">Step 5</div>
+<h2>Regenerate against the gap</h2>
+<p>Four more tests, same preamble, different instruction under test. Each targets one named arm.</p>
+<div class="scroll"><table>
+<thead><tr><th>Test</th><th>Instruction</th><th>Arm targeted</th><th>Cause</th></tr></thead><tbody>
+<tr><td class="m">sw_pmp_write_denied</td><td class="m">sw x1, 0(x2)</td><td class="m">Store(Data)</td><td class="n">7</td></tr>
+<tr><td class="m">lr_pmp_read_denied</td><td class="m">lr.d x1, (x2)</td><td class="m">LoadReserved(_,_,Data)</td><td class="n">5</td></tr>
+<tr><td class="m">sc_pmp_write_denied</td><td class="m">sc.d x3, x1, (x2)</td><td class="m">StoreConditional(_,_,Data)</td><td class="n">7</td></tr>
+<tr><td class="m">amo_pmp_denied</td><td class="m">amoadd.d x1, x1, (x2)</td><td class="m">Atomic(_,_,_,Data,Data)</td><td class="n">7</td></tr>
+</tbody></table></div>
+<p>The causes are not guesses &mdash; they are read out of
+<code>accessFaultFromAccessType</code>, which maps loads to <code>E_Load_Access_Fault</code> (5)
+and stores, SCs and AMOs to <code>E_SAMO_Access_Fault</code> (7).</p>
+<div class="scroll"><table>
+<thead><tr><th>Test</th><th>Sail</th><th>Spike</th></tr></thead><tbody>
+<tr><td class="m">lw_pmp_read_denied</td><td class="a">SUCCESS</td><td class="a">pass</td></tr>
+<tr><td class="m">sw_pmp_write_denied</td><td class="a">SUCCESS</td><td class="a">pass</td></tr>
+<tr><td class="m">lr_pmp_read_denied</td><td class="a">SUCCESS</td><td class="a">pass</td></tr>
+<tr><td class="m">sc_pmp_write_denied</td><td class="a">SUCCESS</td><td class="a">pass</td></tr>
+<tr><td class="m">amo_pmp_denied</td><td class="a">SUCCESS</td><td class="a">pass</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="secnum">Step 6</div>
+<h2>Re-measure: what moved</h2>
+<div class="scroll"><table>
+<thead><tr><th>&nbsp;</th><th class="n">1 test</th><th class="n">5 tests</th><th class="n">delta</th></tr></thead><tbody>
+<tr><td class="m">pmp/pmp_control.sail</td><td class="n">38/77 &nbsp;49.4%</td><td class="n">42/77 &nbsp;54.5%</td><td class="n"><b>+4</b></td></tr>
+<tr><td class="m">pmp/pmp_regs.sail</td><td class="n">43/149 &nbsp;28.9%</td><td class="n">43/149 &nbsp;28.9%</td><td class="n">+0</td></tr>
+<tr><td class="a">pmp/ total</td><td class="n">81/226 &nbsp;35.8%</td><td class="n">85/226 &nbsp;<b>37.6%</b></td><td class="n"><b>+4</b></td></tr>
+<tr><td class="a">whole model</td><td class="n">2,152 &nbsp;14.2%</td><td class="n">2,255 &nbsp;<b>14.9%</b></td><td class="n"><b>+103</b></td></tr>
+<tr><td class="a">pmpCheckRWX arms</td><td class="n">4 of 19</td><td class="n"><b>7 of 19</b></td><td class="n"><b>+3</b></td></tr>
+</tbody></table></div>
+<div class="warn"><b><code>pmp_regs.sail</code> did not move at all, and that is the finding.</b>
+Four new tests, four more enforcement branches, and <em>zero</em> progress on the register file
+&mdash; which is two thirds of the PMP code. Enforcement tests exercise
+<code>pmp_control.sail</code>; nothing here writes a <code>pmpcfg</code> value and reads it back
+to check what the model <em>kept</em>. That is a different campaign, and it is the larger one.</div>
+
+<h3>And the plan updated itself</h3>
+<div class="scroll"><table>
+<thead><tr><th>Plan item</th><th>Before</th><th>After</th></tr></thead><tbody>
+<tr><td class="m">pmpCheck</td><td class="m">out of reach</td><td class="a">complete</td></tr>
+<tr><td class="m">encdec_amoop</td><td class="m">not started</td><td class="m">partial</td></tr>
+<tr><td class="m">exceptionType_bits</td><td class="m">not started</td><td class="m">partial</td></tr>
+<tr><td class="m">xtval_exception_value</td><td class="m">not started</td><td class="m">partial</td></tr>
+<tr><td class="m">&hellip; 25 more</td><td colspan="2">29 plan items changed state in total, across 9 stimulus categories</td></tr>
+</tbody></table></div>
+<div class="key"><b>Nobody edited the plan.</b> It is derived from the model's span manifest and
+joined against the coverage file, so adding tests moves items on their own. That is the property
+that makes it usable as a work queue rather than a document that goes stale.</div>
+</section>
+
+<section>
+<div class="secnum">The loop</div>
+<h2>What this demonstrates</h2>
+<div class="scroll"><table>
+<thead><tr><th class="n">&nbsp;</th><th>Stage</th><th>Output</th></tr></thead><tbody>
+<tr><td class="n">1</td><td>Generate</td><td>A self-checking ELF from the unmodified model, with the PMP state built in the preamble</td></tr>
+<tr><td class="n">2</td><td>Run</td><td>Passes on Sail and Spike; both negative controls fail, so the pass is meaningful</td></tr>
+<tr><td class="n">3</td><td>Measure</td><td>Branch coverage against the Sail sources &mdash; 35.8% of <code>pmp/</code> from one test</td></tr>
+<tr><td class="n">4</td><td>Plan</td><td><code>pmpCheck</code> flagged out of reach, with the reason visible</td></tr>
+<tr><td class="n">5</td><td>Regenerate</td><td>Four tests aimed at the named arms</td></tr>
+<tr><td class="n">6</td><td>Re-measure</td><td>37.6%, 7 of 19 arms, <code>pmpCheck</code> complete &mdash; and a new gap exposed</td></tr>
+</tbody></table></div>
+<div class="key"><b>Step 6 producing a new gap is the point, not a shortfall.</b> The loop does not
+terminate in "done"; it terminates when every reachable span is hit or excluded with a written
+reason. Right now it is telling us the next campaign is CSR read-back on
+<code>pmp_regs.sail</code> &mdash; 149 spans, 28.9% covered, and not one enforcement test will
+move it.</div>
+</section>
+
+<footer>All artefacts in <code>demo/pmp-lw-denied/</code>: seven <code>.s</code>/<code>.elf</code>
+pairs, two <code>sail_coverage</code> traces, two sailcov HTML reports
+(<code>sailcov/</code> = 1 test, <code>sailcov_5tests/</code> = 5 tests), and two testplans.
+Coverage measured with <code>build-coverage/c_emulator/sail_riscv_sim</code> against
+<code>sail_riscv_model.branch_info</code>; independent results from Spike
+<code>--isa=rv64imac_zicsr</code>.</footer>
+</div>

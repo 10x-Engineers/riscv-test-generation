@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>pmp_control</title></head>
+<body>
+<h1>pmp_control.sail (37/67) 55%</h1>
+<code style="display: block">
+//&nbsp;=======================================================================================<br>
+//&nbsp;This&nbsp;Sail&nbsp;RISC-V&nbsp;architecture&nbsp;model,&nbsp;comprising&nbsp;all&nbsp;files&nbsp;and<br>
+//&nbsp;directories&nbsp;except&nbsp;where&nbsp;otherwise&nbsp;noted&nbsp;is&nbsp;subject&nbsp;the&nbsp;BSD<br>
+//&nbsp;two-clause&nbsp;license&nbsp;in&nbsp;the&nbsp;LICENSE&nbsp;file.<br>
+//<br>
+//&nbsp;SPDX-License-Identifier:&nbsp;BSD-2-Clause<br>
+//&nbsp;=======================================================================================<br>
+<br>
+<br>
+//&nbsp;permission&nbsp;checks<br>
+<br>
+private&nbsp;function&nbsp;pmpCheckRWX(ent&nbsp;:&nbsp;Pmpcfg_ent,&nbsp;access&nbsp;:&nbsp;MemoryAccessType(mem_payload))&nbsp;-&gt;&nbsp;bool&nbsp;=<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 80%)">match&nbsp;access&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Load(Data)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">ent[R]&nbsp;==&nbsp;0b1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Load(Vector)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">ent[R]&nbsp;==&nbsp;0b1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Load(PageTableEntry)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">ent[R]&nbsp;==&nbsp;0b1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;LoadReserved(_,&nbsp;_,&nbsp;Data)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">ent[R]&nbsp;==&nbsp;0b1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Store(Data)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">ent[W]&nbsp;==&nbsp;0b1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Store(Vector)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">ent[W]&nbsp;==&nbsp;0b1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Store(PageTableEntry)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">ent[W]&nbsp;==&nbsp;0b1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;StoreConditional(_,&nbsp;_,&nbsp;Data)&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">ent[W]&nbsp;==&nbsp;0b1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Atomic(_,&nbsp;_,&nbsp;_,&nbsp;Data,&nbsp;Data)&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">ent[R]&nbsp;==&nbsp;0b1&nbsp;&&nbsp;<span style="background-color: hsl(0, 85%, 80%)">ent[W]&nbsp;==&nbsp;0b1</span></span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;InstructionFetch()&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">ent[X]&nbsp;==&nbsp;0b1</span>,<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&quot;The&nbsp;PMP&nbsp;checks&nbsp;are&nbsp;extended&nbsp;to&nbsp;require&nbsp;read-write&nbsp;permission<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;for&nbsp;memory&nbsp;accessed&nbsp;by&nbsp;shadow&nbsp;stack&nbsp;instructions.&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Load(ShadowStack)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">ent[R]&nbsp;==&nbsp;0b1&nbsp;&&nbsp;<span style="background-color: hsl(0, 85%, 75%)">ent[W]&nbsp;==&nbsp;0b1</span></span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Store(ShadowStack)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">ent[R]&nbsp;==&nbsp;0b1&nbsp;&&nbsp;<span style="background-color: hsl(0, 85%, 75%)">ent[W]&nbsp;==&nbsp;0b1</span></span>,<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Atomic(_,&nbsp;_,&nbsp;_,&nbsp;ShadowStack,&nbsp;ShadowStack)&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">ent[R]&nbsp;==&nbsp;0b1&nbsp;&&nbsp;<span style="background-color: hsl(0, 85%, 75%)">ent[W]&nbsp;==&nbsp;0b1</span></span>,<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;LoadReserved(_,&nbsp;_,&nbsp;p)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">internal_error(__FILE__,&nbsp;__LINE__,&nbsp;&quot;Invalid&nbsp;payload&nbsp;(&quot;&nbsp;^&nbsp;mem_payload_name(p)&nbsp;^&nbsp;&quot;)&nbsp;for&nbsp;LoadReserved.&quot;)</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;StoreConditional(_,&nbsp;_,&nbsp;p)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">internal_error(__FILE__,&nbsp;__LINE__,&nbsp;&quot;Invalid&nbsp;payload&nbsp;(&quot;&nbsp;^&nbsp;mem_payload_name(p)&nbsp;^&nbsp;&quot;)&nbsp;for&nbsp;StoreConditional.&quot;)</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Atomic(_,&nbsp;_,&nbsp;_,&nbsp;rp,&nbsp;wp)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">internal_error(__FILE__,&nbsp;__LINE__,&nbsp;&quot;Invalid&nbsp;payloads&nbsp;(&quot;&nbsp;^&nbsp;mem_payload_name(rp)&nbsp;^&nbsp;&quot;,&nbsp;&quot;&nbsp;^&nbsp;mem_payload_str(wp)&nbsp;^&nbsp;&quot;)&nbsp;for&nbsp;Atomic.&quot;)</span>,<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;TODO:&nbsp;&quot;If&nbsp;neither&nbsp;a&nbsp;load&nbsp;instruction&nbsp;nor&nbsp;store&nbsp;instruction&nbsp;is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;permitted&nbsp;to&nbsp;access&nbsp;the&nbsp;physical&nbsp;addresses,&nbsp;but&nbsp;an&nbsp;instruction<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;fetch&nbsp;is&nbsp;permitted&nbsp;to&nbsp;access&nbsp;the&nbsp;physical&nbsp;addresses,&nbsp;whether&nbsp;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;cache-block&nbsp;management&nbsp;instruction&nbsp;is&nbsp;permitted&nbsp;to&nbsp;access&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;cache&nbsp;block&nbsp;is&nbsp;UNSPECIFIED.&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CacheAccess(CB_manage(_))&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">ent[R]&nbsp;==&nbsp;0b1&nbsp;|&nbsp;<span style="background-color: hsl(0, 85%, 75%)">ent[W]&nbsp;==&nbsp;0b1</span></span>,<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CacheAccess(CB_zero())&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">ent[W]&nbsp;==&nbsp;0b1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CacheAccess(CB_prefetch(p))&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">match&nbsp;p&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PREFETCH_I&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 75%)">ent[X]&nbsp;==&nbsp;0b1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PREFETCH_R&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 75%)">ent[R]&nbsp;==&nbsp;0b1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PREFETCH_W&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 75%)">ent[W]&nbsp;==&nbsp;0b1</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</span>,<br>
+&nbsp;&nbsp;}</span><br>
+<br>
+<br>
+//&nbsp;matching&nbsp;logic<br>
+<br>
+private&nbsp;enum&nbsp;pmpAddrMatch&nbsp;=&nbsp;{PMP_NoMatch,&nbsp;PMP_PartialMatch,&nbsp;PMP_Match}<br>
+<br>
+//&nbsp;Given&nbsp;a&nbsp;right-open&nbsp;interval&nbsp;[begin,&nbsp;end_),&nbsp;return&nbsp;whether&nbsp;[addr,&nbsp;addr+width)<br>
+//&nbsp;is&nbsp;contained&nbsp;fully&nbsp;within&nbsp;it&nbsp;(PMP_Match),&nbsp;doesn't&nbsp;overlap&nbsp;at&nbsp;all&nbsp;(PMP_NoMatch)<br>
+//&nbsp;or&nbsp;partially&nbsp;intersects&nbsp;it&nbsp;(PMP_PartialMatch).<br>
+private&nbsp;function&nbsp;pmpRangeMatch(<br>
+&nbsp;&nbsp;begin&nbsp;:&nbsp;nat,<br>
+&nbsp;&nbsp;end_&nbsp;:&nbsp;nat,<br>
+&nbsp;&nbsp;addr&nbsp;:&nbsp;nat,<br>
+&nbsp;&nbsp;width&nbsp;:&nbsp;nat,<br>
+)&nbsp;-&gt;&nbsp;pmpAddrMatch&nbsp;=<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 80%)">if&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">(addr&nbsp;+&nbsp;width&nbsp;&lt;=&nbsp;begin)&nbsp;|&nbsp;(<span style="background-color: hsl(120, 85%, 70%)">end_&nbsp;&lt;=&nbsp;addr</span>)</span><br>
+&nbsp;&nbsp;then&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">PMP_NoMatch</span><br>
+&nbsp;&nbsp;else&nbsp;<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;<span style="background-color: hsl(120, 85%, 70%)">(begin&nbsp;&lt;=&nbsp;addr)&nbsp;&&nbsp;(<span style="background-color: hsl(120, 85%, 65%)">addr&nbsp;+&nbsp;width&nbsp;&lt;=&nbsp;end_</span>)</span><br>
+&nbsp;&nbsp;then&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 70%)">PMP_Match</span><br>
+&nbsp;&nbsp;else&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">PMP_PartialMatch</span></span></span><br>
+<br>
+//&nbsp;Destructured&nbsp;in&nbsp;the&nbsp;body,&nbsp;not&nbsp;the&nbsp;parameter&nbsp;list:&nbsp;see&nbsp;split_access_utils.sail<br>
+//&nbsp;(is_aligned_paddr/is_aligned_vaddr)&nbsp;for&nbsp;why.<br>
+private&nbsp;function&nbsp;pmpMatchAddr(<br>
+&nbsp;&nbsp;pa&nbsp;:&nbsp;physaddr,<br>
+&nbsp;&nbsp;width&nbsp;:&nbsp;xlenbits,<br>
+&nbsp;&nbsp;ent&nbsp;:&nbsp;Pmpcfg_ent,<br>
+&nbsp;&nbsp;pmpaddr&nbsp;:&nbsp;xlenbits,<br>
+&nbsp;&nbsp;prev_pmpaddr&nbsp;:&nbsp;xlenbits,<br>
+)&nbsp;-&gt;&nbsp;pmpAddrMatch&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
+&nbsp;&nbsp;let&nbsp;Physaddr(addr)&nbsp;=&nbsp;pa;<br>
+&nbsp;&nbsp;let&nbsp;addr&nbsp;=&nbsp;unsigned(addr);<br>
+&nbsp;&nbsp;let&nbsp;width&nbsp;=&nbsp;unsigned(width);<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">match&nbsp;pmpAddrMatchType_encdec(ent[A])&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;OFF&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 70%)">PMP_NoMatch</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;TOR&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&quot;If&nbsp;PMP&nbsp;entry&nbsp;[i]'s&nbsp;A&nbsp;field&nbsp;is&nbsp;set&nbsp;to&nbsp;TOR,&nbsp;the&nbsp;entry&nbsp;matches<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;any&nbsp;address&nbsp;y&nbsp;such&nbsp;that&nbsp;pmpaddr[i-1]&nbsp;&lt;=&nbsp;y&nbsp;&lt;&nbsp;pmpaddr[i]&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&quot;If&nbsp;pmpaddr[i-1]&nbsp;&gt;=&nbsp;pmpaddr[i]&nbsp;and&nbsp;pmpcfg[i].A=TOR,&nbsp;then&nbsp;PMP&nbsp;entry&nbsp;i&nbsp;matches&nbsp;no&nbsp;addresses.&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;prev_pmpaddr&nbsp;&gt;=_u&nbsp;pmpaddr<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 70%)">PMP_NoMatch</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;<span style="background-color: hsl(0, 85%, 70%)">pmpRangeMatch(unsigned(prev_pmpaddr)&nbsp;*&nbsp;4,&nbsp;unsigned(pmpaddr)&nbsp;*&nbsp;4,&nbsp;addr,&nbsp;width)</span></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;NA4&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;NA4&nbsp;is&nbsp;not&nbsp;selectable&nbsp;when&nbsp;the&nbsp;PMP&nbsp;grain&nbsp;G&nbsp;&gt;=&nbsp;1.&nbsp;See&nbsp;pmpWriteCfg().<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(sys_pmp_grain&nbsp;&lt;&nbsp;1,&nbsp;&quot;NA4&nbsp;cannot&nbsp;be&nbsp;selected&nbsp;when&nbsp;PMP&nbsp;grain&nbsp;G&nbsp;&gt;=&nbsp;1.&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Match&nbsp;a&nbsp;4-byte&nbsp;region.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;begin&nbsp;=&nbsp;unsigned(pmpaddr)&nbsp;*&nbsp;4;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pmpRangeMatch(begin,&nbsp;begin&nbsp;+&nbsp;4,&nbsp;addr,&nbsp;width)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;NAPOT&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 70%)">{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Example&nbsp;pmpaddr:&nbsp;0b00010101111<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^---&nbsp;last&nbsp;0&nbsp;dictates&nbsp;region&nbsp;size&nbsp;&&nbsp;alignment<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;mask&nbsp;=&nbsp;pmpaddr&nbsp;^&nbsp;(pmpaddr&nbsp;+&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;pmpaddr&nbsp;+&nbsp;1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0b00010110000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;mask:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0b00000011111<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;~mask:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0b11111100000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;begin_words&nbsp;=&nbsp;unsigned(pmpaddr&nbsp;&&nbsp;(~(mask)));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;mask&nbsp;+&nbsp;1:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0b00000100000<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;end_words&nbsp;=&nbsp;begin_words&nbsp;+&nbsp;unsigned(mask)&nbsp;+&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pmpRangeMatch(begin_words&nbsp;*&nbsp;4,&nbsp;end_words&nbsp;*&nbsp;4,&nbsp;addr,&nbsp;width)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</span>,<br>
+&nbsp;&nbsp;}</span><br>
+}</span><br>
+<br>
+//&nbsp;priority&nbsp;checks<br>
+<br>
+function&nbsp;pmpCheck&nbsp;forall&nbsp;'n,&nbsp;0&nbsp;&lt;&nbsp;'n&nbsp;&lt;=&nbsp;max_mem_access&nbsp;.&nbsp;(<br>
+&nbsp;&nbsp;addr&nbsp;:&nbsp;physaddr,<br>
+&nbsp;&nbsp;width&nbsp;:&nbsp;int('n),<br>
+&nbsp;&nbsp;access&nbsp;:&nbsp;MemoryAccessType(mem_payload),<br>
+&nbsp;&nbsp;priv&nbsp;:&nbsp;Privilege,<br>
+)&nbsp;-&gt;&nbsp;option(ExceptionType)&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
+<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;sys_pmp_count&nbsp;==&nbsp;0&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 80%)">return&nbsp;None()</span></span>;<br>
+<br>
+&nbsp;&nbsp;let&nbsp;width&nbsp;:&nbsp;xlenbits&nbsp;=&nbsp;to_bits(width);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;TODO&nbsp;for&nbsp;accesses&nbsp;of&nbsp;type&nbsp;CacheAccess:<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;The&nbsp;CMO&nbsp;extensions&nbsp;impose&nbsp;the&nbsp;following&nbsp;constraints&nbsp;on&nbsp;the<br>
+&nbsp;&nbsp;//&nbsp;physical&nbsp;addresses&nbsp;in&nbsp;a&nbsp;given&nbsp;cache&nbsp;block:&nbsp;&quot;The&nbsp;PMP&nbsp;access&nbsp;control<br>
+&nbsp;&nbsp;//&nbsp;bits&nbsp;shall&nbsp;be&nbsp;the&nbsp;same&nbsp;for&nbsp;all&nbsp;physical&nbsp;addresses&nbsp;in&nbsp;the&nbsp;cache<br>
+&nbsp;&nbsp;//&nbsp;block,&nbsp;and&nbsp;if&nbsp;write&nbsp;permission&nbsp;is&nbsp;granted&nbsp;by&nbsp;the&nbsp;PMP&nbsp;access<br>
+&nbsp;&nbsp;//&nbsp;control&nbsp;bits,&nbsp;read&nbsp;permission&nbsp;shall&nbsp;also&nbsp;be&nbsp;granted.&quot;<br>
+<br>
+&nbsp;&nbsp;foreach&nbsp;(i&nbsp;from&nbsp;0&nbsp;to&nbsp;sys_pmp_count&nbsp;-&nbsp;1)&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;prev_pmpaddr&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;i&nbsp;&gt;&nbsp;0&nbsp;then&nbsp;<span style="background-color: hsl(120, 85%, 70%)">pmpReadAddrReg(i&nbsp;-&nbsp;1)</span>&nbsp;else&nbsp;<span style="background-color: hsl(120, 85%, 70%)">zeros()</span></span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;cfg&nbsp;=&nbsp;pmpcfg_n[i];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">match&nbsp;pmpMatchAddr(addr,&nbsp;width,&nbsp;cfg,&nbsp;pmpReadAddrReg(i),&nbsp;prev_pmpaddr)&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PMP_NoMatch&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 70%)">()</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PMP_PartialMatch&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">return&nbsp;Some(accessFaultFromAccessType(access))</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PMP_Match&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 70%)">return&nbsp;(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 65%)">if&nbsp;<span style="background-color: hsl(120, 85%, 60%)">pmpCheckRWX(cfg,&nbsp;access)&nbsp;|&nbsp;(<span style="background-color: hsl(120, 85%, 55%)">priv&nbsp;==&nbsp;Machine&nbsp;&&nbsp;<span style="background-color: hsl(120, 85%, 50%)">not(pmpLocked(cfg))</span></span>)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;then&nbsp;<span style="background-color: hsl(120, 85%, 60%)">None()</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;<span style="background-color: hsl(120, 85%, 60%)">Some(accessFaultFromAccessType(access))</span></span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</span>;<br>
+&nbsp;&nbsp;};<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;priv&nbsp;==&nbsp;Machine&nbsp;then&nbsp;<span style="background-color: hsl(120, 85%, 70%)">None()</span>&nbsp;else&nbsp;<span style="background-color: hsl(0, 85%, 80%)">Some(accessFaultFromAccessType(access))</span></span><br>
+}</span><br>
+<br>
+function&nbsp;reset_pmp()&nbsp;-&gt;&nbsp;unit&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
+&nbsp;&nbsp;foreach&nbsp;(i&nbsp;from&nbsp;0&nbsp;to&nbsp;63)&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;On&nbsp;reset&nbsp;the&nbsp;PMP&nbsp;register's&nbsp;A&nbsp;and&nbsp;L&nbsp;bits&nbsp;are&nbsp;set&nbsp;to&nbsp;0&nbsp;unless&nbsp;the&nbsp;platform<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;mandates&nbsp;a&nbsp;different&nbsp;value.&nbsp;Previously&nbsp;this&nbsp;used&nbsp;a&nbsp;`with`-update&nbsp;on&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;existing&nbsp;pmpcfg_n[i]&nbsp;(`[pmpcfg_n[i]&nbsp;with&nbsp;A&nbsp;=&nbsp;...,&nbsp;L&nbsp;=&nbsp;0b0]`),&nbsp;which&nbsp;only<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;concretizes&nbsp;those&nbsp;two&nbsp;fields&nbsp;—&nbsp;X/W/R&nbsp;stay&nbsp;whatever&nbsp;pmpcfg_n[i]&nbsp;was<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;before&nbsp;(symbolic,&nbsp;since&nbsp;pmpcfg_n&nbsp;has&nbsp;no&nbsp;default&nbsp;initializer).&nbsp;Reading<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;`.bits`&nbsp;off&nbsp;a&nbsp;vector-of-bitfield-struct&nbsp;register&nbsp;in&nbsp;that<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;partially-concretized&nbsp;state&nbsp;hits&nbsp;a&nbsp;real&nbsp;isla-lib&nbsp;execution&nbsp;gap<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;(smt_value&nbsp;called&nbsp;on&nbsp;a&nbsp;raw&nbsp;Val::Struct&nbsp;instead&nbsp;of&nbsp;a&nbsp;projected<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;symbolic&nbsp;bitvector&nbsp;—&nbsp;see&nbsp;PMP_PLAN.md).&nbsp;Constructing&nbsp;a&nbsp;fully&nbsp;concrete<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Pmpcfg_ent&nbsp;from&nbsp;scratch&nbsp;(all&nbsp;fields,&nbsp;not&nbsp;just&nbsp;A/L)&nbsp;sidesteps&nbsp;it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;entirely,&nbsp;and&nbsp;is&nbsp;equally&nbsp;correct:&nbsp;every&nbsp;field&nbsp;is&nbsp;architecturally&nbsp;0&nbsp;at<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;reset&nbsp;for&nbsp;a&nbsp;from-scratch&nbsp;boot,&nbsp;not&nbsp;just&nbsp;A/L.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[i]&nbsp;=&nbsp;[Mk_Pmpcfg_ent(zeros())&nbsp;with&nbsp;A&nbsp;=&nbsp;pmpAddrMatchType_encdec(OFF),&nbsp;L&nbsp;=&nbsp;0b0];<br>
+&nbsp;&nbsp;};<br>
+}</span><br>
+</code>
+</body>
+</html>

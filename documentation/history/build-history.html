@@ -1,0 +1,356 @@
+<title>Building the Test Generator</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f5f6f8; --surface:#fff; --sunk:#edeff3;
+  --ink:#15171d; --body:#343a48; --muted:#646c80;
+  --rule:#d9dce4; --rule-firm:#bbc0cd;
+  --accent:#3d4a8c; --accent-soft:#e2e5f2;
+  --warn:#8a5a18; --warn-soft:#f6efe2;
+  --ok:#2c6144;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f1116; --surface:#171a21; --sunk:#1d212a;
+    --ink:#eef0f5; --body:#c2c8d6; --muted:#8b93a5;
+    --rule:#282d38; --rule-firm:#3a4150;
+    --accent:#8b9adf; --accent-soft:#1e2436;
+    --warn:#d6a558; --warn-soft:#2a2418;
+    --ok:#6fbf94;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f1116; --surface:#171a21; --sunk:#1d212a;
+  --ink:#eef0f5; --body:#c2c8d6; --muted:#8b93a5;
+  --rule:#282d38; --rule-firm:#3a4150;
+  --accent:#8b9adf; --accent-soft:#1e2436;
+  --warn:#d6a558; --warn-soft:#2a2418;
+  --ok:#6fbf94;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:16px;line-height:1.62;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 26px 90px}
+h1,h2,h3,h4{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(2rem,4.4vw,3rem);font-weight:600;letter-spacing:-.02em;line-height:1.1}
+h2{font-size:1.5rem;font-weight:600;letter-spacing:-.012em}
+h3{font-size:1.08rem;font-weight:600}
+h4{font-size:.95rem;font-weight:600}
+p{margin:0}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.855em;background:var(--sunk);padding:.1em .34em;border-radius:2px;
+  overflow-wrap:anywhere}
+.prose{max-width:68ch}
+.masthead{border-bottom:1px solid var(--rule-firm);padding:54px 0 24px;margin-bottom:36px;
+  display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.71rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);font-weight:500}
+.standfirst{font-size:1.07rem;color:var(--muted);max-width:64ch}
+section{margin-top:52px}
+.lede{margin:10px 0 24px}
+
+/* repos */
+.repos{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule)}
+.repo{background:var(--surface);padding:15px 17px}
+.repo .nm{font-family:"IBM Plex Mono",monospace;font-size:.79rem;color:var(--accent);font-weight:500}
+.repo .rl{font-size:.9rem;margin-top:5px}
+.repo .fk{font-size:.78rem;color:var(--muted);margin-top:7px}
+
+/* timeline */
+.tl{border-left:2px solid var(--rule-firm);margin-left:11px;padding-left:26px;
+  display:flex;flex-direction:column;gap:38px;margin-top:26px}
+.ev{position:relative}
+.ev::before{content:"";position:absolute;left:-33px;top:7px;width:9px;height:9px;
+  background:var(--accent);border:2px solid var(--paper);border-radius:50%}
+.when{font-family:"IBM Plex Mono",monospace;font-size:.73rem;letter-spacing:.05em;
+  color:var(--muted);text-transform:uppercase}
+.ev h3{margin:3px 0 8px}
+.sha{font-family:"IBM Plex Mono",monospace;font-size:.73rem;color:var(--accent);
+  background:var(--accent-soft);padding:1px 6px;border-radius:2px;white-space:nowrap}
+.files{margin-top:14px;border:1px solid var(--rule);background:var(--surface);overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:8px 13px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.67rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.f{white-space:nowrap;font-family:"IBM Plex Mono",monospace;font-size:.79rem;color:var(--ink)}
+.why{border-left:2px solid var(--warn);background:var(--warn-soft);padding:12px 16px;margin:14px 0;
+  font-size:.93rem}
+.why b{color:var(--ink)}
+.note{border-left:2px solid var(--accent);padding:2px 0 2px 17px;margin:16px 0}
+footer{margin-top:70px;padding-top:20px;border-top:1px solid var(--rule);
+  font-size:.82rem;color:var(--muted)}
+.count{display:flex;flex-wrap:wrap;gap:1px;background:var(--rule);border:1px solid var(--rule);
+  margin-top:20px}
+.count>div{background:var(--surface);padding:13px 17px;flex:1;min-width:130px}
+.count .k{font-family:"IBM Plex Mono",monospace;font-size:.67rem;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted)}
+.count .v{font-family:"IBM Plex Serif",Georgia,serif;font-size:1.6rem;font-weight:600;
+  color:var(--ink);line-height:1.2;margin-top:3px;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+<header class="masthead">
+  <div class="eyebrow">RISC-V test generation &middot; engineering history</div>
+  <h1>Building the Test Generator</h1>
+  <p class="standfirst">How the framework was assembled across four repositories — which
+  files had to change, and what was actually broken in each case. Reconstructed from
+  commit history, not memory.</p>
+</header>
+
+<section style="margin-top:8px">
+<h2>Four repositories</h2>
+<div class="prose lede"><p>Three are forks of existing projects. Only the driver layer
+was written from scratch — the strategy throughout was to make existing tools work
+against the RISC-V model rather than to replace them.</p></div>
+<div class="repos">
+  <div class="repo"><div class="nm">10x-Engineers/isla</div>
+    <div class="rl">The symbolic execution library</div>
+    <div class="fk">fork of rems-project/isla</div></div>
+  <div class="repo"><div class="nm">10x-Engineers/isla-testgen</div>
+    <div class="rl">The test generator built on it</div>
+    <div class="fk">fork of the CHERI/Morello generator</div></div>
+  <div class="repo"><div class="nm">10x-Engineers/sail-riscv-testgen</div>
+    <div class="rl">The Golden Model</div>
+    <div class="fk">fork of riscv/sail-riscv</div></div>
+  <div class="repo"><div class="nm">10x-Engineers/riscv-test-generation</div>
+    <div class="rl">Drivers, sweeps, measurement</div>
+    <div class="fk">written from scratch</div></div>
+</div>
+<div class="repos" style="margin-top:1px">
+  <div class="repo"><div class="nm">10x-Engineers/sail-riscv-autotest</div>
+    <div class="rl">The concrete oracle backend</div>
+    <div class="fk">written from scratch</div></div>
+</div>
+</section>
+
+<section>
+<h2>The sequence</h2>
+<div class="prose lede"><p>Two independent tracks ran in parallel and met in the driver
+layer: a concrete oracle that needed nothing from the symbolic engine, and a symbolic
+path that needed changes in three separate repositories before it produced a single
+test.</p></div>
+
+<div class="tl">
+
+  <div class="ev">
+    <div class="when">5 January 2026 &middot; isla</div>
+    <h3>Groundwork in the symbolic library</h3>
+    <p class="prose">Before any RISC-V target existed, three changes made the library
+    usable at all for a new architecture: an <code>--isla-output-dir</code> option so
+    <code>isla-sail</code> could write its IR somewhere chosen, an extension of the list-nil
+    handling to <code>eq_anything</code>, and constant primops for a 32-bit target.</p>
+    <p style="margin-top:9px"><span class="sha">f742610</span> <span class="sha">bf098be</span> <span class="sha">b898a55</span></p>
+  </div>
+
+  <div class="ev">
+    <div class="when">2 July 2026 &middot; autotest</div>
+    <h3>The concrete oracle, in one commit</h3>
+    <p class="prose">24 files. The oracle track needed nothing from the symbolic engine:
+    run a random instruction sequence on the Golden Model, read the resulting
+    architectural state back, and bake it into a self-checking test. That independence is
+    why floating point and vector had a working generator long before the symbolic side
+    could touch them.</p>
+    <div class="files"><table>
+      <thead><tr><th>File</th><th>Responsibility</th></tr></thead><tbody>
+      <tr><td class="f">config.py</td><td>read a Golden Model configuration</td></tr>
+      <tr><td class="f">model.py</td><td>derive the instruction set from the Sail sources</td></tr>
+      <tr><td class="f">oracle.py</td><td>run the model, read the state back</td></tr>
+      <tr><td class="f">selfcheck.py</td><td>turn observed state into assertions</td></tr>
+      <tr><td class="f">program.py</td><td>render assembly</td></tr>
+      <tr><td class="f">toolchain.py</td><td>assemble and link exactly as the model does</td></tr>
+      <tr><td class="f">suite.py / runner.py</td><td>organise by extension; run and summarise</td></tr>
+      </tbody></table></div>
+    <p style="margin-top:9px"><span class="sha">6f3f4a1</span></p>
+  </div>
+
+  <div class="ev">
+    <div class="when">16 July 2026 &middot; isla</div>
+    <h3>Making the library compile against the real model</h3>
+    <p class="prose">Seven files, four unrelated reasons. This is the commit that took the
+    symbolic engine from "does not build" to "runs the RISC-V model".</p>
+    <div class="files"><table>
+      <thead><tr><th>File</th><th>Why it had to change</th></tr></thead><tbody>
+      <tr><td class="f">isla-sail/jib_ir.ml<br>isla-sail/sail_plugin_isla.ml</td>
+        <td>Upstream Sail API drift. <code>Jib.funtype</code>'s bool tag became a variant,
+        <code>CT_bit</code> was removed, and the rewrite-pass list had gained, lost and
+        reordered entries. <code>isla-sail</code> is a Sail <i>plugin</i>, so it must track
+        whatever the Sail it links against looks like.</td></tr>
+      <tr><td class="f">isla-lib/src/primop.rs</td>
+        <td>Primops the model calls that the library never implemented:
+        <code>cancel_reservation</code>, <code>valid_reservation</code>,
+        <code>match_reservation</code>, <code>load_reservation</code>,
+        <code>count_trailing_zeros</code>, <code>vector_init</code>,
+        <code>sys_enable_experimental_extensions</code>.</td></tr>
+      <tr><td class="f">isla-lib/src/bitvector.rs<br>bitvector/b64.rs, b129.rs</td>
+        <td><code>BV::trailing_zeros</code>, required by the new primop.</td></tr>
+      <tr><td class="f">isla-lib/src/memory.rs</td>
+        <td><code>check_concrete_overlap</code> hardcoded 64-bit addresses. RV32 addresses
+        are 32 bits, so reads were silently mis-sized. Now uses the address's own
+        solver-tracked width.</td></tr>
+      </tbody></table></div>
+    <div class="why"><b>The one that mattered most.</b> <code>vector_access</code> and
+    <code>vector_update</code> had no case for struct-typed elements, because
+    <code>smt_value</code> cannot represent <code>Val::Struct</code>. RISC-V's PMP
+    configuration is <code>vector(64, Pmpcfg_ent)</code> — a vector of bitfield structs,
+    not bitvectors — so any symbolic access to a PMP register crashed the engine. The fix
+    builds a per-field ITE instead. Without it there is no symbolic PMP testing at
+    all, and PMP is a required item in the RFP.</div>
+    <p style="margin-top:9px"><span class="sha">00ffeb4</span></p>
+  </div>
+
+  <div class="ev">
+    <div class="when">16 July 2026 &middot; sail-riscv</div>
+    <h3>The model side: entry points and a codegen workaround</h3>
+    <p class="prose">The generator needs a two-phase init/step calling convention, which
+    the model did not expose. <code>isla_testgen_init()</code> and
+    <code>isla_testgen_step()</code> were added to <code>main.sail</code>, modelled on the
+    existing <code>isla_footprint</code> entry points, and <code>fetch()</code> was made
+    non-private so the latter could call it.</p>
+    <div class="why"><b>Then a compiler bug got in the way.</b> Any Sail function binding
+    <code>_</code> or a destructuring pattern to a parameter of two or more tuple elements
+    got two inconsistent synthetic names out of <code>isla-sail</code>. Worked around by
+    destructuring in the function body instead of the parameter list — about 50 functions
+    across <code>core/</code>, <code>sys/</code>, <code>extensions/</code> and
+    <code>pmp/</code>.<br><br>
+    Four functions hit the same bug in the scattered-function <i>merging</i> step rather
+    than in any clause body, so <code>read_CSR</code>, <code>write_CSR</code>,
+    <code>is_CSR_accessible</code> and <code>is_CSR_exception_virtual</code> — 302
+    <code>function clause</code>s across ~17 files — were fully de-scattered into one plain
+    function each, preserving first-match-wins order.</div>
+    <p class="prose"><code>reset_pmp()</code> also had to build a fully concrete
+    <code>Mk_Pmpcfg_ent(zeros())</code> per entry rather than a <code>with</code>-update on
+    the prior symbolic value. Together with the <code>vector_access</code> fix above, this
+    is what unblocked PMP.</p>
+    <p style="margin-top:9px"><span class="sha">7a6fb873</span></p>
+  </div>
+
+  <div class="ev">
+    <div class="when">16 July 2026 &middot; isla-testgen</div>
+    <h3>The RISC-V target itself</h3>
+    <p class="prose">The generator is organised around a <code>Target</code> trait of some
+    28 methods — register naming, PC alignment, entry points, ELF emission. Adding RISC-V
+    meant implementing it, writing an object emitter, and fixing three assumptions in the
+    shared execution engine that were true only for the architectures already supported.</p>
+    <div class="files"><table>
+      <thead><tr><th>File</th><th>What it does</th></tr></thead><tbody>
+      <tr><td class="f">src/target.rs</td><td>the <code>RiscV</code> Target implementation</td></tr>
+      <tr><td class="f">src/generate_object_riscv.rs</td><td>ELF emitter, 405 lines</td></tr>
+      <tr><td class="f">src/execution.rs</td><td>three generic fixes — see below</td></tr>
+      <tr><td class="f">riscv-ir/riscv32.ir</td><td>the compiled model IR, 451,420 lines</td></tr>
+      </tbody></table></div>
+    <div class="why"><b>Three assumptions that were not portable.</b><br><br>
+    <b>Concrete boot PC.</b> The engine set the initial PC by asserting equality at the
+    solver level. That silently does nothing when the PC is already concrete — which it is,
+    because RISC-V's init calls <code>reset()</code>. The frame kept the wrong PC. Now the
+    value is overwritten directly, which works whether it was symbolic or concrete.<br><br>
+    <b>PC width vs address width.</b> RV32's PC is 32 bits, but the model's
+    <code>sail_mem_read</code> interface uses 64-bit addresses regardless of XLEN. The PC is
+    now zero-extended to <code>addr_size()</code> for the fetch.<br><br>
+    <b>Register numbering.</b> GPRs were assumed to start at zero. RISC-V's <code>x0</code>
+    is hardwired to zero and is not a general-purpose register, so a
+    <code>first_gpr_index()</code> was added to the trait.</div>
+    <p style="margin-top:9px"><span class="sha">4f7b031</span></p>
+  </div>
+
+  <div class="ev">
+    <div class="when">21–22 July 2026 &middot; parent</div>
+    <h3>The driver repository opens</h3>
+    <p class="prose">The parent repo is created, the submodule is pointed at the RISC-V
+    branch, and the pipeline is documented as a flow diagram. At this point both engines
+    exist but nothing drives them systematically.</p>
+    <p style="margin-top:9px"><span class="sha">3432eb7</span> <span class="sha">86fe2bd</span> <span class="sha">001a200</span></p>
+  </div>
+
+  <div class="ev">
+    <div class="when">11 August 2026 &middot; parent</div>
+    <h3>The driver and measurement layer</h3>
+    <p class="prose">One commit brings the whole Python framework under version control —
+    eight scripts and the documentation trail behind them. This is where generation stops
+    being a manual invocation and becomes a sweep with a coverage figure attached.</p>
+    <div class="files"><table>
+      <thead><tr><th>Script</th><th>What it answers</th></tr></thead><tbody>
+      <tr><td class="f">model_opcodes.py</td><td>which instructions exist — parsed from the model, not from riscv-opcodes</td></tr>
+      <tr><td class="f">opcode_sweep.py</td><td>generate and run one per instruction</td></tr>
+      <tr><td class="f">csr_sweep.py</td><td>the ~10 privileged extensions that define no mnemonics at all</td></tr>
+      <tr><td class="f">scenario_tests.py</td><td>architectural state, not single instructions</td></tr>
+      <tr><td class="f">coverage_report.py</td><td>how much of the model the corpus reaches</td></tr>
+      <tr><td class="f">coverage_matrix.py</td><td>per-instruction status across both generators</td></tr>
+      <tr><td class="f">status_report.py</td><td>whose fault each failure is</td></tr>
+      <tr><td class="f">regression.py</td><td>what got worse since the baseline</td></tr>
+      </tbody></table></div>
+    <p style="margin-top:9px"><span class="sha">9ab92bf</span></p>
+  </div>
+
+  <div class="ev">
+    <div class="when">11 August 2026</div>
+    <h3>Privileged capability, and making the repo clonable</h3>
+    <p class="prose">Per-ELF coverage, PMA scenarios driven by the model's own config, and
+    interrupt delivery. Separately, <code>paths.py</code> replaces absolute paths that had
+    been repeated across four scripts, and the model becomes a submodule.</p>
+    <div class="why"><b>Two things the model taught us here.</b>
+    <code>--pending-interrupt</code> deliberately left <code>mstatus.MIE</code> clear, so it
+    tested WFI rather than delivery. Adding <code>--deliver-interrupt</code> exposed that
+    delegation had to use a <i>supervisor</i> software interrupt:
+    <code>legalize_mideleg</code> hardwires the machine-mode bits to zero, so delegating a
+    machine software interrupt writes 0 and the trap is still taken in M-mode. The first
+    version did exactly that and read as a delegation failure when it was an impossible
+    test.</div>
+    <p style="margin-top:9px"><span class="sha">59b0fde</span> <span class="sha">b1d8230</span> <span class="sha">eade459</span> <span class="sha">4238a61</span> <span class="sha">549dd5c</span></p>
+  </div>
+
+  <div class="ev">
+    <div class="when">24 August 2026</div>
+    <h3>Floating point, downstream compatibility, and a clone that verifies itself</h3>
+    <p class="prose">The symbolic engine gains a SoftFloat interface, closing the last
+    capability gap; both backends start emitting the riscv-arch-test contract so the two
+    halves produce interchangeable output; and the repository gains a single command that
+    proves a fresh clone works.</p>
+    <div class="files"><table>
+      <thead><tr><th>Change</th><th>Why</th></tr></thead><tbody>
+      <tr><td class="f">primop/softfloat.rs</td><td>every FP operation in the model calls
+        SoftFloat; isla had no binding, so FP terminated with <code>NoFunction</code></td></tr>
+      <tr><td class="f">smtlib.rs / smt.rs</td><td><code>FPUnary::ToIEEE</code>, the inverse
+        of the existing <code>FromIEEE</code>, wired to Z3</td></tr>
+      <tr><td class="f">generate_object_riscv.rs</td><td>scratch registers could collide with
+        the harness's own, clobbering the value under test — a green test that verified
+        nothing</td></tr>
+      <tr><td class="f">program.py / selfcheck.py</td><td>ACT header, signature region and
+        <code>rvtest_entry_point</code>, so one file runs under both runtimes</td></tr>
+      <tr><td class="f">tools/verify_clone.py</td><td>runs the pipeline end to end rather
+        than checking that files exist</td></tr>
+      </tbody></table></div>
+    <p style="margin-top:9px"><span class="sha">29cf051</span> <span class="sha">9b6498f</span> <span class="sha">0a812d5</span> <span class="sha">6c2ef42</span></p>
+  </div>
+
+</div>
+</section>
+
+<section>
+<h2>What it added up to</h2>
+<div class="count">
+  <div><div class="k">repositories</div><div class="v">5</div></div>
+  <div><div class="k">forked</div><div class="v">3</div></div>
+  <div><div class="k">written new</div><div class="v">2</div></div>
+  <div><div class="k">months</div><div class="v">8</div></div>
+</div>
+<div class="note prose" style="margin-top:24px"><p>Three of the five repositories are forks,
+and every change in them was made to reach the RISC-V model rather than to alter what those
+tools do. The changes divide cleanly into four kinds: <b>API drift</b> in the Sail plugin,
+<b>missing primops</b> the model calls, <b>portability assumptions</b> that were true only
+for 64-bit zero-based-GPR targets, and <b>one genuine engine gap</b> — struct-typed vector
+elements — without which PMP could not be tested symbolically at all.</p></div>
+<div class="prose" style="margin-top:18px"><p>The model fork is the one worth being precise
+about. It carries a single commit, and nothing in it changes architectural behaviour: two
+entry points, a workaround for an <code>isla-sail</code> codegen bug affecting roughly 50
+functions, four scattered functions consolidated, and one initialisation made concrete. But
+they <i>are</i> changes, which is why the technical plan does not describe the model as
+unmodified.</p></div>
+</section>
+
+<footer>Reconstructed from the commit history of all five repositories. Every commit
+referenced is reachable on the 10x-Engineers forks.</footer>
+</div>

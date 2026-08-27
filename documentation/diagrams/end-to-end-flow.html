@@ -1,0 +1,260 @@
+<title>Sail to Coverage Report</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --surface:#fff; --sunk:#eaeef2;
+  --ink:#14181d; --body:#333c47; --muted:#647082;
+  --rule:#d6dce4; --rule-firm:#b6bfcb;
+  --accent:#3b5bb5; --accent-bg:#e6ecfa;
+  --ok:#0f7368; --ok-bg:#dff0ed;
+  --warn:#9a6114; --warn-bg:#f7efe0;
+  --alert:#a5372b; --alert-bg:#fae9e6;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px 80px}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.8rem,3.6vw,2.5rem);font-weight:600;letter-spacing:-.018em;line-height:1.12}
+h2{font-size:1.28rem;font-weight:600;letter-spacing:-.01em}
+p{margin:0}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.86em;background:var(--sunk);padding:.08em .32em;border-radius:2px}
+header{padding:48px 0 20px;border-bottom:1px solid var(--rule-firm);margin-bottom:32px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px}
+.standfirst{font-size:1.03rem;color:var(--muted);max-width:66ch;margin-top:10px}
+section{margin-top:44px}
+figure{margin:0}
+figcaption{font-size:.85rem;color:var(--muted);margin-top:12px;max-width:72ch}
+svg{max-width:100%;height:auto;display:block}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.a{white-space:nowrap;font-weight:600;color:var(--ink)}
+td.c{text-align:center;color:var(--ok);font-weight:600}
+td.n{text-align:center;color:var(--muted)}
+.num{font-variant-numeric:tabular-nums;text-align:right}
+.callout{border-left:3px solid var(--ok);background:var(--ok-bg);padding:13px 17px;margin:0 0 16px}
+.callout b{color:var(--ink)}
+.measures{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.measures>div{background:var(--surface);padding:11px 15px}
+.measures .m{font-weight:600;color:var(--ink);font-size:.9rem}
+.measures .q{font-size:.85rem;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:22px}
+.deliv{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.deliv>div{background:var(--surface);padding:10px 15px;display:flex;gap:12px;align-items:baseline}
+.deliv .k{font-family:"IBM Plex Mono",monospace;color:var(--accent);font-weight:500;font-size:.8rem}
+.more{border:1px solid var(--rule);background:var(--surface);padding:16px 20px;margin-top:14px}
+.more a{color:var(--accent)}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);
+  font-size:.8rem;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">RISC-V Sail test generation &middot; overview</div>
+  <h1>Sail Model to Coverage Report</h1>
+  <p class="standfirst">Six stages in a closed loop. Coverage is not only a report — it is
+  the feedback that drives generation of tests for what is still missing.</p>
+</header>
+
+<section>
+<figure>
+<svg viewBox="0 0 980 430" role="img" aria-label="Configuration feeds Generation, which feeds Simulation. Simulation forks into two parallel outputs: a coverage report and failure reports. The coverage report feeds Feedback and Record, which returns uncovered targets to Configuration to be regenerated. Failure reports are triaged into model, simulator, framework or implementation-defined causes.">
+  <defs>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-family="IBM Plex Sans, sans-serif" font-size="12.5" fill="currentColor">
+
+    <!-- main row -->
+    <rect x="16" y="150" width="152" height="70" fill="var(--surface)" stroke="currentColor"/>
+    <text x="27" y="170" font-size="10.5" fill="var(--accent)" font-family="IBM Plex Mono, monospace">1</text>
+    <text x="92" y="171" text-anchor="middle" font-weight="600">Configuration</text>
+    <text x="92" y="189" text-anchor="middle" font-size="10.8" opacity=".78">resolve one config;</text>
+    <text x="92" y="203" text-anchor="middle" font-size="10.8" opacity=".78">reachable + excluded lists</text>
+
+    <line x1="168" y1="185" x2="212" y2="185" stroke="currentColor" marker-end="url(#a2)"/>
+
+    <rect x="214" y="150" width="152" height="70" fill="var(--surface)" stroke="currentColor"/>
+    <text x="225" y="170" font-size="10.5" fill="var(--accent)" font-family="IBM Plex Mono, monospace">2</text>
+    <text x="290" y="171" text-anchor="middle" font-weight="600">Generation</text>
+    <text x="290" y="189" text-anchor="middle" font-size="10.8" opacity=".78">route, build preamble,</text>
+    <text x="290" y="203" text-anchor="middle" font-size="10.8" opacity=".78">generate, gate, materialise</text>
+
+    <line x1="366" y1="185" x2="410" y2="185" stroke="currentColor" marker-end="url(#a2)"/>
+
+    <rect x="412" y="150" width="152" height="70" fill="var(--surface)" stroke="currentColor"/>
+    <text x="423" y="170" font-size="10.5" fill="var(--accent)" font-family="IBM Plex Mono, monospace">3</text>
+    <text x="488" y="171" text-anchor="middle" font-weight="600">Simulation</text>
+    <text x="488" y="189" text-anchor="middle" font-size="10.8" opacity=".78">same ELF on the model</text>
+    <text x="488" y="203" text-anchor="middle" font-size="10.8" opacity=".78">and an independent sim</text>
+
+    <!-- fork -->
+    <path d="M564 172 L590 172 L590 96 L616 96" fill="none" stroke="currentColor" marker-end="url(#a2)"/>
+    <path d="M564 198 L590 198 L590 300 L616 300" fill="none" stroke="currentColor" marker-end="url(#a2)"/>
+
+    <!-- coverage branch -->
+    <rect x="618" y="62" width="150" height="66" fill="var(--surface)" stroke="currentColor"/>
+    <text x="629" y="82" font-size="10.5" fill="var(--accent)" font-family="IBM Plex Mono, monospace">4</text>
+    <text x="693" y="83" text-anchor="middle" font-weight="600">Coverage report</text>
+    <text x="693" y="101" text-anchor="middle" font-size="10.8" opacity=".78">per test and per suite;</text>
+    <text x="693" y="115" text-anchor="middle" font-size="10.8" opacity=".78">every span reconciled</text>
+
+    <line x1="768" y1="95" x2="806" y2="95" stroke="currentColor" marker-end="url(#a2)"/>
+
+    <rect x="808" y="62" width="156" height="66" fill="var(--accent-bg)" stroke="var(--accent)"/>
+    <text x="819" y="82" font-size="10.5" fill="var(--accent)" font-family="IBM Plex Mono, monospace">6</text>
+    <text x="886" y="83" text-anchor="middle" font-weight="600">Feedback &amp; record</text>
+    <text x="886" y="101" text-anchor="middle" font-size="10.8" opacity=".78">uncovered targets,</text>
+    <text x="886" y="115" text-anchor="middle" font-size="10.8" opacity=".78">classified by cause</text>
+
+    <!-- failure branch -->
+    <rect x="618" y="266" width="150" height="66" fill="var(--surface)" stroke="var(--alert)"/>
+    <text x="629" y="286" font-size="10.5" fill="var(--alert)" font-family="IBM Plex Mono, monospace">5</text>
+    <text x="693" y="287" text-anchor="middle" font-weight="600">Failure reports</text>
+    <text x="693" y="305" text-anchor="middle" font-size="10.8" opacity=".78">triage every</text>
+    <text x="693" y="319" text-anchor="middle" font-size="10.8" opacity=".78">disagreement by cause</text>
+
+    <line x1="768" y1="299" x2="806" y2="299" stroke="currentColor" marker-end="url(#a2)"/>
+
+    <rect x="808" y="262" width="156" height="74" fill="var(--alert-bg)" stroke="var(--alert)"/>
+    <text x="886" y="284" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--alert)">triage classes</text>
+    <text x="886" y="302" text-anchor="middle" font-size="10.5">model &middot; simulator</text>
+    <text x="886" y="317" text-anchor="middle" font-size="10.5">framework</text>
+    <text x="886" y="330" text-anchor="middle" font-size="10.5">implementation-defined</text>
+
+    <!-- regeneration loop -->
+    <path d="M886 128 L886 146 L92 146 L92 150" fill="none" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#a2)" color="var(--accent)"/>
+    <rect x="330" y="130" width="316" height="19" fill="var(--paper)"/>
+    <text x="488" y="144" text-anchor="middle" font-size="11" fill="var(--accent)" font-weight="600">regenerate: uncovered targets, same configuration</text>
+
+    <!-- config sweep band -->
+    <line x1="16" y1="378" x2="964" y2="378" stroke="currentColor" opacity=".25"/>
+    <text x="16" y="406" font-size="11.8" opacity=".85">The whole pipeline runs separately for each of the seven configurations, and each reports its own coverage rather than a combined figure.</text>
+  </g>
+</svg>
+<figcaption>Coverage and failure reports are <em>parallel</em> outputs of simulation, not
+sequential: coverage comes from the instrumented model run, failure reports from comparing
+the two simulators' verdicts. A failing test writes no coverage data at all, so the two
+paths carry different tests.</figcaption>
+</figure>
+</section>
+
+<section>
+<h2>Coverage: what &ldquo;100%&rdquo; means</h2>
+<div class="callout"><b>Every target in the configuration's reachable denominator has at
+least one generated test, and every excluded target is recorded with a reason.</b> It is a
+statement about the target list — not about Sail source branches, and not about differential
+agreement.</div>
+<div class="measures">
+  <div><span class="m">Reachable coverage</span> &nbsp;<span class="q">Does every reachable target have a test?</span></div>
+  <div><span class="m">Model source coverage</span> &nbsp;<span class="q">Which Sail source branches were exercised?</span></div>
+  <div><span class="m">Fault sensitivity</span> &nbsp;<span class="q">Can each test fail — proven by a passing and a deliberately broken run?</span></div>
+  <div><span class="m">Differential agreement</span> &nbsp;<span class="q">Does a simulator not derived from the model agree?</span></div>
+</div>
+<p style="margin-top:13px;max-width:72ch">Reported separately, never combined. One number cannot
+distinguish what was reached from whether the tests could detect a fault.</p>
+</section>
+
+<section>
+<h2>How the privileged architecture is reached</h2>
+<p style="max-width:72ch;margin-bottom:14px">The model implements the entire privileged
+architecture through <b>nine instructions</b>. Coverage therefore comes from machine state the
+preamble builds, not from opcode selection — which is what makes 29 extensions and
+capabilities reachable at all.</p>
+<div class="scroll"><table>
+<thead><tr><th>Surface</th><th>Mechanism</th><th>Becomes a target as</th></tr></thead>
+<tbody>
+<tr><td class="a">M / S / U modes</td><td>Preamble sets <code>mstatus.MPP</code>/<code>SPP</code>; returns via <code>MRET</code>/<code>SRET</code></td><td>one per mode per behaviour</td></tr>
+<tr><td class="a">CSRs</td><td>Model-derived register set swept per instruction, at each legal privilege</td><td>one per (CSR, access, privilege)</td></tr>
+<tr><td class="a">Traps &amp; exceptions</td><td>Preamble constructs the faulting condition; handler asserts both cause and origin</td><td>one per exception cause</td></tr>
+<tr><td class="a">Interrupts &amp; delegation</td><td>Pending and enable bits set directly; <code>mideleg</code> toggled</td><td>one per cause &times; {taken, not taken, delegated}</td></tr>
+<tr><td class="a">Virtual memory</td><td>Preamble builds a page table and points <code>satp</code> at it</td><td>one per mode &times; PTE feature &times; fault class</td></tr>
+<tr><td class="a">PMP</td><td>Preamble programs entries with the correct order and lock bits</td><td>one per match type &times; access &times; privilege</td></tr>
+<tr><td class="a">PMA</td><td>Region attributes come from the model's configuration JSON</td><td>one per attribute, under a config declaring the access illegal</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<h2>Committed scope</h2>
+<div class="scroll"><table>
+<thead><tr><th>Area</th><th>Committed</th><th>Deferred — architecture ready</th><th>Excluded</th></tr></thead>
+<tbody>
+<tr><td class="a">M-mode</td><td>CSR access, trap entry and return, privilege transitions, PMP, PMA, interrupt delivery and delegation</td><td>Nested traps</td><td class="n">—</td></tr>
+<tr><td class="a">S-mode</td><td>All translation schemes — Sv32, Sv39, Sv48, Sv57, Svbare — with negative controls, plus PTE content features and the fault taxonomy</td><td class="n">—</td><td class="n">—</td></tr>
+<tr><td class="a">Privileged extensions<br><span style="font-weight:400;color:var(--muted)">and capabilities</span></td><td>29 of 29 &mdash; <span style="color:var(--muted)">27 extensions plus the S and U privilege modes, which the model declares as <code>Ext_S</code>/<code>Ext_U</code> because they are optional</span></td><td class="n">—</td><td class="n">—</td></tr>
+<tr><td class="a">Unprivileged ISA</td><td>Only what privileged scenarios require</td><td>Systematic generation across the unprivileged ISA</td><td class="n">—</td></tr>
+<tr><td class="a">Floating point</td><td class="n">—</td><td>F/D instruction functionality. Configurations with F and D enabled are still generated and run</td><td class="n">—</td></tr>
+<tr><td class="a">Vector</td><td class="n">—</td><td>Vector instruction functionality, same reason and same route</td><td class="n">—</td></tr>
+<tr><td class="a">Hypervisor</td><td class="n">—</td><td class="n">—</td><td>Not implemented in the model</td></tr>
+</tbody></table></div>
+</section>
+
+<div class="grid2" style="margin-top:44px">
+<section style="margin-top:0">
+<h2>Configurations</h2>
+<div class="callout" style="margin:8px 0 12px;font-size:.88rem">These seven configurations come
+from the Golden Model's own test suite. They are not a free XLEN &times; VLEN &times; ELEN
+cross-product; the model constrains which combinations are valid.</div>
+<div class="scroll"><table>
+<thead><tr><th>Configuration</th><th class="num">XLEN</th><th class="num">VLEN</th><th class="num">ELEN</th><th>Generation route</th></tr></thead>
+<tbody>
+<tr><td class="mono">rv32d_v64_e32</td><td class="num">32</td><td class="num">64</td><td class="num">32</td><td>Symbolic</td></tr>
+<tr><td class="mono">rv64d_v64_e64</td><td class="num">64</td><td class="num">64</td><td class="num">64</td><td>Symbolic</td></tr>
+<tr><td class="mono">rv32d_v128_e32</td><td class="num">32</td><td class="num">128</td><td class="num">32</td><td>Symbolic</td></tr>
+<tr><td class="mono">rv64d_v128_e64</td><td class="num">64</td><td class="num">128</td><td class="num">64</td><td>Symbolic</td></tr>
+<tr><td class="mono">rv32d_v256_e32</td><td class="num">32</td><td class="num">256</td><td class="num">32</td><td>Oracle only</td></tr>
+<tr><td class="mono">rv64d_v256_e64</td><td class="num">64</td><td class="num">256</td><td class="num">64</td><td>Oracle only</td></tr>
+<tr><td class="mono">rv64d_v512_e64</td><td class="num">64</td><td class="num">512</td><td class="num">64</td><td>Oracle only</td></tr>
+</tbody></table></div>
+<div class="callout" style="font-size:.85rem;margin:10px 0 0"><b>Each configuration has its own
+reachable target list, exclusion list and coverage result. Results are reported separately, not
+averaged. VLEN=256 and VLEN=512 use the concrete oracle because they exceed the symbolic engine's
+129-bit value limit.</b></div>
+</section>
+
+<section style="margin-top:0">
+<h2>Deliverables</h2>
+<div class="deliv" style="margin-top:12px">
+  <div><span class="k">1</span><span>Repository with framework, user-facing and developer documentation</span></div>
+  <div><span class="k">2</span><span>Example scripts generating a suite from a given configuration</span></div>
+  <div><span class="k">3</span><span>Example scripts executing a suite, collecting results, summarising</span></div>
+  <div><span class="k">4</span><span>CI integration into the Golden Model</span></div>
+  <div><span class="k">5</span><span>Required Golden Model changes</span></div>
+</div>
+<div class="more">
+  <b style="color:var(--ink)">Generation detail</b>
+  <p style="margin-top:6px;font-size:.9rem">Which backend serves which target, why two exist,
+  and what each one structurally cannot do, are on the companion page — <em>ISLA vs
+  Oracle</em>.</p>
+</div>
+</section>
+</div>
+
+<footer>Content traces to the technical plan, sections 1.2, 1.3, 1.4, 2.1 and 2.4.</footer>
+</div>
