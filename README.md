@@ -510,7 +510,20 @@ the first thing to break.
 
 ## 3. Build
 
-**The Sail model, twice.** `CMAKE_BUILD_TYPE` is required — the model's CMakeLists has no
+**Load the Sail environment first, in this shell.** `cmake` invokes the Sail compiler, and
+opam does not put it on `PATH` by itself:
+
+```bash
+eval $(opam env)
+sail --version            # must print a version, or the configure below fails
+```
+
+Skipping it is the single most common first failure: `cmake` stops at configure time with
+*"Sail not found. See README.md for installation instructions."* See
+[Sail, and the step that is easy to miss](#sail-and-the-step-that-is-easy-to-miss) if `sail`
+is not installed at all.
+
+**Then the Sail model, twice.** `CMAKE_BUILD_TYPE` is required — the model's CMakeLists has no
 default and stops with *"No build type selected"* if you leave it out.
 
 ```bash
@@ -528,9 +541,13 @@ The second emits `sail-riscv/build-coverage/sail_riscv_model.branch_info`, the s
 is the denominator for every coverage number here. A `Release` build alone gives you a runner but
 no denominator.
 
-If a configure attempt already failed, it leaves a `CMakeCache.txt` behind; re-running with the
-flag normally just works, and `rm -rf sail-riscv/build` is the clean way out if CMake complains
-about a stale cache.
+**If a configure attempt already failed** — for either reason above — it leaves a
+`CMakeCache.txt` behind that still records the failure. Clear it rather than re-running in
+place:
+
+```bash
+rm -rf sail-riscv/build
+```
 
 **Then the symbolic engine:**
 
