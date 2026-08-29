@@ -1,0 +1,979 @@
+<title>Test Generation Plan (Direct)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --surface:#fff; --sunk:#eaeef2;
+  --ink:#14181d; --body:#333c47; --muted:#647082;
+  --rule:#d6dce4; --rule-firm:#b6bfcb;
+  --accent:#3b5bb5; --accent-bg:#e6ecfa;
+  --ok:#0f7368; --ok-bg:#dff0ed;
+  --warn:#9a6114; --warn-bg:#f7efe0;
+  --alert:#a5372b; --alert-bg:#fae9e6;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:15px;line-height:1.58;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 26px 80px}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.9rem,3.8vw,2.6rem);font-weight:600;letter-spacing:-.02em;line-height:1.1}
+h2{font-size:1.34rem;font-weight:600;letter-spacing:-.012em}
+h3{font-size:1.02rem;font-weight:600;margin-top:22px}
+p{margin:0 0 11px;max-width:74ch}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.85em;background:var(--sunk);padding:.08em .32em;border-radius:2px;overflow-wrap:anywhere}
+header{padding:50px 0 22px;border-bottom:2px solid var(--ink);margin-bottom:32px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px}
+.standfirst{font-size:1.05rem;color:var(--muted);max-width:66ch;margin-top:12px}
+section{margin-top:46px;padding-top:4px}
+.secnum{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);margin:12px 0 16px}
+table{border-collapse:collapse;width:100%;font-size:.87rem}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.a{white-space:nowrap;font-weight:600;color:var(--ink)}
+td.n{text-align:center;color:var(--muted)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.claim{border:1.5px solid var(--ink);background:var(--surface);padding:14px 17px;margin:16px 0}
+.claim .t{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.claim p{margin:0;font-size:1.02rem;color:var(--ink)}
+.key{border-left:3px solid var(--accent);background:var(--accent-bg);padding:12px 16px;margin:14px 0}
+.key b{color:var(--ink)}
+.risk{border-left:3px solid var(--warn);background:var(--warn-bg);padding:12px 16px;margin:14px 0}
+.work{border:1px solid var(--rule);background:var(--surface);margin:14px 0}
+.work .hd{background:var(--sunk);padding:9px 15px;font-weight:600;color:var(--ink);
+  display:flex;justify-content:space-between;gap:14px;align-items:baseline;flex-wrap:wrap}
+.work .hd .where{font-family:"IBM Plex Mono",monospace;font-size:.74rem;color:var(--muted);font-weight:400}
+.work ul{margin:0;padding:12px 15px 14px 32px}
+.work li{margin-bottom:7px;max-width:72ch}
+.work li:last-child{margin-bottom:0}
+figure{margin:18px 0}
+figcaption{font-size:.84rem;color:var(--muted);margin-top:10px;max-width:72ch}
+svg{max-width:100%;height:auto;display:block}
+footer{margin-top:70px;padding-top:20px;border-top:1px solid var(--rule);
+  font-size:.82rem;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">RISC-V International RFP &middot; technical plan</div>
+  <h1>Automatic Test Generation from the Sail Golden Model</h1>
+  <p class="standfirst">We generate RISC-V tests from the upstream Sail model, targeting the Privileged
+  Architecture, and wire the result into the Golden Model's own CI.</p>
+</header>
+
+<section style="margin-top:0">
+<div class="secnum">1 &middot; Objective and deliverables</div>
+<h2>Objective</h2>
+<p>We take one Golden Model configuration and the model itself. We produce standalone RISC-V
+executables, organised by extension, plus the evidence needed to judge what they cover.</p>
+<p>We read the instruction set from the model's own declarations. The suite therefore tracks the
+model, not a list we maintain by hand.</p>
+
+<div class="scroll"><table>
+<thead><tr><th>#</th><th>Deliverable</th></tr></thead><tbody>
+<tr><td class="num">1</td><td>Repository with framework, user-facing and developer documentation</td></tr>
+<tr><td class="num">2</td><td>Example scripts generating a suite from a given configuration</td></tr>
+<tr><td class="num">3</td><td>Example scripts executing a suite, collecting results, summarising</td></tr>
+<tr><td class="num">4</td><td>CI integration into the Golden Model</td></tr>
+<tr><td class="num">5</td><td>Required Golden Model changes</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="secnum">2 &middot; Methodology</div>
+<h2>How the framework works</h2>
+<p>Six subsections: the pipeline and what it measures, how generation is routed between two backends, how the privileged architecture is reached, how a test is proven able to fail, what the suite looks like, and what runs in CI.</p>
+
+<h2>2.1 Sail model to coverage report</h2>
+<p>Six stages in a closed loop. Coverage is not only a report &mdash; it is the feedback that drives generation of tests for what is still missing. Each stage carries a distinct
+responsibility.</p>
+<figure>
+<svg viewBox="0 0 900 312" role="img" aria-label="Configuration feeds Generation, which feeds Simulation. Simulation forks into a coverage report and failure reports. The coverage report feeds Feedback and Record, which returns uncovered targets to Configuration. Failure reports are triaged by cause.">
+<defs><marker id="m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g font-family="IBM Plex Sans, sans-serif" font-size="12" fill="currentColor">
+  <rect x="14" y="118" width="140" height="58" fill="var(--surface)" stroke="currentColor"/>
+  <text x="84" y="139" text-anchor="middle" font-weight="600">Configuration</text>
+  <text x="84" y="156" text-anchor="middle" font-size="10.5" opacity=".76">resolve config;</text>
+  <text x="84" y="169" text-anchor="middle" font-size="10.5" opacity=".76">reachable + excluded</text>
+  <line x1="154" y1="147" x2="194" y2="147" stroke="currentColor" marker-end="url(#m1)"/>
+  <rect x="196" y="118" width="140" height="58" fill="var(--surface)" stroke="currentColor"/>
+  <text x="266" y="139" text-anchor="middle" font-weight="600">Generation</text>
+  <text x="266" y="156" text-anchor="middle" font-size="10.5" opacity=".76">route, preamble,</text>
+  <text x="266" y="169" text-anchor="middle" font-size="10.5" opacity=".76">generate, gate</text>
+  <line x1="336" y1="147" x2="376" y2="147" stroke="currentColor" marker-end="url(#m1)"/>
+  <rect x="378" y="118" width="140" height="58" fill="var(--surface)" stroke="currentColor"/>
+  <text x="448" y="139" text-anchor="middle" font-weight="600">Simulation</text>
+  <text x="448" y="156" text-anchor="middle" font-size="10.5" opacity=".76">model + independent</text>
+  <text x="448" y="169" text-anchor="middle" font-size="10.5" opacity=".76">simulator</text>
+  <path d="M518 136 L542 136 L542 68 L566 68" fill="none" stroke="currentColor" marker-end="url(#m1)"/>
+  <path d="M518 158 L542 158 L542 226 L566 226" fill="none" stroke="currentColor" marker-end="url(#m1)"/>
+  <rect x="568" y="40" width="150" height="56" fill="var(--surface)" stroke="currentColor"/>
+  <text x="643" y="62" text-anchor="middle" font-weight="600">Coverage report</text>
+  <text x="643" y="80" text-anchor="middle" font-size="10.5" opacity=".76">every span reconciled</text>
+  <line x1="718" y1="68" x2="752" y2="68" stroke="currentColor" marker-end="url(#m1)"/>
+  <rect x="754" y="40" width="132" height="56" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <text x="820" y="62" text-anchor="middle" font-weight="600">Feedback</text>
+  <text x="820" y="80" text-anchor="middle" font-size="10.5" opacity=".76">classified by cause</text>
+  <rect x="568" y="198" width="150" height="56" fill="var(--surface)" stroke="var(--alert)"/>
+  <text x="643" y="220" text-anchor="middle" font-weight="600">Failure reports</text>
+  <text x="643" y="238" text-anchor="middle" font-size="10.5" opacity=".76">triage by cause</text>
+  <line x1="718" y1="226" x2="752" y2="226" stroke="currentColor" marker-end="url(#m1)"/>
+  <rect x="754" y="194" width="132" height="64" fill="var(--alert-bg)" stroke="var(--alert)"/>
+  <text x="820" y="214" text-anchor="middle" font-size="10.5">model &middot; simulator</text>
+  <text x="820" y="229" text-anchor="middle" font-size="10.5">framework</text>
+  <text x="820" y="244" text-anchor="middle" font-size="10.5">impl-defined</text>
+  <path d="M820 96 L820 106 L84 106 L84 118" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#m1)" color="var(--accent)"/>
+  <rect x="286" y="98" width="338" height="16" fill="var(--paper)"/>
+  <text x="455" y="110" text-anchor="middle" font-size="10.5" fill="var(--accent)" font-weight="600">regenerate: uncovered targets, same configuration</text>
+  <line x1="14" y1="278" x2="886" y2="278" stroke="currentColor" opacity=".22"/>
+  <text x="14" y="297" font-size="11.5" opacity=".85">The whole pipeline runs separately for each of the seven configurations, and each reports its own coverage rather than a combined figure.</text>
+</g></svg>
+<figcaption><b>Coverage here is Sail specification branch coverage</b>, measured by the model's
+own instrumentation rather than by a proxy. Building with <code>-DCOVERAGE=ON</code> passes
+<code>--c-coverage</code> to the Sail compiler, which emits a <code>.branch_info</code> manifest
+of every branch the source declares, and defines <code>SAILCOV</code> in the emulator, which
+appends to <code>sail_coverage</code> as each span executes. The repository documents this as
+specification coverage measurement in testing.<br><br>
+Coverage and failure reports are parallel outputs of simulation, not sequential: coverage comes
+from that instrumented run, failure reports from comparing verdicts. A failing test writes no
+coverage data, so the two paths carry different tests.</figcaption>
+</figure>
+
+<div class="scroll"><table>
+<thead><tr><th>Stage</th><th>Why it is necessary</th></tr></thead><tbody>
+<tr><td class="a">Configuration</td><td>Prevents inconsistent configuration and removes unreachable targets from the denominator.</td></tr>
+<tr><td class="a">Generation</td><td>Routes each target to an appropriate generator and produces tests that can detect failures.</td></tr>
+<tr><td class="a">Simulation</td><td>Provides Sail reference execution and an independent check of the same ELF.</td></tr>
+<tr><td class="a">Coverage Report</td><td>Separately measures reachable-target coverage, Sail source coverage, and test sensitivity per configuration.</td></tr>
+<tr><td class="a">Failure Reports</td><td>Turns disagreements into actionable model, simulator, framework, or implementation-defined findings.</td></tr>
+<tr><td class="a">Feedback &amp; Record</td><td>Classifies uncovered targets and feeds them back into generation to close the coverage gap.</td></tr>
+</tbody></table></div>
+<h3>Coverage: what we measure</h3>
+<p>We measure four things and report them separately. One number cannot express completeness,
+and these four are not interchangeable.</p>
+<div class="scroll"><table>
+<thead><tr><th>Measure</th><th>Question it answers</th></tr></thead><tbody>
+<tr><td class="a">Reachable coverage</td><td>Does every reachable target have a test?</td></tr>
+<tr><td class="a">Model source coverage</td><td>Which Sail source branches were exercised?</td></tr>
+<tr><td class="a">Fault sensitivity</td><td>Can each test fail &mdash; proven by a passing and a deliberately broken run?</td></tr>
+<tr><td class="a">Differential agreement</td><td>Does a simulator not derived from the model agree?</td></tr>
+</tbody></table></div>
+
+<h3>The committed configurations</h3>
+<div class="key">These seven configurations come from the Golden Model's own test suite. They are
+not a free XLEN &times; VLEN &times; ELEN cross-product; the model constrains which combinations
+are valid.</div>
+<div class="scroll"><table>
+<thead><tr><th>Configuration</th><th class="num">XLEN</th><th class="num">VLEN</th><th class="num">ELEN</th><th>Generation route</th></tr></thead>
+<tbody>
+<tr><td class="mono">rv32d_v64_e32</td><td class="num">32</td><td class="num">64</td><td class="num">32</td><td>Symbolic</td></tr>
+<tr><td class="mono">rv64d_v64_e64</td><td class="num">64</td><td class="num">64</td><td class="num">64</td><td>Symbolic</td></tr>
+<tr><td class="mono">rv32d_v128_e32</td><td class="num">32</td><td class="num">128</td><td class="num">32</td><td>Symbolic</td></tr>
+<tr><td class="mono">rv64d_v128_e64</td><td class="num">64</td><td class="num">128</td><td class="num">64</td><td>Symbolic</td></tr>
+<tr><td class="mono">rv32d_v256_e32</td><td class="num">32</td><td class="num">256</td><td class="num">32</td><td>Oracle only</td></tr>
+<tr><td class="mono">rv64d_v256_e64</td><td class="num">64</td><td class="num">256</td><td class="num">64</td><td>Oracle only</td></tr>
+<tr><td class="mono">rv64d_v512_e64</td><td class="num">64</td><td class="num">512</td><td class="num">64</td><td>Oracle only</td></tr>
+</tbody></table></div>
+<div class="key"><b>Each configuration has its own reachable target list, exclusion list and
+coverage result. Results are reported separately, not averaged. VLEN=256 and VLEN=512 use the
+concrete oracle because they exceed the symbolic engine's 129-bit value limit.</b></div>
+<h2>2.2 ISLA vs Oracle</h2>
+<p>Three families of generator are relevant. Each works. Each fails on a different part of this
+problem &mdash; which is why we route between them rather than pick one.</p>
+<div class="scroll"><table>
+<thead><tr><th>Approach</th><th>Represented by</th><th>What it does</th><th>Why it is not sufficient alone</th></tr></thead><tbody>
+<tr><td class="a">Constrained random</td><td>the riscv-dv lineage</td>
+    <td>Generates instruction streams under architectural constraints</td>
+    <td>Cannot aim at a named behaviour in the model, and still needs a separate oracle for expected results</td></tr>
+<tr><td class="a">Concrete oracle</td><td><code>rems-project/<wbr>sail-riscv-test-generation</code></td>
+    <td>Chooses instructions and operands, runs the model, records the resulting state as the expectation</td>
+    <td>Cannot construct privileged machine state, and cannot aim &mdash; it reports what the chosen values did</td></tr>
+<tr><td class="a">Symbolic path enumeration</td><td><code>rems-project/isla-testgen</code></td>
+    <td>Leaves operands unknown and solves for values reaching each feasible path</td>
+    <td>Cannot execute floating point or vector; value representation is bounded at 129 bits</td></tr>
+</tbody></table></div>
+<div class="claim">
+  <div class="t">The methodology adopted</div>
+  <p>We use both: the concrete oracle and symbolic path enumeration, as <b>two backends under one
+  control loop</b>, with a small template backstop. Their limitations are opposites. Privileged
+  behaviour needs the machine in a specific state <em>and</em> an instruction executed there, and
+  neither approach gives us both.</p>
+</div>
+
+<h3>ISLA and the oracle, on one instruction</h3>
+<figure>
+<svg viewBox="0 0 900 340" role="img" aria-label="Symbolic execution leaves operands unknown and asks a solver which values reach each path through the model; the concrete oracle chooses operands, runs the model, and records whatever state resulted.">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g font-family="IBM Plex Sans, sans-serif" font-size="12.5" fill="currentColor">
+
+    <!-- SYMBOLIC -->
+    <text x="20" y="24" font-size="13.5" font-weight="600" fill="var(--accent)">SYMBOLIC — the solver derives the operands</text>
+    <rect x="20" y="40" width="180" height="46" fill="var(--accent-bg)" stroke="var(--accent)"/>
+    <text x="110" y="60" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12">div x12, x10, x11</text>
+    <text x="110" y="77" text-anchor="middle" font-size="11.5" opacity=".75">operands UNKNOWN</text>
+
+    <line x1="200" y1="63" x2="252" y2="63" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="226" y="55" text-anchor="middle" font-size="10.5" opacity=".75">execute</text>
+
+    <rect x="254" y="34" width="188" height="58" fill="none" stroke="currentColor" opacity=".55"/>
+    <text x="348" y="55" text-anchor="middle" font-size="12">model branches on</text>
+    <text x="348" y="72" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" opacity=".8">divisor==0? overflow?</text>
+
+    <line x1="442" y1="63" x2="494" y2="63" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="468" y="55" text-anchor="middle" font-size="10.5" opacity=".75">solve</text>
+
+    <rect x="496" y="28" width="200" height="34" fill="var(--accent-bg)" stroke="var(--accent)"/>
+    <text x="596" y="49" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">x11 = 0</text>
+    <rect x="496" y="66" width="200" height="34" fill="var(--accent-bg)" stroke="var(--accent)"/>
+    <text x="596" y="87" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">x10 = INT_MIN, x11 = -1</text>
+
+    <line x1="696" y1="45" x2="742" y2="45" stroke="currentColor" marker-end="url(#ar)"/>
+    <line x1="696" y1="83" x2="742" y2="83" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="748" y="49" font-size="11.5">one test per</text>
+    <text x="748" y="87" font-size="11.5">feasible path</text>
+
+    <text x="20" y="118" font-size="11.5" opacity=".8">Aims: derives inputs that provably reach a named behaviour.</text>
+    <text x="20" y="135" font-size="11.5" opacity=".8">Signed overflow is one pair in 2^128 — nothing stumbles on it.</text>
+
+    <line x1="20" y1="160" x2="880" y2="160" stroke="currentColor" opacity=".22"/>
+
+    <!-- ORACLE -->
+    <text x="20" y="192" font-size="13.5" font-weight="600" fill="var(--ok)">ORACLE — the model reports what happened</text>
+    <rect x="20" y="208" width="180" height="46" fill="var(--ok-bg)" stroke="var(--ok)"/>
+    <text x="110" y="228" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12">add x12, x10, x11</text>
+    <text x="110" y="245" text-anchor="middle" font-size="11.5" opacity=".75">x10 = 1, x11 = 1</text>
+
+    <line x1="200" y1="231" x2="252" y2="231" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="226" y="223" text-anchor="middle" font-size="10.5" opacity=".75">run</text>
+
+    <rect x="254" y="208" width="188" height="46" fill="none" stroke="currentColor" opacity=".55"/>
+    <text x="348" y="236" text-anchor="middle" font-size="12">Golden Model executes</text>
+
+    <line x1="442" y1="231" x2="494" y2="231" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="468" y="223" text-anchor="middle" font-size="10.5" opacity=".75">observe</text>
+
+    <rect x="496" y="208" width="200" height="46" fill="var(--ok-bg)" stroke="var(--ok)"/>
+    <text x="596" y="230" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11">x12 = 2</text>
+    <text x="596" y="246" text-anchor="middle" font-size="10.5" opacity=".75">state IS the expectation</text>
+
+    <line x1="696" y1="231" x2="742" y2="231" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="748" y="228" font-size="11.5">one test</text>
+    <text x="748" y="244" font-size="11.5">per run</text>
+
+    <text x="20" y="286" font-size="11.5" opacity=".8">Cannot aim — reports what the chosen values did.</text>
+    <text x="20" y="303" font-size="11.5" opacity=".8">But executes anything the model runs, including FP and vector.</text>
+    <text x="20" y="326" font-size="11.5" opacity=".8">No solver, so no representational bound.</text>
+  </g>
+</svg>
+<figcaption>Where the oracle is blind, the solver aims: the model's divide has a signed-overflow
+case requiring the dividend to be exactly the most negative value and the divisor exactly
+<code>-1</code> &mdash; one pair in 2<sup>128</sup> at 64-bit width, which no value-choosing
+generator will land on. Where the solver stops, the oracle continues: floating point and vector
+together are more than half the model's instruction declarations, and the oracle runs both
+unmodified.</figcaption>
+</figure>
+
+<h3>Generation backends</h3>
+<div class="scroll"><table>
+<thead><tr><th>Backend</th><th>What it is for</th></tr></thead><tbody>
+<tr><td class="a">ISLA + Z3</td><td>Derives operands that provably reach a named behaviour; solves for privileged machine state</td></tr>
+<tr><td class="a">Concrete oracle</td><td>Executes anything the model can run, including FP and vector. No solver, so no solver limits</td></tr>
+<tr><td class="a">Templates</td><td>A hand-written backstop for the few targets <b>neither engine can produce a valid test for</b>. Capped at 4 builders; growth is a defect signal, reported in the suite summary rather than counted as progress</td></tr>
+</tbody></table></div>
+
+<p><b>Why a third backend exists at all.</b> Control-flow instructions defeat both
+engines, for unrelated reasons. The symbolic engine does not model a compressed instruction's
+control-flow effect, so <code>c.jr</code> and <code>c.jalr</code> emerge with nothing
+constraining the jump target &mdash; the test jumps wherever the register happened to point. The
+oracle cannot cover them either, because a jump's target address differs between the probe run
+and the final linked ELF, so the recorded expectation would not match what executes. A
+hand-written template solves both by making the observable result independent of the address:
+jump to a local label, place an instruction between the jump and the label that would corrupt a
+checked register if it ever ran, then clear the address-holding register. That is what makes it
+a test of the jump rather than of nothing.</p>
+<p>It is deliberately a backstop, not a general-purpose tool. Every template is a target the
+generators could not reach, so the count is reported with the suite: <b>if it grows, that is
+evidence of an engine gap to be fixed, not of coverage gained.</b></p>
+
+<h3>Generation routing</h3>
+<p>We route each target with a table, not hard-coded dispatch. Most of the ISA is reachable by
+either engine, so the choice is real. Where it is not, we record the representational limit next
+to the routing decision. A new extension later is one table row, not a new engine.</p>
+<div class="scroll"><table><thead><tr><th>ISA surface</th><th>Symbolic</th><th>Oracle</th><th>Routed to</th></tr></thead>
+<tbody>
+<tr><td class="tt">I, M, A, B, C, Zicsr, <code>Zb*</code>/<code>Zc*</code>/<code>Za*</code>/<code>Zk*</code></td>
+    <td>Yes</td><td>Yes</td><td class="route r-sym">Symbolic, oracle as fallback</td></tr>
+<tr><td class="tt">CSR-only privileged extensions<br><span style="font-weight:400;color:var(--muted)"><code>Sstc</code>, <code>Sscofpmf</code>, state-enable, pointer masking</span></td>
+    <td>Where expressible as constraints</td><td>Yes</td><td class="route">Either</td></tr>
+<tr><td class="tt">F, D, <code>Zf*</code>/<code>Zd*</code>/<code>Zh*</code></td>
+    <td><b>No</b> — 45 soft-float primitives absent from the engine</td><td>Yes</td>
+    <td class="route r-orc">Oracle only</td></tr>
+<tr><td class="tt">V, <code>Zv*</code>, vector crypto</td>
+    <td><b>No</b> — vector length is runtime state; value representation bounded at 129 bits</td><td>Yes</td>
+    <td class="route r-orc">Oracle only</td></tr>
+<tr><td class="tt">Branch, jump</td>
+    <td>Partial</td><td>Partial</td><td class="route r-tpl">Template — capped at 4</td></tr>
+</tbody></table></div>
+
+<h3>What each target type needs from a generator</h3>
+<div class="scroll"><table><thead><tr><th>Target type</th><th>What it covers</th><th>Best suited for</th></tr></thead>
+<tbody>
+<tr><td class="tt">Instruction sequences</td><td>ALU ops, loads and stores</td><td>Functional execution and corner cases</td></tr>
+<tr><td class="tt">CSRs / state</td><td><code>Zicsr</code>, counters, state enable, privilege state</td><td>CSR access, privilege transitions, machine-state scenarios</td></tr>
+<tr><td class="tt">Traps / exceptions</td><td>Illegal instruction, page faults, <code>ecall</code>/<code>ebreak</code></td><td>Exception handling, trap entry and return, fault scenarios</td></tr>
+<tr><td class="tt">Interrupts</td><td>Timer, external, software</td><td>Delivery, priority, delegation</td></tr>
+<tr><td class="tt">Translation / memory</td><td>Page tables, Sv modes, PMP/PMA</td><td>Virtual memory, access faults, protection</td></tr>
+<tr><td class="tt">Privileged features</td><td>M/S/U modes, counters, state-enable, QoS</td><td>Mode transitions, delegation, feature enablement</td></tr>
+</tbody></table></div>
+
+<h3>Why the proposed framework differs from the existing generator</h3>
+<p>The existing REMS generator provides useful prior art, but this proposal requires additional
+capabilities for configuration-aware privileged-ISA coverage and model evolution. The framework
+therefore builds on the same ecosystem while extending the generation flow in the areas that
+matter to this RFQ.</p>
+<div class="scroll"><table>
+<thead><tr><th>Area</th><th>Existing generator</th><th>Proposed framework</th></tr></thead><tbody>
+<tr><td class="a">Instruction source</td>
+    <td>Uses a fixed generator-side instruction description</td>
+    <td>Derives the instruction inventory from the Sail model at generation time</td></tr>
+<tr><td class="a">Encoding</td>
+    <td>Generator-defined</td>
+    <td>Assembly is emitted and encoded by the target toolchain</td></tr>
+<tr><td class="a">Configuration</td>
+    <td>General ISA generation</td>
+    <td>Filters targets against the selected model configuration before generation</td></tr>
+<tr><td class="a">Privileged state</td>
+    <td>Not the primary generation mechanism</td>
+    <td>Builds required machine state through the preamble</td></tr>
+<tr><td class="a">Generation method</td>
+    <td>Primarily concrete generation</td>
+    <td>Routes targets between symbolic, concrete, and template backends</td></tr>
+<tr><td class="a">Validation</td>
+    <td>Test generation / model execution</td>
+    <td>Fail-capable tests plus differential execution on an independent simulator</td></tr>
+<tr><td class="a">Model evolution</td>
+    <td>Requires generator-side updates when its source assumptions change</td>
+    <td>Model-derived targets allow new Sail functionality to enter the generation flow without rebuilding the instruction inventory by hand</td></tr>
+</tbody></table></div>
+<div class="key">The key design choice is to make the Sail model the source of truth for what the
+framework can generate, while keeping generation, privileged-state construction, validation, and
+reporting as replaceable components. This allows the framework to follow model evolution without
+turning each new Sail feature into a separate generator change.</div>
+<h2>2.3 Privileged architecture</h2>
+<p>The model implements the whole privileged architecture through <b>nine instructions</b>:
+<code>ECALL</code>, <code>EBREAK</code>, <code>MRET</code>, <code>SRET</code>, <code>WFI</code>,
+<code>SFENCE.VMA</code>, and <code>Svinval</code>'s <code>SINVAL.VMA</code>,
+<code>SFENCE.W.INVAL</code> and <code>SFENCE.INVAL.IR</code>. Count only those meaningful
+exclusively in a privileged context and it is seven. So we get coverage from machine state we
+build in the preamble, not from picking opcodes. The preamble builder, not the instruction
+generator, is the load-bearing part.</p>
+<div class="scroll"><table><thead><tr><th>Surface</th><th>Mechanism</th><th>Becomes a target as</th></tr></thead>
+<tbody>
+<tr><td class="a">M / S / U modes</td><td>Preamble sets <code>mstatus.MPP</code>/<code>SPP</code>; returns via <code>MRET</code>/<code>SRET</code></td><td>one per mode per behaviour</td></tr>
+<tr><td class="a">CSRs</td><td>Model-derived register set swept per instruction, at each legal privilege</td><td>one per (CSR, access, privilege)</td></tr>
+<tr><td class="a">Traps &amp; exceptions</td><td>Preamble constructs the faulting condition; handler asserts both cause and origin</td><td>one per exception cause</td></tr>
+<tr><td class="a">Interrupts &amp; delegation</td><td>Pending and enable bits set directly; <code>mideleg</code> toggled</td><td>one per cause &times; {taken, not taken, delegated}</td></tr>
+<tr><td class="a">Virtual memory</td><td>Preamble builds a page table and points <code>satp</code> at it</td><td>one per mode &times; PTE feature &times; fault class</td></tr>
+<tr><td class="a">PMP</td><td>Preamble programs entries with the correct order and lock bits</td><td>one per match type &times; access &times; privilege</td></tr>
+<tr><td class="a">PMA</td><td>Region attributes come from the model's configuration JSON</td><td>one per attribute, under a config declaring the access illegal</td></tr>
+</tbody></table></div>
+<p><b>We make interrupts deterministic in the preamble rather than waiting for one.</b> A
+self-checking ELF cannot wait for a timer across four targets with four notions of time. So we set
+the pending bit, the enable, and where needed the global enable directly. The assertion then checks
+<em>which mode</em> the trap landed in, not merely that one occurred.</p>
+<p><b>We exercise PMA through the configuration, not an instruction.</b> Physical memory attributes
+are platform-defined region properties, not state a preamble can write. So a PMA test is an
+ordinary access, run under a configuration whose region declares that access illegal. That makes
+the negative control exact: the same ELF under the stock configuration must pass.</p>
+<h2>2.4 Validation</h2>
+<p>A test that cannot fail still executes, and still raises the coverage figure. We stop that
+with three gates. Each is a gate, not a review step &mdash; nothing reaches the suite by
+inspection.</p>
+<figure>
+<svg viewBox="0 0 900 260" role="img" aria-label="A generated test passes three gates: it must have a non-empty expected result or be rejected and recorded; a trap-asserting scenario must ship a negative control that fails; and it must run on both the model and an independent simulator, where agreement passes, disagreement is triaged, and only one target available is inconclusive.">
+<defs><marker id="m3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g font-family="IBM Plex Sans, sans-serif" font-size="12" fill="currentColor">
+  <rect x="14" y="100" width="128" height="48" fill="var(--surface)" stroke="currentColor"/>
+  <text x="78" y="129" text-anchor="middle" font-weight="600">generated test</text>
+  <line x1="142" y1="124" x2="178" y2="124" stroke="currentColor" marker-end="url(#m3)"/>
+
+  <rect x="180" y="96" width="152" height="56" fill="var(--surface)" stroke="currentColor"/>
+  <text x="256" y="118" text-anchor="middle" font-size="11.5" font-weight="600">gate 1</text>
+  <text x="256" y="136" text-anchor="middle" font-size="10.5" opacity=".8">non-empty expected state?</text>
+  <path d="M256 152 L256 196" fill="none" stroke="var(--alert)" marker-end="url(#m3)" color="var(--alert)"/>
+  <text x="264" y="176" font-size="10.5" fill="var(--alert)">no</text>
+  <rect x="180" y="198" width="152" height="42" fill="var(--alert-bg)" stroke="var(--alert)"/>
+  <text x="256" y="224" text-anchor="middle" font-size="11" fill="var(--alert)">rejected + recorded</text>
+  <line x1="332" y1="124" x2="368" y2="124" stroke="currentColor" marker-end="url(#m3)"/>
+
+  <rect x="370" y="96" width="160" height="56" fill="var(--surface)" stroke="currentColor"/>
+  <text x="450" y="118" text-anchor="middle" font-size="11.5" font-weight="600">gate 2</text>
+  <text x="450" y="136" text-anchor="middle" font-size="10.5" opacity=".8">negative control fails?</text>
+  <path d="M450 152 L450 196" fill="none" stroke="var(--alert)" marker-end="url(#m3)" color="var(--alert)"/>
+  <text x="458" y="176" font-size="10.5" fill="var(--alert)">no</text>
+  <rect x="370" y="198" width="160" height="42" fill="var(--alert-bg)" stroke="var(--alert)"/>
+  <text x="450" y="224" text-anchor="middle" font-size="11" fill="var(--alert)">reported as regression</text>
+  <line x1="530" y1="124" x2="566" y2="124" stroke="currentColor" marker-end="url(#m3)"/>
+
+  <rect x="568" y="96" width="164" height="56" fill="var(--surface)" stroke="currentColor"/>
+  <text x="650" y="118" text-anchor="middle" font-size="11.5" font-weight="600">gate 3</text>
+  <text x="650" y="136" text-anchor="middle" font-size="10.5" opacity=".8">two targets agree?</text>
+
+  <path d="M732 110 L768 84" fill="none" stroke="currentColor" marker-end="url(#m3)"/>
+  <rect x="770" y="62" width="116" height="38" fill="var(--ok-bg)" stroke="var(--ok)"/>
+  <text x="828" y="86" text-anchor="middle" font-weight="600" fill="var(--ok)">pass</text>
+
+  <path d="M732 138 L768 164" fill="none" stroke="currentColor" marker-end="url(#m3)"/>
+  <rect x="770" y="146" width="116" height="38" fill="var(--alert-bg)" stroke="var(--alert)"/>
+  <text x="828" y="170" text-anchor="middle" font-size="11" fill="var(--alert)">triage</text>
+
+  <text x="568" y="228" font-size="11" opacity=".85">one target only &rarr; INCONCLUSIVE,</text>
+  <text x="568" y="243" font-size="11" opacity=".85">never scored as a pass</text>
+
+  <text x="14" y="52" font-size="11.5" opacity=".85">Each is a gate, not a review step: a test that cannot fail never enters the suite.</text>
+</g></svg>
+<figcaption>Gate 1 answers &ldquo;can this test fail at all&rdquo;; gate 2, &ldquo;can it tell a
+correct trap from one that never fired&rdquo;; gate 3, &ldquo;is this more than the model
+agreeing with itself&rdquo;.</figcaption>
+</figure>
+
+<div class="scroll"><table>
+<thead><tr><th>Mechanism</th><th>What it rejects</th></tr></thead><tbody>
+<tr><td class="a">Validation gate</td><td>Any test with an empty expected result. The rejection is recorded with its cause, never silently dropped</td></tr>
+<tr><td class="a">Negative controls</td><td>Every trap-asserting scenario ships with the same setup minus the triggering condition. It must fail. A control that stops failing is reported as a regression</td></tr>
+<tr><td class="a">Differential execution</td><td>Agreement with the model alone. Where only the model is available the result is reported inconclusive, never scored as a pass</td></tr>
+</tbody></table></div>
+<div class="key"><b>Two invariants govern a trap-asserting test, and they are independent.</b> The
+handler must check the <em>cause</em>, so a trap of the wrong kind fails rather than passing as
+&ldquo;a trap occurred&rdquo;. It must also check the <em>origin</em>: the trap vector is
+installed by the preamble's first instruction, so every later preamble step runs with the
+handler live, and a fault raised there carrying the expected cause would otherwise report
+success having never reached the instruction under test. The negative controls do not cover
+that case, because they vary the expected cause rather than the trap's origin.</div>
+<h2>2.5 Output</h2>
+<p>One directory per configuration, one subdirectory per extension, with a manifest carrying
+each test's extension, target, originating backend, required configuration predicates, whether
+it is a negative control, and a provenance stamp. Selection is a predicate over that manifest
+rather than a naming convention, so selection and coverage accounting cannot disagree.</p>
+<div class="scroll"><table>
+<thead><tr><th></th><th>Self-checking profile</th><th>arch-test profile</th></tr></thead><tbody>
+<tr><td class="a">Pass/fail via</td><td>HTIF <code>tohost</code> write</td><td>Signature region, dumped and compared</td></tr>
+<tr><td class="a">Code placement</td><td>Preamble at the target's fixed boot address</td><td>Test bytes at <code>0x80000000</code></td></tr>
+<tr><td class="a">Entry symbol</td><td>Framework's own preamble</td><td><code>rvtest_entry_point</code></td></tr>
+<tr><td class="a">Consumers</td><td>Sail, Spike, QEMU, RTL</td><td>The arch-test pipeline</td></tr>
+</tbody></table></div>
+<p>These cannot be one ELF, and that is the consumers' constraint rather than ours. arch-test's
+linker script wants test bytes at <code>0x80000000</code>; fixed-boot-address mode wants the
+preamble there. One address, two claimants. So a generation run targets one consumer or the
+other.</p>
+<h2>2.6 Continuous integration</h2>
+<div class="scroll"><table>
+<thead><tr><th>Job</th><th>Trigger</th><th>Does</th><th>Budget</th></tr></thead><tbody>
+<tr><td class="a">Suite replay</td><td>Every PR</td><td>Runs the checked-in suite against the model; reports pass/fail with the triage split</td><td>Minutes</td></tr>
+<tr><td class="a">Regenerate and re-measure</td><td>Scheduled</td><td>Regenerates from the current model, re-runs, re-measures coverage, reports drift against the baseline</td><td>Off the PR path</td></tr>
+</tbody></table></div>
+<p>Generation is solver-bound and can take longer than a per-PR check should. Replaying a
+prebuilt suite is fast. We split them so two different signals do not arrive as the same red
+mark.</p>
+<p>A failing PR job means the change under review altered behaviour the suite had pinned. A
+failing scheduled job may instead mean the suite needs regenerating against a changed model.</p>
+</section>
+
+<section>
+<div class="secnum">3 &middot; Scope</div>
+<h2>What is committed, deferred and excluded</h2>
+<div class="scroll"><table><thead><tr><th>Area</th><th>Committed</th><th>Deferred — architecture ready</th><th>Excluded</th></tr></thead>
+<tbody>
+<tr><td class="a">M-mode</td><td>CSR access, trap entry and return, privilege transitions, PMP, PMA, interrupt delivery and delegation</td><td>Nested traps</td><td class="n">—</td></tr>
+<tr><td class="a">S-mode</td><td>All translation schemes — Sv32, Sv39, Sv48, Sv57, Svbare — with negative controls, plus PTE content features and the fault taxonomy</td><td class="n">—</td><td class="n">—</td></tr>
+<tr><td class="a">Privileged extensions<br><span style="font-weight:400;color:var(--muted)">and capabilities</span></td><td>29 of 29 &mdash; <span style="color:var(--muted)">27 extensions plus the S and U privilege modes, which the model declares as <code>Ext_S</code>/<code>Ext_U</code> because they are optional</span></td><td class="n">—</td><td class="n">—</td></tr>
+<tr><td class="a">Unprivileged ISA</td><td>Only what privileged scenarios require</td><td>Systematic generation across the unprivileged ISA</td><td class="n">—</td></tr>
+<tr><td class="a">Floating point</td><td class="n">—</td><td>F/D instruction functionality. Configurations with F and D enabled are still generated and run</td><td class="n">—</td></tr>
+<tr><td class="a">Vector</td><td class="n">—</td><td>Vector instruction functionality, same reason and same route</td><td class="n">—</td></tr>
+<tr><td class="a">Hypervisor</td><td class="n">—</td><td class="n">—</td><td>Not implemented in the model</td></tr>
+</tbody></table></div>
+<h3>The 29 privileged targets, enumerated</h3>
+<p>Two of these are privilege modes rather than extensions. The model declares them as
+<code>Ext_S</code>/<code>Ext_U</code> because that enum encodes what a configuration can turn
+off, and a hart may be M-mode-only. M-mode has no such clause &mdash; it is not optional &mdash;
+so it is committed in its own row above rather than counted here.</p>
+<div class="scroll"><table>
+<thead><tr><th>Group</th><th>Targets</th><th class="num">n</th><th>How we reach it</th></tr></thead><tbody>
+<tr><td class="a">Privilege modes<br><span style="font-weight:400;color:var(--muted)">not extensions</span></td>
+    <td><code>S</code>, <code>U</code></td><td class="num">2</td>
+    <td>Enter and transition between privilege modes</td></tr>
+<tr><td class="a">CSR access and counters</td>
+    <td><code>Zicsr</code>, <code>Zicntr</code>, <code>Zihpm</code>, <code>Smcntrpmf</code>, <code>Sscounterenw</code></td><td class="num">5</td>
+    <td>CSR accesses at each applicable privilege; RV32 adds the high-half registers</td></tr>
+<tr><td class="a">State enable, QoS, overflow</td>
+    <td><code>Smstateen</code>, <code>Ssstateen</code>, <code>Ssqosid</code>, <code>Sscofpmf</code></td><td class="num">4</td>
+    <td>CSR accesses at each applicable privilege</td></tr>
+<tr><td class="a">Timer and trap value</td>
+    <td><code>Sstc</code>, <code>Sstvala</code></td><td class="num">2</td>
+    <td>Configure timer and trap state, then observe the behaviour</td></tr>
+<tr><td class="a">Pointer masking</td>
+    <td><code>Smmpm</code>, <code>Smnpm</code>, <code>Ssnpm</code></td><td class="num">3</td>
+    <td>Run existing instructions with masking enabled &mdash; no instructions of its own</td></tr>
+<tr><td class="a">Translation modes</td>
+    <td><code>Svbare</code>, <code>Sv32</code> <span style="color:var(--muted)">(RV32)</span>, <code>Sv39</code>, <code>Sv48</code>, <code>Sv57</code> <span style="color:var(--muted)">(RV64)</span></td><td class="num">5</td>
+    <td>Configure translation, build page tables, execute memory accesses</td></tr>
+<tr><td class="a">Translation maintenance</td>
+    <td><code>Svinval</code></td><td class="num">1</td>
+    <td>Execute the relevant instructions &mdash; the only group that has any</td></tr>
+<tr><td class="a">Page-table entry content</td>
+    <td><code>Svade</code>, <code>Svadu</code>, <code>Svnapot</code> <span style="color:var(--muted)">(RV64)</span>, <code>Svpbmt</code> <span style="color:var(--muted)">(RV64)</span>, <code>Svrsw60t59b</code></td><td class="num">5</td>
+    <td>Construct the relevant PTEs and exercise translation</td></tr>
+<tr><td class="a">Translation guarantees</td>
+    <td><code>Svvptc</code>, <code>Ssccptr</code></td><td class="num">2</td>
+    <td>Observe a property of the walk itself, not a dedicated instruction</td></tr>
+<tr><td class="a" style="border-top:2px solid var(--rule-firm)"><b>Total</b></td>
+    <td style="border-top:2px solid var(--rule-firm)"></td>
+    <td class="num" style="border-top:2px solid var(--rule-firm)"><b>29</b></td>
+    <td style="border-top:2px solid var(--rule-firm)"></td></tr>
+</tbody></table></div>
+<div class="key"><b>Only one group contributes instructions.</b> Everything else is reached
+through CSRs, machine state, page tables or configuration &mdash; which is why the preamble
+builder carries this scope, not the instruction generator. XLEN applicability comes from the
+model: <code>core/extensions.sail</code> gates <code>Sv32</code> on a 32-bit register width, and
+<code>Sv39</code>, <code>Sv48</code>, <code>Sv57</code>, <code>Svnapot</code> and
+<code>Svpbmt</code> on a 64-bit one. A target that cannot apply to a configuration leaves that
+configuration's list with that reason recorded &mdash; it is not a gap.</div>
+
+<p>We exclude a target for one of two reasons only: the model does not implement it, or no test
+that can fail could observe it. We record which one, and either is open to challenge.</p>
+<p>We exclude Hypervisor because the model's hypervisor file has an enablement clause and no
+behaviour. There is nothing to target. Enabling it means implementing it upstream, which is model
+development and costed separately.</p>
+</section>
+
+<section>
+<div class="secnum">4 &middot; Implementation and schedule</div>
+<h2>How the framework will be built, and in what order</h2>
+<p>We work across five repositories, three of them forks. Throughout, we make existing tools
+reach the RISC-V model rather than replace them. That keeps the engineering surface small and the
+upstream story simple.</p>
+<p>The work splits into five workstreams. The first three must land together before we can
+generate a single symbolic test.</p>
+
+<div class="scroll"><table>
+<thead><tr><th>Repository</th><th>Origin</th><th>Role</th><th>Why it must change</th><th class="num">WS</th></tr></thead><tbody>
+<tr><td class="a">sail-riscv</td><td>fork of <code>riscv/sail-riscv</code><br><span style="color:var(--muted)">BSD-2-Clause</span></td>
+    <td>The Golden Model &mdash; the specification under test, and the source of every target</td>
+    <td>Exposes no entry point with the two-phase init/step convention the generator needs. Adding one, plus a workaround for a Sail codegen limitation, is <b>Deliverable 5</b></td><td class="num">B</td></tr>
+<tr><td class="a">isla<br><span style="color:var(--muted)">isla-lib, isla-sail</span></td><td>fork of <code>rems-project/isla</code><br><span style="color:var(--muted)">BSD-2-Clause</span></td>
+    <td>Symbolic execution library, and the Sail-to-IR compiler it depends on</td>
+    <td>Lacks primitives this model calls, assumes 64-bit addresses, and cannot represent struct-typed vector elements &mdash; without which PMP cannot be tested symbolically at all</td><td class="num">A</td></tr>
+<tr><td class="a">isla-testgen</td><td>fork of the CHERI/Morello generator<br><span style="color:var(--muted)">BSD-2-Clause</span></td>
+    <td>Turns symbolic execution into materialised ELF tests</td>
+    <td>Has no RISC-V target, and carries three assumptions true only of the architectures it already supports</td><td class="num">C</td></tr>
+<tr><td class="a">Concrete oracle</td><td>written new<br><span style="color:var(--muted)">Apache-2.0</span></td>
+    <td>Runs the model and records the resulting architectural state as the expectation</td>
+    <td>No existing tool does this against a configuration-driven model. Depends on none of the above</td><td class="num">D</td></tr>
+<tr><td class="a">Framework repository</td><td>written new<br><span style="color:var(--muted)">Apache-2.0</span></td>
+    <td>Orchestration, target enumeration, sweeps, coverage, reporting</td>
+    <td>The engagement's own deliverable &mdash; <b>Deliverable 1</b>, and the home of Deliverables 2 and 3</td><td class="num">E</td></tr>
+</tbody></table></div>
+
+<div class="key"><b>Only one of these changes is a committed deliverable.</b> The Golden Model
+changes are Deliverable 5 and are submitted upstream, so their acceptance is contractual and
+their merge is tracked as Phase 12. The isla and isla-testgen changes are carried in forks: the
+RISC-V target is specific to this work and belongs there, while the fixes that are not
+RISC-V-specific &mdash; the address-width assumption, the struct-typed vector elements &mdash;
+will be offered upstream as a matter of good practice. That offer is not committed as a
+deliverable, because this project cannot commit to another project's merge decision. The two new
+repositories are ours to deliver outright.</div>
+
+<div class="risk"><b>Why this section is specific.</b> A plan that says &ldquo;integrate the
+symbolic engine&rdquo; is not a plan. The items below are the work that integration actually
+consists of, identified by scoping each tool against the current model. Each names the file or
+subsystem it lands in, so the estimate in section 4 rests on enumerated work rather than on an
+allowance.</div>
+
+<h3>4.1 Prepare the symbolic execution library</h3>
+<div class="work">
+  <div class="hd"><span>Workstream A &mdash; symbolic library</span>
+    <span class="where">fork of rems-project/isla</span></div>
+  <ul>
+    <li><b>Track the Sail release the model compiles with.</b> The Sail plugin consumes Sail's
+    own Jib IR, whose type definitions and rewrite-pass ordering change between releases. The
+    plugin will be updated against the Sail version pinned at project start, and re-checked
+    whenever that pin moves.</li>
+    <li><b>Implement the primitives the model calls and the engine lacks.</b> Scoping against
+    the current model identifies the reservation-set operations
+    (<code>load_reservation</code>, <code>match_reservation</code>,
+    <code>valid_reservation</code>, <code>cancel_reservation</code>),
+    <code>count_trailing_zeros</code>, <code>vector_init</code>, and
+    <code>sys_enable_experimental_extensions</code>. Each is a small, self-contained addition;
+    the risk is discovering a further one late, which is why Phase&nbsp;4's acceptance test is a
+    clean symbolic run over every symbolic-routed extension rather than over a sample.</li>
+    <li><b>Remove the 64-bit address assumption.</b> The memory model's overlap check uses a
+    fixed 64-bit address width. RV32 addresses are 32 bits, so the width will be taken from the
+    address's own solver-tracked value.</li>
+    <li><b>Support struct-typed vector elements.</b> This is the item PMP depends on. The
+    model represents PMP configuration as <code>vector(64, Pmpcfg_ent)</code> &mdash; a vector
+    of bitfield <em>structs</em>, not of bitvectors &mdash; and the engine's value encoding has
+    no case for struct-typed elements, so any symbolic access to a PMP register fails. Vector
+    read and update will construct a per-field conditional instead. Without this there is no
+    symbolic PMP testing, and PMP is a required item in the RFP.</li>
+  </ul>
+</div>
+
+<h3>4.2 Propose the model-side entry points</h3>
+<div class="work">
+  <div class="hd"><span>Workstream B &mdash; Golden Model</span>
+    <span class="where">Deliverable 5, submitted upstream</span></div>
+  <ul>
+    <li><b>Two entry points.</b> The generator needs a two-phase init/step calling convention
+    that the model does not currently expose. <code>isla_testgen_init</code> and
+    <code>isla_testgen_step</code> will be added to <code>main.sail</code>, modelled on the
+    existing <code>isla_footprint</code> entry points, and preserved against dead-code
+    elimination. A post-build check will confirm they survived compilation.</li>
+    <li><b>Work around a compiler limitation, minimally.</b> Sail functions that destructure a
+    parameter of two or more tuple elements currently produce inconsistent synthetic names in
+    the IR. The change is mechanical &mdash; destructure in the function body rather than the
+    parameter list &mdash; and affects on the order of fifty functions. It alters no
+    architectural behaviour.</li>
+    <li><b>Consolidate four CSR accessors.</b> <code>read_CSR</code>, <code>write_CSR</code>,
+    <code>is_CSR_accessible</code> and <code>is_CSR_exception_virtual</code> hit the same
+    limitation in the scattered-function merging step rather than in any clause body, so those
+    four will be de-scattered into one function each, preserving first-match-wins clause order.
+    This is the largest single diff of the workstream and will be proposed as its own commit so
+    it can be reviewed on its merits.</li>
+    <li><b>Make PMP reset concrete.</b> <code>reset_pmp()</code> will build a fully concrete
+    entry per <code>pmpcfg</code> register rather than updating the prior symbolic value.</li>
+  </ul>
+</div>
+<div class="key"><b>These changes are proposed, not assumed.</b> They will be submitted upstream
+and are complete only when merged. If the entry points are rejected, the framework falls back
+to oracle-only generation &mdash; a capability reduction rather than a project failure, with
+privileged scenarios that relied on solver-derived state moving to preamble construction. That
+fallback is a designed path, not a contingency invented at the time.</div>
+
+<h3>4.3 Implement the RISC-V generator target</h3>
+<div class="work">
+  <div class="hd"><span>Workstream C &mdash; test generator</span>
+    <span class="where">fork of the CHERI/Morello isla-testgen</span></div>
+  <ul>
+    <li><b>A RISC-V target implementation.</b> The generator is organised around a target
+    interface of roughly thirty methods covering register naming, PC alignment, entry points and
+    ELF emission. Implementing it for RISC-V is the bulk of this workstream.</li>
+    <li><b>An ELF emitter</b> producing standalone, self-checking executables in the two output
+    profiles of section 2.5.</li>
+    <li><b>Three portability assumptions to remove</b>, each true only of the architectures the
+    generator already supports:
+      <ul style="margin-top:6px">
+        <li><em>Boot PC.</em> The engine sets the initial PC by asserting equality at the solver
+        level, which silently does nothing when the PC is already concrete &mdash; as it is for
+        RISC-V, whose init calls <code>reset()</code>. The value will be written directly.</li>
+        <li><em>PC width against address width.</em> RV32's PC is 32 bits while the model's
+        memory interface uses 64-bit addresses regardless of XLEN, so the PC will be
+        zero-extended for the fetch.</li>
+        <li><em>Register numbering.</em> General-purpose registers are assumed to start at zero.
+        <code>x0</code> is hardwired and is not general-purpose, so the target interface gains a
+        first-GPR index.</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<h3>4.4 Build the concrete oracle</h3>
+<div class="work">
+  <div class="hd"><span>Workstream D &mdash; oracle backend</span>
+    <span class="where">independent of A, B and C</span></div>
+  <ul>
+    <li><b>Derive the instruction set from the model</b> rather than from an external opcode
+    list, so the oracle exercises only what this model implements.</li>
+    <li><b>Run the model and read the state back</b>, turning the resulting architectural state
+    into the test's expectation.</li>
+    <li><b>Assemble and link exactly as the model does</b>, reusing the Golden Model's own
+    runtime and linker script so a generated test is executable by construction.</li>
+    <li><b>Emit both output profiles</b> through one shared format layer, so the two backends
+    cannot drift into mutually incompatible layouts.</li>
+  </ul>
+</div>
+<div class="key"><b>This workstream depends on none of the others</b>, which is what makes it
+the schedule's safety margin. It needs no solver, no IR and no upstream model change, so it can
+proceed in parallel with A&ndash;C and carries the floating-point and vector configurations
+regardless of how the symbolic path lands.</div>
+
+<h3>4.5 Build the driver and measurement layer</h3>
+<div class="work">
+  <div class="hd"><span>Workstream E &mdash; orchestration</span>
+    <span class="where">written new</span></div>
+  <ul>
+    <li><b>Configuration resolution</b> &mdash; one validated object from which every downstream
+    value derives, so no two components can disagree about the configuration.</li>
+    <li><b>Target enumeration and the reachable denominator</b> &mdash; every declared target
+    evaluated against the configuration's predicates, partitioned into reachable and excluded
+    with one recorded reason each, with nothing left over.</li>
+    <li><b>Routing and preamble construction</b> &mdash; the declarative table of section 2.2, and
+    the builder that constructs privileged machine state directly rather than asking a solver to
+    discover it.</li>
+    <li><b>Sweep drivers</b> per extension, per CSR, and per privileged scenario &mdash; the
+    last of these because roughly ten privileged extensions define no mnemonics at all and exist
+    only as CSR addresses.</li>
+    <li><b>Coverage collection and reconciliation</b>, per test and per suite, against the
+    model's own span manifest.</li>
+    <li><b>Reporting</b> &mdash; per-extension status split by cause, regression against a
+    stored baseline, and the classified uncovered-target list that closes the loop.</li>
+  </ul>
+</div>
+
+<h3>4.6 Dependencies between workstreams</h3>
+<figure>
+<svg viewBox="0 0 900 300" role="img" aria-label="Workstreams A, B and D start in parallel. A and B both feed C. C and D both feed E, which produces the suite and coverage. The critical path runs A to C to E; workstream B's upstream merge is outside the project's control.">
+<defs><marker id="m2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g font-family="IBM Plex Sans, sans-serif" font-size="12" fill="currentColor">
+  <rect x="16" y="30" width="176" height="54" fill="var(--surface)" stroke="currentColor"/>
+  <text x="30" y="50" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">A</text>
+  <text x="104" y="51" text-anchor="middle" font-weight="600">symbolic library</text>
+  <text x="104" y="70" text-anchor="middle" font-size="10.5" opacity=".76">primops, widths, structs</text>
+
+  <rect x="16" y="118" width="176" height="54" fill="var(--surface)" stroke="var(--warn)"/>
+  <text x="30" y="138" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--warn)">B</text>
+  <text x="104" y="139" text-anchor="middle" font-weight="600">model entry points</text>
+  <text x="104" y="158" text-anchor="middle" font-size="10.5" opacity=".76">upstream &mdash; Deliverable 5</text>
+
+  <rect x="16" y="212" width="176" height="54" fill="var(--ok-bg)" stroke="var(--ok)"/>
+  <text x="30" y="232" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ok)">D</text>
+  <text x="104" y="233" text-anchor="middle" font-weight="600">concrete oracle</text>
+  <text x="104" y="252" text-anchor="middle" font-size="10.5" opacity=".76">depends on nothing</text>
+
+  <path d="M192 57 L250 57 L250 90 L286 90" fill="none" stroke="currentColor" marker-end="url(#m2)"/>
+  <path d="M192 145 L250 145 L250 112 L286 112" fill="none" stroke="currentColor" marker-end="url(#m2)"/>
+
+  <rect x="288" y="74" width="176" height="54" fill="var(--surface)" stroke="currentColor"/>
+  <text x="302" y="94" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">C</text>
+  <text x="376" y="95" text-anchor="middle" font-weight="600">generator target</text>
+  <text x="376" y="114" text-anchor="middle" font-size="10.5" opacity=".76">target impl, ELF emitter</text>
+
+  <path d="M464 101 L520 101 L520 140 L556 140" fill="none" stroke="currentColor" marker-end="url(#m2)"/>
+  <path d="M192 239 L520 239 L520 162 L556 162" fill="none" stroke="var(--ok)" marker-end="url(#m2)" color="var(--ok)"/>
+
+  <rect x="558" y="124" width="176" height="54" fill="var(--surface)" stroke="currentColor"/>
+  <text x="572" y="144" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">E</text>
+  <text x="646" y="145" text-anchor="middle" font-weight="600">orchestration</text>
+  <text x="646" y="164" text-anchor="middle" font-size="10.5" opacity=".76">targets, sweeps, coverage</text>
+
+  <line x1="734" y1="151" x2="774" y2="151" stroke="currentColor" marker-end="url(#m2)"/>
+  <rect x="776" y="124" width="110" height="54" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <text x="831" y="146" text-anchor="middle" font-weight="600">suite +</text>
+  <text x="831" y="163" text-anchor="middle" font-weight="600">coverage</text>
+
+  <text x="16" y="290" font-size="11.5" opacity=".85">Critical path: A &rarr; C &rarr; E. B's <tspan font-style="italic">merge</tspan>, not its engineering, is the least controllable element.</text>
+</g></svg>
+<figcaption>A, B and D proceed concurrently. D is the schedule's safety margin: it needs no
+solver, no IR and no upstream change, so it carries the floating-point and vector
+configurations regardless of how the symbolic path lands.</figcaption>
+</figure>
+
+<div class="scroll"><table>
+<thead><tr><th>Workstream</th><th>Depends on</th><th>Blocks</th></tr></thead><tbody>
+<tr><td class="a">A &mdash; symbolic library</td><td class="n">&mdash;</td><td>C, and all symbolic generation</td></tr>
+<tr><td class="a">B &mdash; model entry points</td><td class="n">&mdash;</td><td>C; upstream merge gates Deliverable 5</td></tr>
+<tr><td class="a">C &mdash; generator target</td><td>A and B</td><td>Symbolic-routed targets only</td></tr>
+<tr><td class="a">D &mdash; concrete oracle</td><td class="n">&mdash;</td><td class="n">&mdash;</td></tr>
+<tr><td class="a">E &mdash; orchestration</td><td>C or D for real output</td><td>All measurement and reporting</td></tr>
+</tbody></table></div>
+<p>A, B and D can proceed concurrently. The critical path runs A &rarr; C, with B's
+<em>merge</em> &mdash; not its engineering &mdash; as the schedule's least controllable element.</p>
+
+<h3>4.7 Schedule</h3>
+
+<p>One number, not a range, so we can be held to it. It assumes AI-assisted delivery. That is
+realistic where a phase is well-scoped and mechanical &mdash; parsing, list-building, routing,
+report generation &mdash; and most of this roadmap is.</p>
+<figure>
+<svg viewBox="0 0 900 230" role="img" aria-label="Four tracks over fifteen engineering-weeks: Foundation phases one to three takes three weeks, Capability phases four to seven takes six weeks, Measurement phases eight to ten takes four weeks, and Integration phases eleven to twelve takes two weeks of engineering effort whose completion depends on upstream merge.">
+<defs><marker id="m4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor">
+  <line x1="150" y1="30" x2="150" y2="196" stroke="currentColor" opacity=".18"/>
+  <line x1="300" y1="30" x2="300" y2="196" stroke="currentColor" opacity=".18"/>
+  <line x1="450" y1="30" x2="450" y2="196" stroke="currentColor" opacity=".18"/>
+  <line x1="600" y1="30" x2="600" y2="196" stroke="currentColor" opacity=".18"/>
+  <line x1="750" y1="30" x2="750" y2="196" stroke="currentColor" opacity=".18"/>
+  <text x="150" y="24" text-anchor="middle" font-size="10" opacity=".7">wk 3</text>
+  <text x="300" y="24" text-anchor="middle" font-size="10" opacity=".7">wk 6</text>
+  <text x="450" y="24" text-anchor="middle" font-size="10" opacity=".7">wk 9</text>
+  <text x="600" y="24" text-anchor="middle" font-size="10" opacity=".7">wk 12</text>
+  <text x="750" y="24" text-anchor="middle" font-size="10" opacity=".7">wk 15</text>
+
+  <rect x="0" y="38" width="150" height="30" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <text x="75" y="58" text-anchor="middle" font-weight="600">Foundation</text>
+  <text x="160" y="58" font-size="10.5" opacity=".78">P1&ndash;3 &middot; config, target list, routing &amp; preamble</text>
+
+  <rect x="150" y="76" width="300" height="30" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <text x="300" y="96" text-anchor="middle" font-weight="600">Capability</text>
+  <text x="460" y="96" font-size="10.5" opacity=".78">P4&ndash;7 &middot; both backends, gate, 29 privileged scenarios</text>
+
+  <rect x="450" y="114" width="200" height="30" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <text x="550" y="134" text-anchor="middle" font-weight="600">Measurement</text>
+  <text x="660" y="134" font-size="10.5" opacity=".78">P8&ndash;10 &middot; differential, coverage, feedback</text>
+
+  <rect x="650" y="152" width="100" height="30" fill="var(--warn-bg)" stroke="var(--warn)"/>
+  <text x="700" y="172" text-anchor="middle" font-weight="600">Integration</text>
+  <path d="M750 167 L800 167" fill="none" stroke="var(--warn)" stroke-dasharray="4 3" marker-end="url(#m4)" color="var(--warn)"/>
+  <text x="806" y="164" font-size="10.5" fill="var(--warn)">merge</text>
+  <text x="806" y="178" font-size="10.5" fill="var(--warn)">latency</text>
+
+  <text x="0" y="216" font-size="11.5" opacity=".85">Track 4's two weeks are engineering effort. Completion depends on a review cadence this project does not set.</text>
+</g></svg>
+<figcaption>Track 2 is the longest because Phase 7 is twenty-nine individual privileged
+scenarios, not one mechanism applied once.</figcaption>
+</figure>
+
+<div class="scroll"><table>
+<thead><tr><th>Track</th><th>Phases</th><th>Delivers</th><th class="num">Weeks</th></tr></thead><tbody>
+<tr><td class="a">1 &mdash; Foundation</td><td>1&ndash;3</td><td>Configuration resolution; reachable target list; routing and preamble builder</td><td class="num">3</td></tr>
+<tr><td class="a">2 &mdash; Capability</td><td>4&ndash;7</td><td>Both generation paths; validation gate; privileged scenario harnesses</td><td class="num">6</td></tr>
+<tr><td class="a">3 &mdash; Measurement</td><td>8&ndash;10</td><td>Differential execution; coverage collection and analysis; feedback interface</td><td class="num">4</td></tr>
+<tr><td class="a">4 &mdash; Integration</td><td>11&ndash;12</td><td>Golden Model CI integration; upstream submission of model changes</td><td class="num">2</td></tr>
+</tbody></table></div>
+<p>Track 2 is the longest because Phase 7 is twenty-nine individual privileged scenarios, not
+one mechanism applied once. Track 4's two weeks are <em>engineering effort</em>, not time to
+completion: both phases are done only when merged, on a review cadence this project does not
+set.</p>
+<h3>Milestones: what each phase builds, and when</h3>
+<p>Each phase names the workstream it advances, the tasks it covers, and one acceptance test.
+We state the test as something observable. A phase is done when its evidence exists, not when its
+effort is spent.</p>
+<div class="scroll"><table>
+<thead><tr><th class="num">Ph</th><th>WS</th><th>Implementation tasks</th><th class="num">Wks</th><th>Accepted when</th></tr></thead><tbody>
+<tr><td class="num">1</td><td class="a">E&nbsp;B</td><td>Configuration resolution &mdash; one validated object from which every downstream value derives. Entry points proposed upstream</td><td class="num">1</td><td>A configuration resolves to one validated object and the correct IR, for every required XLEN</td></tr>
+<tr><td class="num">2</td><td class="a">E</td><td>Target enumeration; reachable and exclusion lists built from the model's declarations</td><td class="num">1</td><td>Every declared target partitions into reachable or excluded, with nothing left over</td></tr>
+<tr><td class="num">3</td><td class="a">E</td><td>Routing table; preamble builder for privileged and CSR-only targets</td><td class="num">1</td><td>Every reachable target routes to exactly one backend; privileged state builds from the preamble alone</td></tr>
+<tr><td class="num">4</td><td class="a">A&nbsp;C</td><td>Engine primitives the model calls; address-width fix; struct-typed vector elements. RISC-V target implementation and the three portability fixes</td><td class="num">1</td><td>The engine derives operands for the targeted path set on every symbolic-routed extension</td></tr>
+<tr><td class="num">5</td><td class="a">D</td><td>Model-derived instruction set; run-and-capture; toolchain assembly and linking</td><td class="num">1</td><td>The oracle generates a passing, checkable test for every oracle-routed target</td></tr>
+<tr><td class="num">6</td><td class="a">C&nbsp;E</td><td>Validation gate; materialisation through one shared format layer; both output profiles</td><td class="num">1</td><td>No test with an empty expected result reaches the suite; every trap scenario carries a negative control that fails</td></tr>
+<tr><td class="num">7</td><td class="a">E&nbsp;B</td><td>Privileged scenario harnesses &mdash; PMP, translation, trap, interrupt, delegation &mdash; on the preamble builder, with the model-side PMP reset fix</td><td class="num">3</td><td>All 29 privileged extensions and capabilities have at least one generated test</td></tr>
+<tr><td class="num">8</td><td class="a">E</td><td>Differential execution across Sail, Spike, QEMU and RTL; verdict comparison and triage</td><td class="num">2</td><td>Every materialised test runs on Sail and at least one independent simulator, with a recorded verdict</td></tr>
+<tr><td class="num">9</td><td class="a">E</td><td>Instrumented build, per-test isolation, accumulation and reconciliation against the span manifest</td><td class="num">1</td><td>Every span reconciles to hit, gap, or exclusion; nothing unaccounted for</td></tr>
+<tr><td class="num">10</td><td class="a">E</td><td>Uncovered-target classification; the machine-readable feedback interface; suite and regression reporting</td><td class="num">1</td><td>The uncovered-target list is published, machine-readable, classified by cause</td></tr>
+<tr><td class="num">11</td><td class="a">E</td><td>The two CI jobs of section 2.6, and the checked-in suite they replay <span style="color:var(--muted)">(D4)</span></td><td class="num">1</td><td>The framework's PR is <b>merged</b> into the Golden Model's CI, not merely approved</td></tr>
+<tr><td class="num">12</td><td class="a">B</td><td>Upstream submission of the model changes of section 4.2 <span style="color:var(--muted)">(D5)</span></td><td class="num">1</td><td>Every required change is <b>merged</b> upstream, not merely filed</td></tr>
+</tbody></table></div>
+<div class="key"><b>Phases 11 and 12 are the only two whose acceptance this project cannot
+unilaterally satisfy.</b> Their engineering is a week each; their completion waits on a review
+cadence the Golden Model's maintainers set. That is why the critical path runs through merge
+latency rather than through effort.</div>
+
+<h3>Cost basis</h3>
+<p>Cost comes from the phase table above: <b>15 engineering-weeks</b>, at an agreed rate. Rate and
+team composition are commercial terms, agreed separately. Once set, the same breakdown drives both
+the schedule and the price.</p>
+<div class="scroll"><table>
+<thead><tr><th>Basis</th><th>Treatment</th></tr></thead><tbody>
+<tr><td class="a">Engineering effort</td><td>15 weeks, derived per phase. No phase is costed by guesswork, and none is skipped to reach a lower number</td></tr>
+<tr><td class="a">Upstream merge latency</td><td><b>Tracked, not priced.</b> It is calendar time, not engineering effort; this plan does not charge for waiting on someone else's review</td></tr>
+<tr><td class="a">Delivery model</td><td>Human-plus-AI-assisted. Every upstream contribution is authored and reviewed by a named engineer who is accountable for it &mdash; see section 6</td></tr>
+<tr><td class="a">Rate and team</td><td>Commercial terms, agreed separately. Stated here as a dependency rather than a number, so the technical plan can be evaluated on its own</td></tr>
+</tbody></table></div>
+
+</section>
+
+<section>
+<div class="secnum">5 &middot; Risk</div>
+<h2>What could go wrong, and what happens then</h2>
+<div class="scroll"><table>
+<thead><tr><th>Risk</th><th>Response</th></tr></thead><tbody>
+<tr><td class="a">Upstream merge latency</td><td>Engage maintainers early rather than at submission. PR state is reported as what it is &mdash; created, reviewed, approved &mdash; never as complete</td></tr>
+<tr><td class="a">Model entry points rejected</td><td>Fall back to oracle-only generation; privileged scenarios move to preamble construction. A capability reduction, not a project failure</td></tr>
+<tr><td class="a">Representational ceiling</td><td>Targets beyond the engine's 129-bit value bound route to the oracle automatically, recorded as an architectural reason. Routing is per target, so a ceiling on one extension never blocks generation elsewhere</td></tr>
+<tr><td class="a">A further missing primitive found late</td><td>Phase 4's acceptance test is a clean symbolic run over <em>every</em> symbolic-routed extension, not a sample, so the discovery happens inside the phase that owns it</td></tr>
+<tr><td class="a">Tests that cannot fail</td><td>The validation gate, mandatory negative controls, and differential execution &mdash; section 2.4</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="secnum">6 &middot; Licensing and contribution</div>
+<h2>How the licences compose</h2>
+<p>We license the framework <b>Apache-2.0</b>, which the RFP names as preferred. The Golden Model
+is <b>BSD-2-Clause</b>. Both are permissive and compatible in this direction. Framework code that
+calls into or ships alongside the model puts no copyleft obligation back on the model, so
+integrating into the Golden Model's CI needs no relicensing either way.</p>
+
+<h3>Third-party components</h3>
+<div class="scroll"><table>
+<thead><tr><th>Component</th><th>Licence</th><th>Role</th></tr></thead><tbody>
+<tr><td class="a">sail-riscv <span style="color:var(--muted)">(Golden Model)</span></td><td>BSD-2-Clause</td><td>The specification under test; consumed unmodified</td></tr>
+<tr><td class="a">isla, isla-sail, isla-testgen</td><td>BSD-2-Clause</td><td>Symbolic execution engine and IR compiler</td></tr>
+<tr><td class="a">Z3</td><td>MIT</td><td>SMT solver, reached only through isla</td></tr>
+<tr><td class="a">Spike <span style="color:var(--muted)">(riscv-isa-sim)</span></td><td>BSD-3-Clause</td><td>Independent execution target</td></tr>
+<tr><td class="a">QEMU</td><td>GPL-2.0</td><td>Independent execution target</td></tr>
+<tr><td class="a">CVA6</td><td>Solderpad v2.0</td><td>RTL execution target</td></tr>
+<tr><td class="a">Verilator</td><td>LGPL-3.0 / Artistic-2.0</td><td>RTL simulator</td></tr>
+<tr><td class="a">RISC-V GNU toolchain</td><td>GPL-3.0 with runtime exception</td><td>Assembler and linker</td></tr>
+<tr><td class="a">riscv-arch-test</td><td>Apache-2.0 / BSD / CC</td><td>Compatibility target</td></tr>
+</tbody></table></div>
+
+<div class="key"><b>The copyleft tools put no obligation on us.</b> We invoke QEMU, Verilator and the
+GNU toolchain as separate executables &mdash; an assembler is run on a file,
+a simulator is run on an ELF and its exit code is read. We do not link against, embed, or derive from any of them. The GPL attaches to distributing derived works, not to being
+executed as a tool, so the framework's Apache-2.0 licence is unaffected and no distributed
+artefact inherits copyleft. The generated tests are likewise unaffected: they are outputs
+produced from the Sail model's own declarations, not derivatives of any tool that runs them.
+CVA6's Solderpad licence &mdash; Apache-2.0 with hardware-specific terms &mdash; is covered by
+the same reasoning, since it is a target the ELFs run on rather than a component the framework
+distributes.</div>
+
+<h3>Upstream submissions</h3>
+<p>Anything we submit into the Sail model itself &mdash; the model changes of Deliverable 5, and
+the entry points of section 4.2 &mdash; becomes part of sail-riscv. We contribute it under
+<b>sail-riscv's own licence and contribution terms</b>, not ours. Its <code>CONTRIBUTING.md</code>
+governs, and we check it at submission time rather than assume it here.</p>
+<p>The schedule assumes AI-assisted delivery, so we state the contribution terms rather than
+leave a reviewer to infer them. A named engineer authors and reviews every change we submit
+upstream, and signs it off under sail-riscv's terms, including a DCO sign-off where required. AI
+assistance does not change who the contributor of record is. We submit nothing a named engineer
+has not reviewed and is not accountable for.</p>
+</section>
+
+<section>
+<div class="secnum">7 &middot; Maintenance</div>
+<h2>After delivery</h2>
+<p>We deliver the framework as its own repository under an RVI-designated organisation, and
+transfer it with its history intact. We agree ownership &mdash; admin, review rights, release
+authority &mdash; at project start, not at delivery.</p>
+<p>Developer documentation covers what someone extending the framework cannot infer: how we
+classify a new extension into the routing table and what evidence that needs, how to add a backend
+behind the same interface, and how the target list derives from the model's declarations so it
+keeps working as the model changes. The model and engine
+revisions the framework was verified against will be pinned as data, with a documented bump
+procedure that re-runs generation and compares against the stored baseline &mdash; so a pin
+moves only when the evidence for the new pin exists.</p>
+<div class="key"><b>We record why each decision was made.</b> Why a backend is routed one
+way, why an exclusion is functional rather than scheduling, why a convention exists. A
+maintainer who cannot reconstruct why a constraint exists will eventually remove it &mdash;
+which is the failure mode this is written to prevent.</div>
+</section>
+
+<footer>Every figure and table in this document is derived from the Sail model's own declarations or from the RFP. Quantities attributed to the model describe the problem to be solved, not work already performed, and will be recomputed against the model revision agreed at project start.</footer>
+</div>

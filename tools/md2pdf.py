@@ -63,6 +63,12 @@ tbody tr:nth-child(even) { background: #fafbfc; }
 blockquote { margin: 8px 0; padding: 6px 10px; background: #fff8e6;
              border-left: 3px solid #d9a441; }
 hr { border: none; border-top: 1px solid #dfe2e7; margin: 14px 0; }
+/* Without this an image renders at its intrinsic pixel width. A figure wider
+   than the text column then overflows the page and Chrome pushes the rest of
+   the content off it -- the PDF still builds, so the only symptom is a page
+   that has gone blank. */
+img { max-width: 100%; height: auto; display: block; margin: 10px auto;
+      page-break-inside: avoid; }
 a { color: #1b3a6b; text-decoration: none; }
 """
 
@@ -77,7 +83,15 @@ def convert(src):
     # python-markdown leaves literal arrows/box glyphs alone, which is what we
     # want -- but it also escapes nothing inside <pre>, so diagrams survive.
     title = re.sub(r"^#\s*", "", text.split("\n")[0]).strip() or os.path.basename(src)
+    # The temp HTML is written to a scratch directory, so relative asset paths
+    # in the markdown (images, above all) would resolve against that directory
+    # and silently fail to load -- Chrome renders the page regardless, so the
+    # only symptom is a missing figure. A <base> pointing at the source file's
+    # own directory makes relative paths mean what the author meant.
+    base = "file://" + os.path.dirname(os.path.abspath(src)) + "/"
+
     page = (f"<!doctype html><html><head><meta charset='utf-8'>"
+            f"<base href='{base}'>"
             f"<title>{html.escape(title)}</title><style>{CSS}</style></head>"
             f"<body>{body}</body></html>")
 

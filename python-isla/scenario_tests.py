@@ -81,6 +81,40 @@ SCENARIOS = [
     ("m2_NEG_no_violation", LOAD_MAPPED,
      ["--pmp-deny", "0x80028000", "--expect-trap-cause", "5", "--trap-is-pass"], False),
 
+    # The three cases above run in M-mode, and M-mode is the *least*
+    # discriminating privilege for PMP: an access matching no entry is allowed
+    # there and denied in S and U. Testing only M therefore exercises the
+    # permissive arm of `pmpCheck` and leaves the default-deny path -- the one
+    # that actually protects anything -- unexecuted. The same access is
+    # repeated here at S and U so all three arms are reached.
+    ("m2_load_permitted_smode", LOAD_MAPPED,
+     ["--run-in-supervisor", "--pmp-allow-all"], True),
+    ("m2_load_denied_smode", LOAD_MAPPED,
+     ["--run-in-supervisor", "--pmp-deny", "0x80020000",
+      "--expect-trap-cause", "5", "--trap-is-pass"], True),
+    # Control for the S-mode pair: without an explicit allow-all, S-mode denies
+    # an unmatched access by default, so a test that expects success must fail.
+    # If this ever passes, `--run-in-supervisor` stopped taking effect and both
+    # S-mode results above are worthless.
+    ("m2_NEG_smode_default_deny", LOAD_MAPPED,
+     ["--run-in-supervisor"], False),
+    # NOT YET REACHABLE, and worth stating rather than leaving as a silent gap.
+    # pmpCheck's final line -- `if priv == Machine then None() else
+    # Some(accessFault...)` -- is the *unmatched* case, and the only place
+    # privilege alone decides the outcome. No scenario here reaches it, because
+    # both PMP options guarantee a match: --pmp-allow-all installs a catch-all,
+    # and --pmp-deny installs a denying entry 0 *plus* an entry 1 permitting
+    # everything else. Leaving the data address unmatched while keeping the
+    # harness's own code fetchable needs a bounded-range option the generator
+    # does not have yet (--pmp-allow-range <lo>-<hi>). Until then the arm is
+    # covered only by m2_NEG_smode_default_deny, which fails by design and so
+    # contributes no coverage.
+    ("m2_load_permitted_umode", LOAD_MAPPED,
+     ["--preload-xepc", "mepc", "--preload-xpp", "mpp=u", "--pmp-allow-all"], True),
+    ("m2_load_denied_umode", LOAD_MAPPED,
+     ["--preload-xepc", "mepc", "--preload-xpp", "mpp=u",
+      "--pmp-deny", "0x80020000", "--expect-trap-cause", "5", "--trap-is-pass"], True),
+
     # ---- M5: interrupt delivery ------------------------------------------
     # `--pending-interrupt` (m0_wfi above) deliberately leaves mstatus.MIE
     # clear, so it tests WFI's wake condition and *not* delivery. These take

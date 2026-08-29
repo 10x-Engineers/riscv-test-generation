@@ -1,0 +1,126 @@
+id,name,classification,classified_by,config_key,xlen_requirement,support_predicate,source
+Ext_M,m,unprivileged,config key extensions.M.supported,extensions.M.supported,any,config extensions.M.supported,core/extensions.sail:35
+Ext_A,a,unprivileged,config key extensions.A.supported,extensions.A.supported,any,config extensions.A.supported,core/extensions.sail:39
+Ext_F,f,unprivileged,config key extensions.F.supported,extensions.F.supported,any,config extensions.F.supported,core/extensions.sail:43
+Ext_D,d,unprivileged,no config gate (always present),Not directly derivable from Sail,any,constraint(ext_d_supported) & hartSupports(Ext_F),core/extensions.sail:49
+Ext_B,b,unprivileged,config key extensions.B.supported,extensions.B.supported,any,config extensions.B.supported,core/extensions.sail:53
+Ext_V,v,unprivileged,no config gate (always present),Not directly derivable from Sail,any,sizeof(vlen_exp) >= 7 & vector_support_level >= Full,core/extensions.sail:57
+Ext_S,s,privileged,config key extensions.S.supported,extensions.S.supported,any,config extensions.S.supported,core/extensions.sail:61
+Ext_U,u,unprivileged,config key extensions.U.supported,extensions.U.supported,any,config extensions.U.supported,core/extensions.sail:65
+Ext_H,h,unprivileged,no config gate (always present),Not directly derivable from Sail,any,false,core/extensions.sail:69
+Ext_Zibi,zibi,unprivileged,config key extensions.Zibi.supported,extensions.Zibi.supported,any,sys_enable_experimental_extensions() & config extensions.Zibi.supported,core/extensions.sail:73
+Ext_Zic64b,zic64b,unprivileged,config key extensions.Zic64b.supported,extensions.Zic64b.supported,any,config extensions.Zic64b.supported,core/extensions.sail:77
+Ext_Zicbom,zicbom,unprivileged,config key extensions.Zicbom.supported,extensions.Zicbom.supported,any,config extensions.Zicbom.supported,core/extensions.sail:82
+Ext_Zicbop,zicbop,unprivileged,config key extensions.Zicbop.supported,extensions.Zicbop.supported,any,config extensions.Zicbop.supported,core/extensions.sail:86
+Ext_Zicboz,zicboz,unprivileged,config key extensions.Zicboz.supported,extensions.Zicboz.supported,any,config extensions.Zicboz.supported,core/extensions.sail:90
+Ext_Zicfilp,zicfilp,unprivileged,config key extensions.Zicfilp.supported,extensions.Zicfilp.supported,any,config extensions.Zicfilp.supported,core/extensions.sail:94
+Ext_Zicfiss,zicfiss,unprivileged,config key extensions.Zicfiss.supported,extensions.Zicfiss.supported,any,config extensions.Zicfiss.supported,core/extensions.sail:98
+Ext_Zicntr,zicntr,unprivileged,config key extensions.Zicntr.supported,extensions.Zicntr.supported,any,config extensions.Zicntr.supported,core/extensions.sail:102
+Ext_Zicond,zicond,unprivileged,config key extensions.Zicond.supported,extensions.Zicond.supported,any,config extensions.Zicond.supported,core/extensions.sail:106
+Ext_Zicsr,zicsr,unprivileged,config key extensions.Zicsr.supported,extensions.Zicsr.supported,any,config extensions.Zicsr.supported,core/extensions.sail:110
+Ext_Zifencei,zifencei,unprivileged,config key extensions.Zifencei.supported,extensions.Zifencei.supported,any,config extensions.Zifencei.supported,core/extensions.sail:114
+Ext_Zihintntl,zihintntl,unprivileged,config key extensions.Zihintntl.supported,extensions.Zihintntl.supported,any,config extensions.Zihintntl.supported,core/extensions.sail:118
+Ext_Zihintpause,zihintpause,unprivileged,config key extensions.Zihintpause.supported,extensions.Zihintpause.supported,any,config extensions.Zihintpause.supported,core/extensions.sail:122
+Ext_Zihpm,zihpm,unprivileged,config key extensions.Zihpm.supported,extensions.Zihpm.supported,any,config extensions.Zihpm.supported,core/extensions.sail:126
+Ext_Zimop,zimop,unprivileged,config key extensions.Zimop.supported,extensions.Zimop.supported,any,config extensions.Zimop.supported,core/extensions.sail:130
+Ext_Zmmul,zmmul,unprivileged,config key extensions.Zmmul.supported,extensions.Zmmul.supported,any,config extensions.Zmmul.supported,core/extensions.sail:135
+Ext_Zaamo,zaamo,unprivileged,config key extensions.Zaamo.supported,extensions.Zaamo.supported,any,config extensions.Zaamo.supported,core/extensions.sail:140
+Ext_Zabha,zabha,unprivileged,config key extensions.Zabha.supported,extensions.Zabha.supported,any,config extensions.Zabha.supported,core/extensions.sail:144
+Ext_Zacas,zacas,unprivileged,config key extensions.Zacas.supported,extensions.Zacas.supported,any,config extensions.Zacas.supported,core/extensions.sail:148
+Ext_Zalrsc,zalrsc,unprivileged,config key extensions.Zalrsc.supported,extensions.Zalrsc.supported,any,config extensions.Zalrsc.supported,core/extensions.sail:152
+Ext_Zawrs,zawrs,unprivileged,config key extensions.Zawrs.supported,extensions.Zawrs.supported,any,config extensions.Zawrs.supported,core/extensions.sail:156
+Ext_Za64rs,za64rs,unprivileged,config key extensions.Zalrsc.supported,extensions.Zalrsc.supported,any,plat_reservation_set_size_exp <= 6 & (config extensions.Zalrsc.supported : bool | config extensions.A.supported : bool),core/extensions.sail:160
+Ext_Za128rs,za128rs,unprivileged,config key extensions.Zalrsc.supported,extensions.Zalrsc.supported,any,plat_reservation_set_size_exp <= 7 & (config extensions.Zalrsc.supported : bool | config extensions.A.supported : bool),core/extensions.sail:163
+Ext_Zfa,zfa,unprivileged,config key extensions.Zfa.supported,extensions.Zfa.supported,any,config extensions.Zfa.supported,core/extensions.sail:168
+Ext_Zfbfmin,zfbfmin,unprivileged,config key extensions.Zfbfmin.supported,extensions.Zfbfmin.supported,any,config extensions.Zfbfmin.supported,core/extensions.sail:172
+Ext_Zfh,zfh,unprivileged,config key extensions.Zfh.supported,extensions.Zfh.supported,any,config extensions.Zfh.supported,core/extensions.sail:176
+Ext_Zfhmin,zfhmin,unprivileged,config key extensions.Zfhmin.supported,extensions.Zfhmin.supported,any,config extensions.Zfhmin.supported,core/extensions.sail:180
+Ext_Zfinx,zfinx,unprivileged,config key extensions.Zfinx.supported,extensions.Zfinx.supported,any,config extensions.Zfinx.supported,core/extensions.sail:184
+Ext_Zdinx,zdinx,unprivileged,config key extensions.Zdinx.supported,extensions.Zdinx.supported,any,config extensions.Zdinx.supported,core/extensions.sail:189
+Ext_Zca,zca,unprivileged,config key extensions.Zca.supported,extensions.Zca.supported,any,config extensions.Zca.supported,core/extensions.sail:194
+Ext_Zcb,zcb,unprivileged,config key extensions.Zcb.supported,extensions.Zcb.supported,any,config extensions.Zcb.supported,core/extensions.sail:198
+Ext_Zcd,zcd,unprivileged,config key extensions.Zcd.supported,extensions.Zcd.supported,any,config extensions.Zcd.supported,core/extensions.sail:202
+Ext_Zcf,zcf,unprivileged,config key extensions.Zcf.supported,extensions.Zcf.supported,32,config extensions.Zcf.supported : bool & (xlen == 32),core/extensions.sail:206
+Ext_Zcmop,zcmop,unprivileged,config key extensions.Zcmop.supported,extensions.Zcmop.supported,any,config extensions.Zcmop.supported,core/extensions.sail:210
+Ext_C,c,unprivileged,no config gate (always present),Not directly derivable from Sail,any,hartSupports(Ext_Zca) & (hartSupports(Ext_Zcf) | not(hartSupports(Ext_F)) | xlen != 32) & (hartSupports(Ext_Zcd) | not(hartSupports(Ext_D))),core/extensions.sail:218
+Ext_Zba,zba,unprivileged,config key extensions.Zba.supported,extensions.Zba.supported,any,config extensions.Zba.supported,core/extensions.sail:223
+Ext_Zbb,zbb,unprivileged,config key extensions.Zbb.supported,extensions.Zbb.supported,any,config extensions.Zbb.supported,core/extensions.sail:227
+Ext_Zbc,zbc,unprivileged,config key extensions.Zbc.supported,extensions.Zbc.supported,any,config extensions.Zbc.supported,core/extensions.sail:231
+Ext_Zbkb,zbkb,unprivileged,config key extensions.Zbkb.supported,extensions.Zbkb.supported,any,config extensions.Zbkb.supported,core/extensions.sail:235
+Ext_Zbkc,zbkc,unprivileged,config key extensions.Zbkc.supported,extensions.Zbkc.supported,any,config extensions.Zbkc.supported,core/extensions.sail:239
+Ext_Zbkx,zbkx,unprivileged,config key extensions.Zbkx.supported,extensions.Zbkx.supported,any,config extensions.Zbkx.supported,core/extensions.sail:243
+Ext_Zbs,zbs,unprivileged,config key extensions.Zbs.supported,extensions.Zbs.supported,any,config extensions.Zbs.supported,core/extensions.sail:247
+Ext_Ziccamoa,ziccamoa,unprivileged,config key extensions.Ziccamoa.supported,extensions.Ziccamoa.supported,any,config extensions.Ziccamoa.supported,core/extensions.sail:252
+Ext_Ziccamoc,ziccamoc,unprivileged,config key extensions.Ziccamoc.supported,extensions.Ziccamoc.supported,any,config extensions.Ziccamoc.supported,core/extensions.sail:256
+Ext_Ziccif,ziccif,unprivileged,config key extensions.Ziccif.supported,extensions.Ziccif.supported,any,config extensions.Ziccif.supported,core/extensions.sail:260
+Ext_Zicclsm,zicclsm,unprivileged,config key extensions.Zicclsm.supported,extensions.Zicclsm.supported,any,config extensions.Zicclsm.supported,core/extensions.sail:265
+Ext_Ziccrse,ziccrse,unprivileged,config key extensions.Ziccrse.supported,extensions.Ziccrse.supported,any,config extensions.Ziccrse.supported,core/extensions.sail:270
+Ext_Zknd,zknd,unprivileged,config key extensions.Zknd.supported,extensions.Zknd.supported,any,config extensions.Zknd.supported,core/extensions.sail:275
+Ext_Zkne,zkne,unprivileged,config key extensions.Zkne.supported,extensions.Zkne.supported,any,config extensions.Zkne.supported,core/extensions.sail:279
+Ext_Zknh,zknh,unprivileged,config key extensions.Zknh.supported,extensions.Zknh.supported,any,config extensions.Zknh.supported,core/extensions.sail:283
+Ext_Zkr,zkr,unprivileged,config key extensions.Zkr.supported,extensions.Zkr.supported,any,config extensions.Zkr.supported,core/extensions.sail:287
+Ext_Zksed,zksed,unprivileged,config key extensions.Zksed.supported,extensions.Zksed.supported,any,config extensions.Zksed.supported,core/extensions.sail:291
+Ext_Zksh,zksh,unprivileged,config key extensions.Zksh.supported,extensions.Zksh.supported,any,config extensions.Zksh.supported,core/extensions.sail:295
+Ext_Zkt,zkt,unprivileged,config key extensions.Zkt.supported,extensions.Zkt.supported,any,config extensions.Zkt.supported,core/extensions.sail:299
+Ext_Zhinx,zhinx,unprivileged,config key extensions.Zhinx.supported,extensions.Zhinx.supported,any,config extensions.Zhinx.supported,core/extensions.sail:305
+Ext_Zhinxmin,zhinxmin,unprivileged,config key extensions.Zhinxmin.supported,extensions.Zhinxmin.supported,any,config extensions.Zhinxmin.supported,core/extensions.sail:309
+Ext_Zvl32b,zvl32b,unprivileged,no config gate (always present),Not directly derivable from Sail,any,sizeof(vlen_exp) >= 5,core/extensions.sail:315
+Ext_Zvl64b,zvl64b,unprivileged,no config gate (always present),Not directly derivable from Sail,any,sizeof(vlen_exp) >= 6,core/extensions.sail:318
+Ext_Zvl128b,zvl128b,unprivileged,no config gate (always present),Not directly derivable from Sail,any,sizeof(vlen_exp) >= 7,core/extensions.sail:321
+Ext_Zvl256b,zvl256b,unprivileged,no config gate (always present),Not directly derivable from Sail,any,sizeof(vlen_exp) >= 8,core/extensions.sail:324
+Ext_Zvl512b,zvl512b,unprivileged,no config gate (always present),Not directly derivable from Sail,any,sizeof(vlen_exp) >= 9,core/extensions.sail:327
+Ext_Zvl1024b,zvl1024b,unprivileged,no config gate (always present),Not directly derivable from Sail,any,sizeof(vlen_exp) >= 10,core/extensions.sail:330
+Ext_Zve32f,zve32f,unprivileged,no config gate (always present),Not directly derivable from Sail,any,sizeof(elen_exp) >= 5 & vector_support_level >= Float_single,core/extensions.sail:334
+Ext_Zve32x,zve32x,unprivileged,no config gate (always present),Not directly derivable from Sail,any,sizeof(elen_exp) >= 5 & vector_support_level >= Integer,core/extensions.sail:337
+Ext_Zve64d,zve64d,unprivileged,no config gate (always present),Not directly derivable from Sail,any,sizeof(elen_exp) >= 6 & vector_support_level >= Float_double,core/extensions.sail:340
+Ext_Zve64f,zve64f,unprivileged,no config gate (always present),Not directly derivable from Sail,any,sizeof(elen_exp) >= 6 & vector_support_level >= Float_single,core/extensions.sail:343
+Ext_Zve64x,zve64x,unprivileged,no config gate (always present),Not directly derivable from Sail,any,sizeof(elen_exp) >= 6 & vector_support_level >= Integer,core/extensions.sail:346
+Ext_Zvabd,zvabd,unprivileged,config key extensions.Zvabd.supported,extensions.Zvabd.supported,any,sys_enable_experimental_extensions() & config extensions.Zvabd.supported,core/extensions.sail:350
+Ext_Zvfbfmin,zvfbfmin,unprivileged,config key extensions.Zvfbfmin.supported,extensions.Zvfbfmin.supported,any,config extensions.Zvfbfmin.supported,core/extensions.sail:354
+Ext_Zvfbfwma,zvfbfwma,unprivileged,config key extensions.Zvfbfwma.supported,extensions.Zvfbfwma.supported,any,config extensions.Zvfbfwma.supported,core/extensions.sail:358
+Ext_Zvfh,zvfh,unprivileged,config key extensions.Zvfh.supported,extensions.Zvfh.supported,any,config extensions.Zvfh.supported,core/extensions.sail:362
+Ext_Zvfhmin,zvfhmin,unprivileged,config key extensions.Zvfhmin.supported,extensions.Zvfhmin.supported,any,config extensions.Zvfhmin.supported,core/extensions.sail:366
+Ext_Zvbb,zvbb,unprivileged,config key extensions.Zvbb.supported,extensions.Zvbb.supported,any,config extensions.Zvbb.supported,core/extensions.sail:371
+Ext_Zvbc,zvbc,unprivileged,config key extensions.Zvbc.supported,extensions.Zvbc.supported,any,config extensions.Zvbc.supported,core/extensions.sail:375
+Ext_Zvkb,zvkb,unprivileged,config key extensions.Zvkb.supported,extensions.Zvkb.supported,any,config extensions.Zvkb.supported,core/extensions.sail:379
+Ext_Zvkg,zvkg,unprivileged,config key extensions.Zvkg.supported,extensions.Zvkg.supported,any,config extensions.Zvkg.supported,core/extensions.sail:383
+Ext_Zvkned,zvkned,unprivileged,config key extensions.Zvkned.supported,extensions.Zvkned.supported,any,config extensions.Zvkned.supported,core/extensions.sail:387
+Ext_Zvknha,zvknha,unprivileged,config key extensions.Zvknha.supported,extensions.Zvknha.supported,any,config extensions.Zvknha.supported,core/extensions.sail:391
+Ext_Zvknhb,zvknhb,unprivileged,config key extensions.Zvknhb.supported,extensions.Zvknhb.supported,any,config extensions.Zvknhb.supported,core/extensions.sail:395
+Ext_Zvksed,zvksed,unprivileged,config key extensions.Zvksed.supported,extensions.Zvksed.supported,any,config extensions.Zvksed.supported,core/extensions.sail:399
+Ext_Zvksh,zvksh,unprivileged,config key extensions.Zvksh.supported,extensions.Zvksh.supported,any,config extensions.Zvksh.supported,core/extensions.sail:403
+Ext_Zvkt,zvkt,unprivileged,config key extensions.Zvkt.supported,extensions.Zvkt.supported,any,config extensions.Zvkt.supported,core/extensions.sail:407
+Ext_Zvkn,zvkn,unprivileged,config key Not directly derivable from Sail,Not directly derivable from Sail,any,Not directly derivable from Sail,core/extensions.sail:414
+Ext_Zvknc,zvknc,unprivileged,no config gate (always present),Not directly derivable from Sail,any,hartSupports(Ext_Zvkn) & hartSupports(Ext_Zvbc),core/extensions.sail:423
+Ext_Zvkng,zvkng,unprivileged,no config gate (always present),Not directly derivable from Sail,any,hartSupports(Ext_Zvkn) & hartSupports(Ext_Zvkg),core/extensions.sail:428
+Ext_Zvks,zvks,unprivileged,config key Not directly derivable from Sail,Not directly derivable from Sail,any,Not directly derivable from Sail,core/extensions.sail:433
+Ext_Zvksc,zvksc,unprivileged,no config gate (always present),Not directly derivable from Sail,any,hartSupports(Ext_Zvks) & hartSupports(Ext_Zvbc),core/extensions.sail:442
+Ext_Zvksg,zvksg,unprivileged,no config gate (always present),Not directly derivable from Sail,any,hartSupports(Ext_Zvks) & hartSupports(Ext_Zvkg),core/extensions.sail:447
+Ext_Ssccptr,ssccptr,privileged,config key extensions.Ssccptr.supported,extensions.Ssccptr.supported,any,config extensions.Ssccptr.supported,core/extensions.sail:453
+Ext_Sscofpmf,sscofpmf,privileged,config key extensions.Sscofpmf.supported,extensions.Sscofpmf.supported,any,config extensions.Sscofpmf.supported,core/extensions.sail:457
+Ext_Sscounterenw,sscounterenw,privileged,config key extensions.Sscounterenw.supported,extensions.Sscounterenw.supported,any,config extensions.Sscounterenw.supported,core/extensions.sail:461
+Ext_Ssnpm,ssnpm,privileged,config key extensions.Ssnpm.supported,extensions.Ssnpm.supported,64,config extensions.Ssnpm.supported : bool & (xlen == 64),core/extensions.sail:465
+Ext_Ssstateen,ssstateen,privileged,config key extensions.Stateen.Ssstateen.supported,extensions.Stateen.Ssstateen.supported,any,config extensions.Stateen.Ssstateen.supported,core/extensions.sail:470
+Ext_Sstc,sstc,privileged,config key extensions.Sstc.supported,extensions.Sstc.supported,any,config extensions.Sstc.supported,core/extensions.sail:474
+Ext_Sstvala,sstvala,privileged,config key extensions.Sstvala.supported,extensions.Sstvala.supported,any,config extensions.Sstvala.supported,core/extensions.sail:478
+Ext_Sstvecd,sstvecd,unprivileged,no config gate (always present),Not directly derivable from Sail,any,hartSupports(Ext_S),core/extensions.sail:484
+Ext_Ssu64xl,ssu64xl,unprivileged,no config gate (always present),Not directly derivable from Sail,64,hartSupports(Ext_S) & (xlen == 64),core/extensions.sail:488
+Ext_Svbare,svbare,privileged,config key extensions.Svbare.supported,extensions.Svbare.supported,any,config extensions.Svbare.supported,core/extensions.sail:493
+Ext_Sv32,sv32,privileged,config key extensions.Sv32.supported,extensions.Sv32.supported,32,config extensions.Sv32.supported : bool & (xlen == 32),core/extensions.sail:496
+Ext_Sv39,sv39,privileged,config key extensions.Sv39.supported,extensions.Sv39.supported,64,config extensions.Sv39.supported : bool & (xlen == 64),core/extensions.sail:499
+Ext_Sv48,sv48,privileged,config key extensions.Sv48.supported,extensions.Sv48.supported,64,config extensions.Sv48.supported : bool & (xlen == 64),core/extensions.sail:502
+Ext_Sv57,sv57,privileged,config key extensions.Sv57.supported,extensions.Sv57.supported,64,config extensions.Sv57.supported : bool & (xlen == 64),core/extensions.sail:505
+Ext_Svade,svade,privileged,config key extensions.Svade.supported,extensions.Svade.supported,any,config extensions.Svade.supported,core/extensions.sail:510
+Ext_Svadu,svadu,privileged,config key extensions.Svadu.supported,extensions.Svadu.supported,any,config extensions.Svadu.supported,core/extensions.sail:514
+Ext_Svinval,svinval,privileged,config key extensions.Svinval.supported,extensions.Svinval.supported,any,config extensions.Svinval.supported,core/extensions.sail:518
+Ext_Svnapot,svnapot,privileged,config key extensions.Svnapot.supported,extensions.Svnapot.supported,64,config extensions.Svnapot.supported : bool & (xlen == 64),core/extensions.sail:522
+Ext_Svpbmt,svpbmt,privileged,config key extensions.Svpbmt.supported,extensions.Svpbmt.supported,64,config extensions.Svpbmt.supported : bool & (xlen == 64),core/extensions.sail:526
+Ext_Svrsw60t59b,svrsw60t59b,privileged,config key extensions.Svrsw60t59b.supported,extensions.Svrsw60t59b.supported,any,config extensions.Svrsw60t59b.supported,core/extensions.sail:530
+Ext_Svvptc,svvptc,privileged,config key extensions.Svvptc.supported,extensions.Svvptc.supported,any,config extensions.Svvptc.supported,core/extensions.sail:534
+Ext_Smcntrpmf,smcntrpmf,privileged,config key extensions.Smcntrpmf.supported,extensions.Smcntrpmf.supported,any,config extensions.Smcntrpmf.supported,core/extensions.sail:539
+Ext_Smmpm,smmpm,privileged,config key extensions.Smmpm.supported,extensions.Smmpm.supported,64,config extensions.Smmpm.supported : bool & (xlen == 64),core/extensions.sail:543
+Ext_Smnpm,smnpm,privileged,config key extensions.Smnpm.supported,extensions.Smnpm.supported,64,config extensions.Smnpm.supported : bool & (xlen == 64),core/extensions.sail:548
+Ext_Smstateen,smstateen,privileged,config key extensions.Stateen.Smstateen.supported,extensions.Stateen.Smstateen.supported,any,config extensions.Stateen.Smstateen.supported,core/extensions.sail:553
+Ext_Ssqosid,ssqosid,privileged,config key extensions.Ssqosid.supported,extensions.Ssqosid.supported,any,config extensions.Ssqosid.supported,core/extensions.sail:558
+Ext_Sspm,sspm,unprivileged,no config gate (always present),Not directly derivable from Sail,any,hartSupports(Ext_Smnpm) & hartSupports(Ext_S),core/extensions.sail:567
+Ext_Supm,supm,unprivileged,no config gate (always present),Not directly derivable from Sail,any,hartSupports(Ext_U) & (if hartSupports(Ext_S) then hartSupports(Ext_Ssnpm) else hartSupports(Ext_Smnpm)),core/extensions.sail:572

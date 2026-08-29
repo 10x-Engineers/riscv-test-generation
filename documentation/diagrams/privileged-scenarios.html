@@ -1,0 +1,353 @@
+<title>Privileged Scenarios</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --surface:#fff; --sunk:#eaeef2;
+  --ink:#14181d; --body:#333c47; --muted:#647082;
+  --rule:#d6dce4; --rule-firm:#b6bfcb;
+  --accent:#3b5bb5; --accent-bg:#e6ecfa;
+  --ok:#0f7368; --ok-bg:#dff0ed;
+  --warn:#9a6114; --warn-bg:#f7efe0;
+  --alert:#a5372b; --alert-bg:#fae9e6;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:15px;line-height:1.58;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;padding:0 26px 80px}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.9rem,3.8vw,2.5rem);font-weight:600;letter-spacing:-.02em;line-height:1.12}
+h2{font-size:1.32rem;font-weight:600;letter-spacing:-.012em}
+h3{font-size:1.02rem;font-weight:600;margin-top:22px}
+h4{font-size:.92rem;font-weight:600;margin-top:16px;font-family:"IBM Plex Sans",sans-serif;color:var(--ink)}
+p{margin:0 0 11px;max-width:76ch}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.85em;background:var(--sunk);padding:.08em .32em;border-radius:2px;overflow-wrap:anywhere}
+header{padding:50px 0 20px;border-bottom:2px solid var(--ink);margin-bottom:30px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px}
+.standfirst{font-size:1.04rem;color:var(--muted);max-width:66ch;margin-top:11px}
+section{margin-top:46px;border-top:1px solid var(--rule);padding-top:22px}
+section:first-of-type{border-top:none;padding-top:0}
+figure{margin:16px 0}
+figcaption{font-size:.85rem;color:var(--muted);margin-top:11px;max-width:72ch}
+svg{max-width:100%;height:auto;display:block}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);margin:12px 0 16px}
+table{border-collapse:collapse;width:100%;font-size:.85rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.65rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.a{white-space:nowrap;font-weight:600;color:var(--ink)}
+td.m{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--ink)}
+tr.neg td{background:var(--alert-bg)}
+tr.neg td.a{color:var(--alert)}
+.key{border-left:3px solid var(--accent);background:var(--accent-bg);padding:12px 16px;margin:14px 0}
+.key b{color:var(--ink)}
+.warn{border-left:3px solid var(--warn);background:var(--warn-bg);padding:12px 16px;margin:14px 0}
+.warn b{color:var(--ink)}
+.gap{border-left:3px solid var(--alert);background:var(--alert-bg);padding:12px 16px;margin:14px 0}
+.gap b{color:var(--ink)}
+pre{background:var(--surface);border:1px solid var(--rule);padding:12px 15px;overflow-x:auto;
+  font-size:.78rem;line-height:1.55;margin:12px 0;font-family:"IBM Plex Mono",monospace}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-size:.82rem;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">RISC-V Sail test generation &middot; privileged scenarios</div>
+  <h1>PMP, Traps, PMA and Virtual Memory</h1>
+  <p class="standfirst">Four areas that cannot be reached by choosing an opcode. Each is an
+  ordinary instruction executed in a state the preamble constructs &mdash; and each ships with a
+  control that must fail.</p>
+</header>
+
+<section>
+<h2>The shape they all share</h2>
+<figure>
+<svg viewBox="0 0 900 250" role="img" aria-label="A scenario has four parts: the preamble builds machine state, an ordinary instruction executes, a trap handler checks the cause and the origin, and a negative control varies one thing and must fail.">
+<defs><marker id="pa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor">
+  <rect x="14" y="40" width="180" height="66" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.4"/>
+  <text x="104" y="62" text-anchor="middle" font-weight="600">1. Preamble</text>
+  <text x="104" y="80" text-anchor="middle" font-size="10">builds the state:</text>
+  <text x="104" y="94" text-anchor="middle" font-size="10">CSRs, PMP, page tables</text>
+  <line x1="194" y1="73" x2="228" y2="73" stroke="currentColor" marker-end="url(#pa)"/>
+  <rect x="230" y="40" width="180" height="66" fill="var(--surface)" stroke="currentColor"/>
+  <text x="320" y="62" text-anchor="middle" font-weight="600">2. Instruction</text>
+  <text x="320" y="80" text-anchor="middle" font-size="10">an ordinary load, AMO</text>
+  <text x="320" y="94" text-anchor="middle" font-size="10">or xRET &mdash; nothing special</text>
+  <line x1="410" y1="73" x2="444" y2="73" stroke="currentColor" marker-end="url(#pa)"/>
+  <rect x="446" y="40" width="190" height="66" fill="var(--surface)" stroke="currentColor"/>
+  <text x="541" y="62" text-anchor="middle" font-weight="600">3. Handler</text>
+  <text x="541" y="80" text-anchor="middle" font-size="10">asserts the cause</text>
+  <text x="541" y="94" text-anchor="middle" font-size="10">and the origin</text>
+  <line x1="636" y1="73" x2="670" y2="73" stroke="currentColor" marker-end="url(#pa)"/>
+  <rect x="672" y="40" width="150" height="66" fill="var(--ok-bg)" stroke="var(--ok)"/>
+  <text x="747" y="78" text-anchor="middle" font-weight="600" fill="var(--ok)">PASS</text>
+
+  <rect x="14" y="140" width="608" height="60" fill="var(--alert-bg)" stroke="var(--alert)" stroke-dasharray="4 3"/>
+  <text x="30" y="162" font-size="11.5" font-weight="600" fill="var(--alert)">4. Negative control &mdash; the same test with exactly one thing changed</text>
+  <text x="30" y="182" font-size="10.5">a different expected cause, or the triggering condition removed, or the state not built</text>
+  <line x1="622" y1="170" x2="670" y2="170" stroke="var(--alert)" marker-end="url(#pa)" color="var(--alert)"/>
+  <rect x="672" y="140" width="150" height="60" fill="var(--alert-bg)" stroke="var(--alert)"/>
+  <text x="747" y="176" text-anchor="middle" font-weight="600" fill="var(--alert)">MUST FAIL</text>
+
+  <text x="14" y="228" font-size="11" opacity=".85">If a control ever passes, the positive result it guards is worthless &mdash; so the control is part of the test, not commentary.</text>
+</g></svg>
+<figcaption>The instruction is never the interesting part. The state before it is.</figcaption>
+</figure>
+<div class="key"><b>Why controls are mandatory here specifically.</b> Two of these scenarios
+passed <em>vacuously</em> during development and were caught only by constructing the case that
+had to fail. A privileged test that never reaches its trap looks exactly like one that traps
+correctly &mdash; both end with a pass.</div>
+</section>
+
+<section>
+<h2>1 &middot; PMP</h2>
+
+<h4>Why an opcode cannot reach it</h4>
+<p>PMP is not an instruction. It is a check the model runs on <em>every</em> memory access,
+against entries held in <code>pmpcfg</code>/<code>pmpaddr</code> CSRs. To exercise it you must
+program those entries, then make an access that lands inside or outside them.</p>
+
+<h4>Foundation it needs</h4>
+<div class="scroll"><table>
+<thead><tr><th>Requirement</th><th>Where</th></tr></thead><tbody>
+<tr><td class="a">Struct-typed vector elements</td><td>PMP config is <code>vector(64, Pmpcfg_ent)</code> &mdash; a vector of bitfield <em>structs</em>. Without the engine fix, any symbolic PMP access crashes. <b>This is the single blocker</b></td></tr>
+<tr><td class="a">Concrete <code>reset_pmp()</code></td><td>Model-side: builds a concrete entry per register rather than updating a symbolic prior value</td></tr>
+<tr><td class="a">Preamble flags</td><td><code>--pmp-allow-all</code> installs a catch-all entry; <code>--pmp-deny &lt;addr&gt;</code> installs a denying entry 0 plus a permitting entry 1</td></tr>
+<tr><td class="a">Privilege control</td><td><code>--run-in-supervisor</code>, and <code>--preload-xpp mpp=u</code> with <code>--preload-xepc</code> for U-mode</td></tr>
+</tbody></table></div>
+
+<h4>The scenarios</h4>
+<div class="scroll"><table>
+<thead><tr><th>Scenario</th><th>Flags</th><th>Expect</th></tr></thead><tbody>
+<tr><td class="a">load permitted (M)</td><td class="m">&mdash;</td><td>pass</td></tr>
+<tr><td class="a">load denied (M)</td><td class="m">--pmp-deny 0x80020000 --expect-trap-cause 5 --trap-is-pass</td><td>pass</td></tr>
+<tr class="neg"><td class="a">NEG wrong cause</td><td class="m">--expect-trap-cause 7</td><td>fail</td></tr>
+<tr class="neg"><td class="a">NEG no violation</td><td class="m">--pmp-deny 0x80028000 <span style="color:var(--muted)">(a different address)</span></td><td>fail</td></tr>
+<tr><td class="a">permitted / denied (S)</td><td class="m">--run-in-supervisor …</td><td>pass</td></tr>
+<tr class="neg"><td class="a">NEG S default-deny</td><td class="m">--run-in-supervisor <span style="color:var(--muted)">with no allow-all</span></td><td>fail</td></tr>
+<tr><td class="a">permitted / denied (U)</td><td class="m">--preload-xpp mpp=u …</td><td>pass</td></tr>
+</tbody></table></div>
+
+<div class="key"><b>Why the same access is repeated at M, S and U.</b> M-mode is the <em>least</em>
+discriminating privilege for PMP: an access matching no entry is <em>allowed</em> in M and
+<em>denied</em> in S and U. Testing only M therefore exercises the permissive arm of
+<code>pmpCheck</code> and leaves the default-deny path &mdash; the one that actually protects
+anything &mdash; unexecuted.</div>
+
+<div class="gap"><b>A gap we state rather than hide.</b> <code>pmpCheck</code>'s final line
+&mdash; <code>if priv == Machine then None() else Some(accessFault…)</code> &mdash; is the
+<em>unmatched</em> case, the only place privilege alone decides the outcome. No scenario reaches
+it, because both PMP options guarantee a match: allow-all installs a catch-all, and deny installs
+a denying entry <em>plus</em> a permitting one. Leaving the data address unmatched while keeping
+the harness's own code fetchable needs a bounded-range option the generator does not have yet
+(<code>--pmp-allow-range lo-hi</code>). Until then the arm is covered only by a control that
+fails by design, and so contributes no coverage.</div>
+</section>
+
+<section>
+<h2>2 &middot; Traps, exceptions and interrupts</h2>
+
+<h4>Why an opcode cannot reach it</h4>
+<p>An exception needs a faulting condition constructed; an interrupt is asynchronous and a
+self-checking ELF cannot wait for a timer across four simulators with four notions of time.</p>
+
+<h4>Foundation it needs</h4>
+<p>A trap handler emitted by the generator, plus preamble flags that make delivery deterministic.
+<b>The interrupt is not awaited &mdash; its architectural conditions are set directly.</b></p>
+<div class="scroll"><table>
+<thead><tr><th>Flag</th><th>What it sets</th><th>What it tests</th></tr></thead><tbody>
+<tr><td class="m">--pending-interrupt</td><td>Pending bit and <code>mie</code>, but <b>not</b> <code>mstatus.MIE</code></td><td><code>WFI</code>'s wake condition, deliberately <em>not</em> delivery</td></tr>
+<tr><td class="m">--deliver-interrupt</td><td>Adds the global enable, so the trap is actually taken</td><td>Delivery</td></tr>
+<tr><td class="m">--delegate-interrupt</td><td><code>mideleg</code>, so it lands in S-mode; handler reads <code>scause</code></td><td>Delegation</td></tr>
+<tr><td class="m">--preload-xepc / --preload-xpp</td><td><code>mepc</code>/<code>sepc</code> and <code>MPP</code>/<code>SPP</code></td><td>Trap return and privilege transitions</td></tr>
+</tbody></table></div>
+
+<h4>The scenarios</h4>
+<div class="scroll"><table>
+<thead><tr><th>Scenario</th><th>Detail</th><th>Expect</th></tr></thead><tbody>
+<tr><td class="a">ecall / ebreak</td><td>causes 11 and 3</td><td>pass</td></tr>
+<tr><td class="a">MRET to M / S / U</td><td>each with the PMP entry the new privilege needs</td><td>pass</td></tr>
+<tr><td class="a">SRET to S / U</td><td>as above</td><td>pass</td></tr>
+<tr class="neg"><td class="a">NEG MRET to U, no PMP</td><td>the post-return fetch must fault, because the privilege change really happened</td><td>fail</td></tr>
+<tr><td class="a">interrupt delivered</td><td>cause 3, taken for real</td><td>pass</td></tr>
+<tr><td class="a">interrupt delegated</td><td><b>cause 1</b>, in S-mode</td><td>pass</td></tr>
+<tr class="neg"><td class="a">NEG wrong cause</td><td>right delivery, cause 7</td><td>fail</td></tr>
+</tbody></table></div>
+
+<div class="key"><b>Delegation must use a <em>supervisor</em> software interrupt &mdash; cause 1,
+not 3.</b> <code>legalize_mideleg</code> hardwires the machine-level delegation bits to zero, so
+a machine software interrupt cannot be delegated at all. The first version tried cause 3 and read
+as a delegation failure when it was an impossible test.</div>
+
+<div class="warn"><b>An interrupt cause is the cause code with the top bit set</b>, so the handler
+tests that bit <em>as a sign bit</em> rather than materialising
+<code>0x8000_0000_0000_0003</code> &mdash; which keeps it XLEN-independent. Requiring the bit to
+be set also stops an exception with the same low cause number satisfying an interrupt test by
+accident: cause 3 as an exception is <code>ebreak</code>.</div>
+
+<div class="gap"><b>A control we removed because it tested nothing.</b> An <code>ebreak</code>
+control was tried alongside the delivered interrupt. With delivery enabled the interrupt fires
+<em>before</em> the <code>ebreak</code> retires, so the test passed on the interrupt and the
+<code>ebreak</code> was never reached. Removed rather than left in place looking like coverage.</div>
+</section>
+
+<section>
+<h2>3 &middot; PMA &mdash; the one that works differently</h2>
+
+<h4>Why an opcode cannot reach it, and neither can a preamble</h4>
+<p>Physical memory attributes are <b>platform-defined region properties</b>, not architectural
+state any instruction can write. There is no CSR to program. So the state is not built by a
+preamble at all &mdash; it is built by <b>generating a configuration</b>.</p>
+
+<h4>How a PMA test is made</h4>
+<pre>1. take the Golden Model's own config JSON
+2. flip one region attribute      e.g. atomic_support: "AMONone"
+3. run an ordinary access there   e.g. amoadd.d x1, x2, (x3)
+4. expect the resulting fault     cause 7, store/AMO access fault</pre>
+<div class="scroll"><table>
+<thead><tr><th>Scenario</th><th>Attribute changed</th><th>Access</th><th>Expect</th></tr></thead><tbody>
+<tr><td class="a">AMO unsupported</td><td class="m">atomic_support: AMONone</td><td class="m">amoadd.d</td><td>cause 7</td></tr>
+<tr class="neg"><td class="a">NEG wrong cause</td><td class="m">same config</td><td class="m">amoadd.d</td><td>cause 5 &rarr; fail</td></tr>
+<tr><td class="a">LR unreservable</td><td class="m">reservability: RsrvNone</td><td class="m">lr.d</td><td>cause 5</td></tr>
+<tr class="neg"><td class="a">NEG wrong cause</td><td class="m">same config</td><td class="m">lr.d</td><td>cause 7 &rarr; fail</td></tr>
+</tbody></table></div>
+
+<div class="key"><b>Two attributes, two different fault classes.</b> Deliberate: a single
+over-broad configuration change cannot satisfy both, so the pair proves the specific attribute
+was what mattered rather than the config being generally broken.</div>
+
+<div class="warn"><b>The obvious control does not work here, and the reason is instructive.</b>
+The first attempt was &ldquo;the same ELF under the stock config&rdquo; &mdash; which sounds
+exact. It does not discriminate: with no trap, the harness falls through to the ordinary
+final-state comparison, which the generator solved for the <em>non-trapping</em> path, so it
+passes either way. The control that does discriminate is the same config with the
+<b>wrong expected cause</b>, which proves the handler compares the cause rather than merely
+noticing a trap.</div>
+</section>
+
+<section>
+<h2>4 &middot; Virtual memory and translation</h2>
+
+<h4>Why an opcode cannot reach it</h4>
+<p>A page-table walk needs a page table in memory, <code>satp</code> pointing at it, and an
+access to an address that is or is not mapped. Three constructed things before the instruction
+runs.</p>
+
+<h4>Foundation it needs</h4>
+<div class="scroll"><table>
+<thead><tr><th>Requirement</th><th>Detail</th></tr></thead><tbody>
+<tr><td class="a">A page table builder</td><td>Behind <code>--sv39</code>: writes a real table, identity-maps the code region, points <code>satp</code> at it</td></tr>
+<tr><td class="a">S-mode</td><td><code>--run-in-supervisor</code> &mdash; translation is not applied in M-mode</td></tr>
+<tr><td class="a">PMP first</td><td><code>--pmp-allow-all</code>, or the access faults on PMP before translation is ever consulted</td></tr>
+<tr><td class="a">Two addresses</td><td>One inside the identity map, one outside it, as separate opcode sequences</td></tr>
+</tbody></table></div>
+
+<h4>The scenarios</h4>
+<div class="scroll"><table>
+<thead><tr><th>Scenario</th><th>What it proves</th><th>Expect</th></tr></thead><tbody>
+<tr><td class="a">supervisor, Bare</td><td>S-mode works with translation off &mdash; the baseline</td><td>pass</td></tr>
+<tr><td class="a">Sv39, mapped address</td><td>A real walk resolves and the access succeeds</td><td>pass</td></tr>
+<tr><td class="a">Sv39, unmapped address</td><td>The walk fails and raises a <b>page</b> fault, cause 13</td><td>pass</td></tr>
+<tr class="neg"><td class="a">NEG no translation</td><td>Same unmapped access with Sv39 off &mdash; faults <em>differently</em></td><td>fail</td></tr>
+<tr class="neg"><td class="a">NEG mapped address</td><td>Sv39 on, mapped address &mdash; does not fault at all</td><td>fail</td></tr>
+</tbody></table></div>
+
+<div class="key"><b>Cause 13 is the whole point.</b> A page fault is reachable only through a real
+walk &mdash; no other mechanism produces it. The two controls bracket it from both sides:
+translation off gives a different fault, a mapped address gives none. Together they prove the
+walk happened, which a single passing test cannot.</div>
+
+<div class="gap"><b>A live limitation.</b> The mapped-address sequence uses
+<code>slli x2, x2, 32</code> to build the address, which is RV64-only &mdash; so every one of
+these scenarios currently fails at RV32. It needs either an RV32 address sequence or an explicit
+skip. Reported as a framework fault, not a model one.</div>
+</section>
+
+<section>
+<h2>What is common, and what it costs</h2>
+<div class="scroll"><table>
+<thead><tr><th>Area</th><th>State built by</th><th>Assertion</th><th>Control varies</th></tr></thead><tbody>
+<tr><td class="a">PMP</td><td>CSR entries in the preamble</td><td>access fault, cause 5 or 7</td><td>the cause, and the denied address</td></tr>
+<tr><td class="a">Traps</td><td>CSR preloads in the preamble</td><td>cause, and the mode it landed in</td><td>the cause, and the PMP entry</td></tr>
+<tr><td class="a">PMA</td><td><b>a generated configuration</b></td><td>fault class per attribute</td><td>the expected cause</td></tr>
+<tr><td class="a">Virtual memory</td><td>a page table plus <code>satp</code></td><td>page fault, cause 13</td><td>translation on/off, address mapped/not</td></tr>
+</tbody></table></div>
+<div class="key"><b>Three of the four build state in the preamble; PMA builds a configuration.</b>
+That is the exception worth remembering, and it is why PMA needed no new generator capability at
+all &mdash; only a config-mutation step and somewhere to put the variant.</div>
+</section>
+
+<section>
+<h2>How the cases get generated</h2>
+<p>The approach follows from the shape above: if the interesting part is the state before the
+instruction, then generation is <b>a script that emits preambles</b>, crossed with the memory
+operations the instruction sweep already solves.</p>
+<pre><b>1</b>  scripts emit one preamble per case      translation &times; PMP &times; PMA &times; interrupt state
+<b>2</b>  cross each with the memory operations   load, store, LR, SC, AMO, fetch, CBO, prefetch
+<b>3</b>  the solver fills in the operands        addresses, register values, post-state</pre>
+<div class="key"><b>The division is the same one that holds everywhere in this framework.</b>
+Machine state is <em>constructed</em> &mdash; arithmetically, in the preamble, where no solver is
+involved. Instruction operands are <em>derived</em> &mdash; by the solver, from the model's own
+path conditions. Neither can do the other's job, and mixing them is what makes privileged test
+generation fail.</div>
+
+<h3>Which crosses are real, and which only add</h3>
+<p>A full cross of every axis is not the goal, and would not be affordable: roughly
+12&nbsp;PMP configs &times; 10&nbsp;PMA variants &times; 12&nbsp;translation setups &times;
+3&nbsp;privileges &times; 4&nbsp;interrupt states is over <b>17,000</b> preambles, and
+&times;&nbsp;18 access kinds is past 300,000 tests. Almost all of that is redundant, because most
+of these features read <em>disjoint</em> state and therefore <b>add</b> rather than multiply
+&mdash; the same factorisation that collapses PMP's own case space.</p>
+<div class="scroll"><table>
+<thead><tr><th>Pair</th><th>Cross or add?</th><th>Why</th></tr></thead><tbody>
+<tr><td class="a">PMP &times; PMA</td><td class="a"><b>Cross</b></td>
+    <td><code>sys/mem.sail</code> evaluates <em>both</em> and merges the results with <code>highestPriorityAlignmentOrAccessFault</code> &mdash; neither short-circuits. The cases that matter are the ones where they <b>disagree</b>, since that is the only way the merge is exercised</td></tr>
+<tr><td class="a">Translation &times; PMP</td><td class="a"><b>Cross, narrowly</b></td>
+    <td>The walker's own PTE reads are PMP-checked. Deny the region the <em>page table</em> lives in and a correct model reports an <b>access</b> fault where every other failure gives a <b>page</b> fault. A handful of cases, not a product</td></tr>
+<tr><td class="a">Translation &times; PMA</td><td>Add</td>
+    <td>Sequential: translation yields a physical address, PMA then judges it. No merge</td></tr>
+<tr><td class="a">Interrupts &times; the rest</td><td>Add</td>
+    <td>An interrupt is taken between instructions, not inside a permission check. The one genuine interaction is delegation &times; privilege, which is its own small axis</td></tr>
+<tr><td class="a">Exceptions</td><td><b>Not an axis</b></td>
+    <td>They are the <em>outcome</em> of the others, not an independent input. Crossing them would double-count every case above</td></tr>
+</tbody></table></div>
+<div class="warn"><b>Applied, that turns 300,000 into a few hundred.</b> Cross PMP&times;PMA where
+they disagree, add a handful of walker cases, treat interrupts and privilege as separate axes, and
+let exceptions be the assertion rather than an input. Every reduction should be recorded with its
+reason, so the count is defensible rather than merely smaller.</div>
+
+<h3>What each step must get right</h3>
+<div class="scroll"><table>
+<thead><tr><th>Step</th><th>Requirement</th></tr></thead><tbody>
+<tr><td class="a">1 &mdash; preambles</td><td>Emit the <b>access address alongside the configuration</b>. &ldquo;Inside the region&rdquo;, &ldquo;straddling the edge&rdquo;, &ldquo;on an unmapped page&rdquo; are all relations between the two, not properties of either</td></tr>
+<tr><td class="a">2 &mdash; cross</td><td>Only cases that <em>reach</em> the permission check are worth crossing with access kinds. A no-match PMP case or an invalid PTE faults earlier, so one access each is enough</td></tr>
+<tr><td class="a">3 &mdash; expectation</td><td><b>Recompute per access kind, never inherit.</b> A page with <code>R=1 W=0</code> permits a load and denies a store; the same PMP entry gives cause 5 for one and cause 7 for the other. The lookup comes from <code>pmpCheckRWX</code> and <code>check_PTE_permission</code>, which are static tables</td></tr>
+<tr><td class="a">every case</td><td>A <b>negative control</b>. Two scenarios in this file once passed vacuously, and only the case built to fail exposed them</td></tr>
+</tbody></table></div>
+</section>
+
+<footer>Scenarios, flags and expectations read from <code>python-isla/scenario_tests.py</code>;
+the gaps are recorded in that file's own comments rather than discovered here.</footer>
+</div>

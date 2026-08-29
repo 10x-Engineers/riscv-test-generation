@@ -1,0 +1,332 @@
+<title>Build Order</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --surface:#fff; --sunk:#eaeef2;
+  --ink:#14181d; --body:#333c47; --muted:#647082;
+  --rule:#d6dce4; --rule-firm:#b6bfcb;
+  --accent:#3b5bb5; --accent-bg:#e6ecfa;
+  --ok:#0f7368; --ok-bg:#dff0ed;
+  --warn:#9a6114; --warn-bg:#f7efe0;
+  --alert:#a5372b; --alert-bg:#fae9e6;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:15px;line-height:1.58;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:0 26px 80px}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.9rem,3.8vw,2.5rem);font-weight:600;letter-spacing:-.02em;line-height:1.12}
+h2{font-size:1.3rem;font-weight:600;letter-spacing:-.012em}
+h3{font-size:1rem;font-weight:600;margin-top:22px}
+p{margin:0 0 11px;max-width:74ch}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.85em;background:var(--sunk);padding:.08em .32em;border-radius:2px}
+header{padding:50px 0 20px;border-bottom:2px solid var(--ink);margin-bottom:30px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px}
+.standfirst{font-size:1.04rem;color:var(--muted);max-width:66ch;margin-top:11px}
+section{margin-top:44px}
+figure{margin:16px 0}
+figcaption{font-size:.85rem;color:var(--muted);margin-top:11px;max-width:72ch}
+svg{max-width:100%;height:auto;display:block}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);margin:12px 0 16px}
+table{border-collapse:collapse;width:100%;font-size:.87rem}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.a{white-space:nowrap;font-weight:600;color:var(--ink)}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.key{border-left:3px solid var(--accent);background:var(--accent-bg);padding:12px 16px;margin:14px 0}
+.key b{color:var(--ink)}
+.warn{border-left:3px solid var(--warn);background:var(--warn-bg);padding:12px 16px;margin:14px 0}
+.warn b{color:var(--ink)}
+.gate{border:1.5px solid var(--ink);background:var(--surface);padding:13px 16px;margin:16px 0}
+.gate .t{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.gate p{margin:0;color:var(--ink)}
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:14px 0}
+ol.steps li{counter-increment:s;position:relative;padding-left:38px;margin-bottom:11px;max-width:74ch}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:24px;height:24px;
+  background:var(--accent-bg);color:var(--accent);border-radius:50%;text-align:center;
+  line-height:24px;font-family:"IBM Plex Mono",monospace;font-size:.78rem;font-weight:500}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-size:.82rem;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">RISC-V Sail test generation &middot; build order</div>
+  <h1>What Gets Built, In What Order</h1>
+  <p class="standfirst">Not by component, but by what you actually do: get one test working end
+  to end, then widen it area by area across the model, then measure what it reached.</p>
+</header>
+
+<section style="margin-top:0">
+<h2>The shape of the work</h2>
+<figure>
+<svg viewBox="0 0 900 400" role="img" aria-label="Stage one is a narrow vertical slice through every pipeline step, producing one working test. Stage two widens that slice area by area across the model, in three cost tiers. Stage three wraps measurement around the corpus. Stage four integrates upstream.">
+<defs><marker id="ba" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor">
+
+  <text x="14" y="18" font-size="10" opacity=".7" font-family="IBM Plex Mono, monospace">PIPELINE STEPS &rarr;</text>
+  <text x="14" y="44" font-size="10.5" opacity=".8">config</text>
+  <text x="14" y="66" font-size="10.5" opacity=".8">generate</text>
+  <text x="14" y="88" font-size="10.5" opacity=".8">gate</text>
+  <text x="14" y="110" font-size="10.5" opacity=".8">assemble</text>
+  <text x="14" y="132" font-size="10.5" opacity=".8">run</text>
+  <text x="14" y="154" font-size="10.5" opacity=".8">compare</text>
+
+  <!-- stage 1: narrow slice -->
+  <rect x="88" y="30" width="52" height="136" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.5"/>
+  <text x="114" y="186" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--accent)">1</text>
+  <text x="114" y="202" text-anchor="middle" font-size="10">one</text>
+  <text x="114" y="215" text-anchor="middle" font-size="10">instruction</text>
+  <text x="114" y="234" text-anchor="middle" font-size="9.5" opacity=".75">FOUNDATION</text>
+
+  <line x1="148" y1="98" x2="180" y2="98" stroke="currentColor" marker-end="url(#ba)"/>
+
+  <!-- stage 2: widening -->
+  <rect x="186" y="30" width="66" height="136" fill="var(--ok-bg)" stroke="var(--ok)"/>
+  <rect x="256" y="30" width="86" height="136" fill="var(--ok-bg)" stroke="var(--ok)"/>
+  <rect x="346" y="30" width="118" height="136" fill="var(--ok-bg)" stroke="var(--ok)"/>
+  <text x="219" y="104" text-anchor="middle" font-size="10">tier 1</text>
+  <text x="299" y="104" text-anchor="middle" font-size="10">tier 2</text>
+  <text x="405" y="104" text-anchor="middle" font-size="10">tier 3</text>
+  <text x="219" y="186" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--ok)">2</text>
+  <text x="325" y="202" text-anchor="middle" font-size="10">one area at a time</text>
+  <text x="325" y="215" text-anchor="middle" font-size="10">&mdash; each its own cost</text>
+  <text x="325" y="234" text-anchor="middle" font-size="9.5" opacity=".75">WIDEN</text>
+
+  <line x1="470" y1="98" x2="502" y2="98" stroke="currentColor" marker-end="url(#ba)"/>
+
+  <!-- stage 3: measurement wraps -->
+  <rect x="508" y="18" width="180" height="160" fill="none" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <rect x="522" y="34" width="152" height="128" fill="var(--ok-bg)" stroke="var(--ok)"/>
+  <text x="598" y="94" text-anchor="middle" font-size="10">the corpus</text>
+  <text x="598" y="110" text-anchor="middle" font-size="10">so far</text>
+  <text x="598" y="14" text-anchor="middle" font-size="10" fill="var(--warn)" font-weight="600">measurement wraps around it</text>
+  <text x="598" y="186" text-anchor="middle" font-size="10.5" font-weight="600" fill="var(--warn)">3</text>
+  <text x="598" y="202" text-anchor="middle" font-size="10">coverage, reconcile,</text>
+  <text x="598" y="215" text-anchor="middle" font-size="10">classify what is missing</text>
+  <text x="598" y="234" text-anchor="middle" font-size="9.5" opacity=".75">MEASURE</text>
+
+  <path d="M598 178 L598 196" fill="none" stroke="var(--warn)"/>
+  <path d="M688 98 L720 98" fill="none" stroke="currentColor" marker-end="url(#ba)"/>
+
+  <rect x="726" y="30" width="160" height="136" fill="var(--surface)" stroke="currentColor"/>
+  <text x="806" y="88" text-anchor="middle" font-size="10">CI job,</text>
+  <text x="806" y="104" text-anchor="middle" font-size="10">upstream PRs</text>
+  <text x="806" y="186" text-anchor="middle" font-size="10.5" font-weight="600">4</text>
+  <text x="806" y="202" text-anchor="middle" font-size="10">hand it over</text>
+  <text x="806" y="234" text-anchor="middle" font-size="9.5" opacity=".75">INTEGRATE</text>
+
+  <line x1="14" y1="266" x2="886" y2="266" stroke="currentColor" opacity=".2"/>
+  <text x="14" y="292" font-size="11.5" font-weight="600" fill="var(--ink)">The foundation is a vertical slice, not a horizontal layer.</text>
+  <text x="14" y="312" font-size="11" opacity=".85">We do not build all of generation, then all of running. We take one instruction through every step until it passes on</text>
+  <text x="14" y="330" font-size="11" opacity=".85">two simulators. Everything after that is widening a pipe that already works &mdash; which is why the risk is front-loaded.</text>
+  <text x="14" y="360" font-size="11" opacity=".85">Measurement comes third because it has nothing to measure until there is a corpus. Building it earlier would mean</text>
+  <text x="14" y="378" font-size="11" opacity=".85">a coverage report of almost nothing, which tells you neither that it works nor that the tests do.</text>
+</g></svg>
+<figcaption>Four stages. Only the first is all-or-nothing; the second is a repeated loop, and the
+third can start as soon as the second has produced anything worth measuring.</figcaption>
+</figure>
+</section>
+
+<section>
+<h2>Stage 1 &mdash; Foundation</h2>
+<p><b>Goal: one instruction, generated and passing on two simulators.</b> Until this works,
+nothing else can be tested, so it is done first and done narrow.</p>
+<ol class="steps">
+<li><b>Build the model twice.</b> The ordinary simulator, and a second build with coverage
+instrumentation. Kept separate so a coverage run can never silently use an uninstrumented
+emulator.</li>
+<li><b>Add the two entry points to the model.</b> <code>isla_testgen_init</code> and
+<code>isla_testgen_step</code>, preserved against dead-code elimination, with a post-build check
+that they survived. Proposed upstream from here.</li>
+<li><b>Compile the model to IR.</b> One <code>isla-sail</code> run per configuration. XLEN is a
+runtime selector; VLEN is baked in here.</li>
+<li><b>Fix what stops <em>any</em> RISC-V test.</b> The missing primitives the model calls, and
+the hardcoded 64-bit address width that mis-sizes RV32 reads. Not extension-specific &mdash;
+nothing runs without them.</li>
+<li><b>Implement the target and the ELF emitter.</b> The generator's target interface, plus the
+three portability assumptions that are true only of the architectures it already supports.</li>
+<li><b>Get one <code>addi</code> through, symbolically.</b> Generate, assemble with the real
+toolchain, run on Sail, run on Spike.</li>
+<li><b>In parallel, the oracle path.</b> Parse one Sail file, build a probe, run it, bake the
+values in, assert them. This depends on none of steps 2&ndash;5.</li>
+</ol>
+<div class="gate">
+  <div class="t">Exit criterion</div>
+  <p><code>addi x1, x0, 1</code> generates from both backends, and passes on Sail
+  <em>and</em> Spike. Not &ldquo;generation completes&rdquo; &mdash; passes.</p>
+</div>
+<div class="warn"><b>This stage carries almost all the technical risk.</b> Every unknown &mdash;
+does the engine handle this model, do the entry points survive, does the emitter produce a
+loadable ELF &mdash; is resolved here, on one instruction, before any breadth is attempted. If
+something is going to be impossible, it becomes visible in stage 1 rather than in week ten.</div>
+</section>
+
+<section>
+<h2>Stage 2 &mdash; Widen, area by area</h2>
+<p>The machinery now works. Each area of the model is an increment, and each follows the same
+recipe:</p>
+<ol class="steps">
+<li>Point the generator at that area &mdash; a set of Sail files for an extension, or a piece of
+state the preamble has to construct for the core.</li>
+<li>Teach the renderer any operand kind it has not seen (a vector mask, a rounding mode, a CSR
+name).</li>
+<li>Generate the sweep and run it.</li>
+<li>Triage every failure into <b>model fault</b> or <b>our fault</b>. This is the step that takes
+the time.</li>
+<li>Fix ours; write up theirs with a reproducer.</li>
+<li>Record the area as done, with its pass count, its coverage and its exclusions.</li>
+</ol>
+<div class="key"><b>&ldquo;Extensions&rdquo; is only two thirds of the model.</b> Of the
+14,975 instrumented spans, 10,437 are in <code>extensions/</code> &mdash; the rest is the core
+machinery every instruction runs through. Both have to be reached, and they are reached
+differently: an extension is widened by pointing the parser at more Sail files, the core by
+constructing the state that makes a branch in it taken.</div>
+
+<h3>What the model actually contains</h3>
+<div class="scroll"><table>
+<thead><tr><th>Area</th><th class="n">Spans</th><th class="n">Files</th><th>What lives there</th><th>Reached by</th></tr></thead><tbody>
+<tr><td class="a">extensions/</td><td class="n">10,437</td><td class="n">33</td>
+    <td>Every ISA extension, from I to vector crypto</td><td>Parsing its Sail files and generating instructions</td></tr>
+<tr><td class="a">core/</td><td class="n">1,458</td><td class="n">32</td>
+    <td>Register file, CSR dispatch, address checks, arithmetic helpers, <code>misa</code>, XLEN/FLEN/VLEN types, the SoftFloat interface</td>
+    <td>Executing instructions that call into it &mdash; mostly indirect</td></tr>
+<tr><td class="a">sys/</td><td class="n">1,368</td><td class="n">16</td>
+    <td>Virtual memory (PTE, page-table walk, TLB), PMA, the platform devices, reservations</td>
+    <td>Constructing page tables and memory attributes in the preamble</td></tr>
+<tr><td class="a">postlude/</td><td class="n">1,356</td><td class="n">11</td>
+    <td>Fetch, the step loop, CSR-clause merging, config validation, device tree</td>
+    <td>Running anything at all &mdash; plus config variation for the rest</td></tr>
+<tr><td class="a">pmp/</td><td class="n">226</td><td class="n">2</td>
+    <td>PMP entry matching and permission checks</td><td>Programming PMP entries, then accessing across their boundaries</td></tr>
+<tr><td class="a">prelude/, exceptions/,<br>mops/, unit_tests/</td><td class="n">129</td><td class="n">7</td>
+    <td>Shared helpers, the exception taxonomy, memory operations</td><td>Faulting deliberately, and by ordinary execution</td></tr>
+</tbody></table></div>
+
+<h3>Tier 1 &mdash; the recipe is enough</h3>
+<div class="scroll"><table>
+<thead><tr><th>Target</th><th>What it needs</th><th class="n">Each</th></tr></thead><tbody>
+<tr><td class="a">I, M, A, C, Zicsr, Zifencei,<br>Zicond, Zawrs, Zihint*</td>
+    <td>Register and immediate operands only. Nothing new</td><td class="n">hours</td></tr>
+<tr><td class="a"><code>core/</code> arithmetic and<br>register helpers</td>
+    <td>Nothing directly &mdash; these are covered as a side effect of tier 1, because every instruction calls them</td><td class="n">free</td></tr>
+</tbody></table></div>
+
+<h3>Tier 2 &mdash; a new operand kind or a new probe</h3>
+<div class="scroll"><table>
+<thead><tr><th>Target</th><th>What it needs beyond the recipe</th><th class="n">Each</th></tr></thead><tbody>
+<tr><td class="a">B, K <span style="color:var(--muted)">(Zb*, Zk*)</span></td>
+    <td>Bit-manipulation operand forms; a separate backend, since the symbolic path cannot reach them</td><td class="n">days</td></tr>
+<tr><td class="a">F, D <span style="color:var(--muted)">(Zf*, Zd*, Zh*)</span></td>
+    <td>An FP probe. More results than callee-saved registers, so values go to a memory buffer before printing. Rounding modes become an operand kind. Also the only way to reach <code>core/softfloat_interface.sail</code> and <code>float_classify.sail</code></td><td class="n">days</td></tr>
+<tr><td class="a">Zicbom, Zicbop, Zicboz,<br>Svinval, Zihpm, Zicntr</td>
+    <td>Cache-block, fence and counter operands. Small, but each its own shape</td><td class="n">days</td></tr>
+<tr><td class="a"><code>postlude/</code> config paths</td>
+    <td>Nothing new to generate &mdash; but reaching <code>validate_config.sail</code> and the step loop's alternatives means <em>running the suite under more than one configuration</em></td><td class="n">days</td></tr>
+</tbody></table></div>
+
+<h3>Tier 3 &mdash; needs machinery that does not exist yet</h3>
+<div class="scroll"><table>
+<thead><tr><th>Target</th><th>What it needs first</th><th class="n">Cost</th></tr></thead><tbody>
+<tr><td class="a">V, vector_crypto, Zvabd<br><span style="color:var(--muted)">plus core/vlen.sail</span></td>
+    <td>A vector probe, VLEN pinned to what the IR was built for, and legality constraints on every generated instruction &mdash; SEW, LMUL, register-group alignment, mask-register overlap</td><td class="n">weeks</td></tr>
+<tr><td class="a"><code>pmp/</code> &mdash; 226 spans</td>
+    <td>A preamble that programs entries in the right order with lock bits set, then accesses across each boundary. Needs the engine's struct-typed vector fix before it can be done symbolically at all</td><td class="n">weeks</td></tr>
+<tr><td class="a"><code>sys/</code> virtual memory<br><span style="color:var(--muted)">vmem_ptw, vmem_pte, vmem_tlb</span></td>
+    <td>A preamble that builds a real page table and points <code>satp</code> at it. Every PTE feature and every fault class is a separate constructed state &mdash; this is the deepest single area in the model</td><td class="n">weeks</td></tr>
+<tr><td class="a"><code>sys/pma.sail</code></td>
+    <td>Region attributes come from the configuration JSON, so a PMA test is an ordinary access run under a configuration whose region declares it illegal &mdash; a config-generation step, not an instruction</td><td class="n">days</td></tr>
+<tr><td class="a">Traps, interrupts,<br>delegation<br><span style="color:var(--muted)">exceptions/, core/interrupt_regs</span></td>
+    <td>The trap handler and the preamble that makes an interrupt deterministic rather than awaited</td><td class="n">weeks</td></tr>
+<tr><td class="a">The 29 privileged targets</td>
+    <td><b>The preamble builder</b>, which the four rows above are all instances of. Almost none map to an instruction</td><td class="n">weeks</td></tr>
+</tbody></table></div>
+<div class="key"><b>The privileged tier is the point of the engagement, and it is last in this
+stage for a reason.</b> A privileged scenario is an instruction executed in a constructed state.
+The instruction half has to work before the state half is worth building &mdash; otherwise a
+failure could be either, and triage becomes guesswork.</div>
+<div class="warn"><b>Two areas are never reached by generating instructions.</b>
+<code>postlude/device_tree.sail</code> and the RVFI files in <code>core/</code> exist for
+tracing and platform description, not for execution. They are excluded with that reason rather
+than counted as a gap &mdash; and the exclusion is derived from the model, not hand-listed.</div>
+</section>
+
+<section>
+<h2>Stage 3 &mdash; Measure what it reached</h2>
+<p>Only meaningful once there is a corpus. Built in this order because each step needs the one
+before it:</p>
+<ol class="steps">
+<li><b>Take the span manifest</b> from the instrumented build &mdash; every branch the model
+declares. This is the denominator, and it comes from the model rather than from us.</li>
+<li><b>Replay the corpus</b> under instrumentation, one test at a time, so a hit is attributable
+to the test that caused it.</li>
+<li><b>Reconcile.</b> Every span lands in exactly one of hit, reachable-but-missed, or excluded.
+A span in none of them is an accounting bug, not a result.</li>
+<li><b>Derive the exclusions</b> rather than listing them. Line numbers move; a checked-in list
+of line numbers silently rots into excluding the wrong code.</li>
+<li><b>Classify what is missing</b> by what it would take: a privilege level, a CSR field, a
+different configuration, an operand value.</li>
+<li><b>Publish that list</b> as the feedback interface, and re-enter generation.</li>
+</ol>
+<div class="warn"><b>One property to know before reading any coverage number.</b> A failing test
+writes no coverage data at all. Every negative control is therefore invisible to this stage
+&mdash; which is correct, but means a coverage gap and a failing test look nothing alike and
+must be read together.</div>
+</section>
+
+<section>
+<h2>Stage 4 &mdash; Hand it over</h2>
+<ol class="steps">
+<li><b>Split the CI into two jobs.</b> A fast per-PR replay of the checked-in suite, and a slower
+scheduled job that regenerates and re-measures. Generation is solver-bound and must never gate a
+pull request.</li>
+<li><b>Submit the model changes upstream.</b> Complete only when merged, on a cadence this
+project does not set.</li>
+<li><b>Write the developer documentation</b> for what a maintainer cannot infer: how an extension
+is classified into the routing table, how a backend is replaced, why each exclusion exists.</li>
+</ol>
+</section>
+
+<section>
+<h2>Why this order</h2>
+<div class="scroll"><table>
+<thead><tr><th>Question</th><th>Answer</th></tr></thead><tbody>
+<tr><td class="a">Why one instruction first?</td>
+    <td>Every technical unknown resolves on the narrowest possible case. Breadth added before the pipe works produces failures nobody can attribute</td></tr>
+<tr><td class="a">Why not measure earlier?</td>
+    <td>Coverage of almost nothing tells you neither that the measurement works nor that the tests do</td></tr>
+<tr><td class="a">Why privileged last within stage 2?</td>
+    <td>A privileged test is an instruction in a constructed state. If the instruction half is unproven, a failure could be either half</td></tr>
+<tr><td class="a">Why is the oracle path parallel?</td>
+    <td>It needs no solver, no IR and no upstream change. It is the schedule's safety margin: if the symbolic path slips, FP and vector still land</td></tr>
+<tr><td class="a">Why CI last?</td>
+    <td>There is nothing to replay until a suite exists, and its acceptance depends on maintainer review rather than on our effort</td></tr>
+</tbody></table></div>
+</section>
+
+<footer>Extension names taken from the model's own <code>extensions/</code> directory; tiers
+reflect what each demands of the generator beyond the common recipe.</footer>
+</div>

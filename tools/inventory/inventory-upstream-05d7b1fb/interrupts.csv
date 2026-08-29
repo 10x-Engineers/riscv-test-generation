@@ -1,0 +1,15 @@
+name,cause_code,reserved,source
+I_Reserved_0,0,True,core/types.sail:150
+I_S_Software,1,False,core/types.sail:150
+I_VS_Software,2,False,core/types.sail:150
+I_M_Software,3,False,core/types.sail:150
+I_Reserved_4,4,True,core/types.sail:150
+I_S_Timer,5,False,core/types.sail:150
+I_VS_Timer,6,False,core/types.sail:150
+I_M_Timer,7,False,core/types.sail:150
+I_Reserved_8,8,True,core/types.sail:150
+I_S_External,9,False,core/types.sail:150
+I_VS_External,10,False,core/types.sail:150
+I_M_External,11,False,core/types.sail:150
+I_SG_External,12,False,core/types.sail:150
+I_COF,13,False,core/types.sail:150

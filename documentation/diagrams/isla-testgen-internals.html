@@ -1,0 +1,267 @@
+<title>Inside isla-testgen</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --surface:#fff; --sunk:#eaeef2;
+  --ink:#14181d; --body:#333c47; --muted:#647082;
+  --rule:#d6dce4; --rule-firm:#b6bfcb;
+  --accent:#3b5bb5; --accent-bg:#e6ecfa;
+  --ok:#0f7368; --ok-bg:#dff0ed;
+  --warn:#9a6114; --warn-bg:#f7efe0;
+  --alert:#a5372b; --alert-bg:#fae9e6;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:15px;line-height:1.58;-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:0 26px 80px}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.9rem,3.8vw,2.5rem);font-weight:600;letter-spacing:-.02em;line-height:1.12}
+h2{font-size:1.3rem;font-weight:600;letter-spacing:-.012em}
+h3{font-size:1rem;font-weight:600;margin-top:20px}
+p{margin:0 0 11px;max-width:74ch}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.85em;background:var(--sunk);padding:.08em .32em;border-radius:2px;overflow-wrap:anywhere}
+header{padding:50px 0 20px;border-bottom:2px solid var(--ink);margin-bottom:30px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px}
+.standfirst{font-size:1.04rem;color:var(--muted);max-width:66ch;margin-top:11px}
+section{margin-top:42px}
+figure{margin:16px 0}
+figcaption{font-size:.85rem;color:var(--muted);margin-top:11px;max-width:72ch}
+svg{max-width:100%;height:auto;display:block}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);margin:12px 0 16px}
+table{border-collapse:collapse;width:100%;font-size:.87rem}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.a{white-space:nowrap;font-weight:600;color:var(--ink)}
+.key{border-left:3px solid var(--accent);background:var(--accent-bg);padding:12px 16px;margin:14px 0}
+.key b{color:var(--ink)}
+.warn{border-left:3px solid var(--warn);background:var(--warn-bg);padding:12px 16px;margin:14px 0}
+pre{background:var(--surface);border:1px solid var(--rule);padding:12px 15px;overflow-x:auto;
+  font-size:.79rem;line-height:1.55;margin:12px 0;font-family:"IBM Plex Mono",monospace}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-size:.82rem;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">RISC-V Sail test generation &middot; internals</div>
+  <h1>Inside isla-testgen</h1>
+  <p class="standfirst">How one opcode becomes a self-checking ELF: the Sail model is compiled
+  to an IR, executed symbolically with unknown registers, and the solver is asked for values
+  that reach each feasible path.</p>
+</header>
+
+<section style="margin-top:0">
+<h2>The whole flow</h2>
+<figure>
+<svg viewBox="0 0 920 470" role="img" aria-label="The Sail model and a platform config are compiled by isla-sail into a JIB IR file. isla-testgen loads that IR plus an ISA config, runs isla_testgen_init to build a symbolic start state, places the opcode, then runs isla_testgen_step. The executor forks at each branch and asks Z3 whether each path is satisfiable. For a feasible path the solver returns concrete register values, which the object emitter turns into assembly, then the toolchain assembles and links an ELF.">
+<defs><marker id="ia" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="currentColor">
+
+  <text x="12" y="16" font-size="10.5" font-weight="600" fill="var(--muted)" font-family="IBM Plex Mono, monospace">ONCE PER MODEL REVISION</text>
+  <rect x="12" y="26" width="150" height="46" fill="var(--surface)" stroke="currentColor"/>
+  <text x="87" y="46" text-anchor="middle" font-weight="600">Sail model</text>
+  <text x="87" y="62" text-anchor="middle" font-size="10" opacity=".75">riscv.sail_project</text>
+  <rect x="12" y="80" width="150" height="42" fill="var(--surface)" stroke="currentColor"/>
+  <text x="87" y="97" text-anchor="middle" font-weight="600">platform config</text>
+  <text x="87" y="112" text-anchor="middle" font-size="10" opacity=".75">rv64d_v128_e64.json</text>
+  <path d="M162 49 L196 49 L196 70 L226 70" fill="none" stroke="currentColor" marker-end="url(#ia)"/>
+  <path d="M162 101 L196 101 L196 78 L226 78" fill="none" stroke="currentColor"/>
+
+  <rect x="228" y="46" width="160" height="56" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <text x="308" y="66" text-anchor="middle" font-weight="600">isla-sail</text>
+  <text x="308" y="81" text-anchor="middle" font-size="10" opacity=".8">a Sail plugin, not a</text>
+  <text x="308" y="94" text-anchor="middle" font-size="10" opacity=".8">separate compiler</text>
+  <line x1="388" y1="74" x2="424" y2="74" stroke="currentColor" marker-end="url(#ia)"/>
+
+  <rect x="426" y="46" width="164" height="56" fill="var(--surface)" stroke="currentColor"/>
+  <text x="508" y="66" text-anchor="middle" font-weight="600">riscv64.ir</text>
+  <text x="508" y="81" text-anchor="middle" font-size="10" opacity=".8">serialised JIB &mdash; the</text>
+  <text x="508" y="94" text-anchor="middle" font-size="10" opacity=".8">model as isla's IR</text>
+
+  <text x="612" y="60" font-size="10" opacity=".85">XLEN and VLEN are</text>
+  <text x="612" y="74" font-size="10" opacity=".85">baked in here, not</text>
+  <text x="612" y="88" font-size="10" opacity=".85">chosen at run time</text>
+
+  <line x1="12" y1="132" x2="908" y2="132" stroke="currentColor" opacity=".2"/>
+  <text x="12" y="152" font-size="10.5" font-weight="600" fill="var(--muted)" font-family="IBM Plex Mono, monospace">ONCE PER TEST</text>
+
+  <rect x="12" y="164" width="150" height="42" fill="var(--surface)" stroke="currentColor"/>
+  <text x="87" y="181" text-anchor="middle" font-weight="600">riscv64.toml</text>
+  <text x="87" y="196" text-anchor="middle" font-size="10" opacity=".75">ISA config: toolchain,</text>
+  <rect x="12" y="214" width="150" height="42" fill="var(--surface)" stroke="currentColor"/>
+  <text x="87" y="231" text-anchor="middle" font-weight="600">opcode word</text>
+  <text x="87" y="246" text-anchor="middle" font-size="10" opacity=".75">0x00100093</text>
+
+  <path d="M162 185 L192 185 L192 218 L222 218" fill="none" stroke="currentColor" marker-end="url(#ia)"/>
+  <path d="M162 235 L192 235 L192 226 L222 226" fill="none" stroke="currentColor"/>
+  <path d="M508 102 L508 118 L192 118 L192 210" fill="none" stroke="currentColor" marker-end="url(#ia)"/>
+
+  <rect x="224" y="164" width="180" height="122" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.4"/>
+  <text x="314" y="184" text-anchor="middle" font-weight="600" fill="var(--accent)">isla-testgen</text>
+  <text x="236" y="204" font-size="10.5" font-family="IBM Plex Mono, monospace">isla_testgen_init</text>
+  <text x="236" y="218" font-size="9.8" opacity=".78">reset; registers become</text>
+  <text x="236" y="230" font-size="9.8" opacity=".78">symbolic variables</text>
+  <text x="236" y="250" font-size="10.5" font-family="IBM Plex Mono, monospace">place opcode</text>
+  <text x="236" y="270" font-size="10.5" font-family="IBM Plex Mono, monospace">isla_testgen_step</text>
+  <text x="236" y="282" font-size="9.8" opacity=".78">decode and execute</text>
+
+  <line x1="404" y1="225" x2="440" y2="225" stroke="currentColor" marker-end="url(#ia)"/>
+
+  <rect x="442" y="176" width="164" height="98" fill="var(--surface)" stroke="currentColor"/>
+  <text x="524" y="196" text-anchor="middle" font-weight="600">symbolic executor</text>
+  <text x="524" y="214" text-anchor="middle" font-size="10" opacity=".8">forks at every branch</text>
+  <text x="524" y="228" text-anchor="middle" font-size="10" opacity=".8">the model takes</text>
+  <text x="524" y="248" text-anchor="middle" font-size="10" opacity=".8">collects the condition</text>
+  <text x="524" y="262" text-anchor="middle" font-size="10" opacity=".8">guarding each path</text>
+
+  <path d="M606 210 L646 210" fill="none" stroke="currentColor" marker-end="url(#ia)"/>
+  <path d="M646 240 L606 240" fill="none" stroke="currentColor" marker-end="url(#ia)"/>
+  <text x="626" y="204" text-anchor="middle" font-size="9.5" opacity=".75">sat?</text>
+  <text x="626" y="256" text-anchor="middle" font-size="9.5" opacity=".75">model</text>
+
+  <rect x="648" y="186" width="120" height="78" fill="var(--ok-bg)" stroke="var(--ok)"/>
+  <text x="708" y="212" text-anchor="middle" font-weight="600" fill="var(--ok)">Z3</text>
+  <text x="708" y="230" text-anchor="middle" font-size="10" opacity=".85">prunes infeasible</text>
+  <text x="708" y="244" text-anchor="middle" font-size="10" opacity=".85">paths; solves the</text>
+  <text x="708" y="256" text-anchor="middle" font-size="10" opacity=".85">rest for operands</text>
+
+  <path d="M524 274 L524 306 L226 306 L226 330" fill="none" stroke="currentColor" marker-end="url(#ia)"/>
+  <text x="330" y="300" font-size="10" opacity=".85">one feasible path &rarr; one test</text>
+
+  <rect x="150" y="334" width="180" height="52" fill="var(--surface)" stroke="currentColor"/>
+  <text x="240" y="354" text-anchor="middle" font-weight="600">concrete start state</text>
+  <text x="240" y="370" text-anchor="middle" font-size="10" opacity=".8">initial + final registers</text>
+  <line x1="330" y1="360" x2="366" y2="360" stroke="currentColor" marker-end="url(#ia)"/>
+
+  <rect x="368" y="334" width="180" height="52" fill="var(--surface)" stroke="currentColor"/>
+  <text x="458" y="354" text-anchor="middle" font-weight="600">object emitter</text>
+  <text x="458" y="370" text-anchor="middle" font-size="10" opacity=".8">preamble, checks, trap vector</text>
+  <line x1="548" y1="360" x2="584" y2="360" stroke="currentColor" marker-end="url(#ia)"/>
+
+  <rect x="586" y="334" width="150" height="52" fill="var(--surface)" stroke="currentColor"/>
+  <text x="661" y="354" text-anchor="middle" font-weight="600">toolchain</text>
+  <text x="661" y="370" text-anchor="middle" font-size="10" opacity=".8">as, ld &mdash; from the toml</text>
+  <line x1="736" y1="360" x2="772" y2="360" stroke="currentColor" marker-end="url(#ia)"/>
+
+  <rect x="774" y="334" width="134" height="52" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <text x="841" y="360" text-anchor="middle" font-weight="600">self-checking ELF</text>
+
+  <line x1="12" y1="416" x2="908" y2="416" stroke="currentColor" opacity=".2"/>
+  <text x="12" y="436" font-size="11" opacity=".85">The solver is never handed a complete constraint system. isla drives Z3 incrementally, asking after each</text>
+  <text x="12" y="452" font-size="11" opacity=".85">branch whether the path so far is still satisfiable, so an infeasible path is abandoned as soon as it becomes one.</text>
+</g></svg>
+<figcaption>Two rates: the IR is rebuilt only when the model or the platform config changes;
+everything below the divider runs per test.</figcaption>
+</figure>
+</section>
+
+<section>
+<h2>Stage by stage</h2>
+
+<h3>1 &middot; Compile the model to IR</h3>
+<p><code>isla-sail</code> is a <em>Sail plugin</em> &mdash; it registers itself as a Sail target
+and links against <code>libsail</code>, rather than being a separate compiler. It emits the model
+as serialised <b>JIB</b>, Sail's own in-memory IR, into a <code>.ir</code> file.</p>
+<pre>isla-sail --isla-preserve isla_testgen_init --isla-preserve isla_testgen_step \
+  --config build/config/rv64d_v128_e64.json --all-modules riscv.sail_project \
+  -o riscv-ir/riscv64</pre>
+<div class="warn"><b><code>--isla-preserve</code> is not optional.</b> <code>isla-sail</code>
+prunes anything unreachable from a small hardcoded root list, and would silently drop the two
+entry points as dead code. The build then succeeds and the generator fails at run time with a
+missing function &mdash; which is why a post-build check confirms they survived.</div>
+<div class="key"><b>XLEN is a run-time selector; VLEN is not.</b> The platform config is consumed
+<em>here</em>, so <code>type vlenbits = bits(vlen)</code> monomorphises into the IR &mdash; a
+vector register becomes a fixed-width type. A configuration whose VLEN does not match the
+available IR needs a rebuild; it cannot be selected later. This is why VLEN 256 and 512 route to
+the oracle instead.</div>
+
+<h3>2 &middot; Load the IR and the ISA config</h3>
+<p>The <code>.toml</code> is a different config from the model's platform JSON, and easy to
+confuse with it. It tells isla about the <em>environment</em> rather than the architecture:</p>
+<div class="scroll"><table>
+<thead><tr><th>Key</th><th>What it supplies</th></tr></thead><tbody>
+<tr><td class="a"><code>pc</code></td><td>Which register is the program counter</td></tr>
+<tr><td class="a"><code>assembler</code>, <code>linker</code><br><code>objdump</code>, <code>nm</code></td><td>The toolchain, with its <code>-march</code> string. Resolved on <code>PATH</code> when not absolute</td></tr>
+<tr><td class="a"><code>[threads]</code></td><td>Where generated code is placed</td></tr>
+<tr><td class="a"><code>[symbolic_addrs]</code></td><td>The region symbolic addresses are solved into</td></tr>
+<tr><td class="a"><code>[registers.defaults]</code></td><td>Reset values the model would otherwise leave unconstrained</td></tr>
+</tbody></table></div>
+
+<h3>3 &middot; Build a symbolic start state</h3>
+<p>The generator calls the model's own <code>isla_testgen_init</code>. This runs the model's
+reset, then leaves the registers under test as <b>symbolic variables</b> rather than numbers:
+<code>x10</code> is not 0, it is an unknown the solver may later choose.</p>
+<p>This is the two-phase convention the model does not otherwise expose, and the reason
+Deliverable 5 exists.</p>
+
+<h3>4 &middot; Place the opcode and step</h3>
+<p>The opcode word is written into memory at the code address, and
+<code>isla_testgen_step</code> is called. The model decodes and executes it &mdash; the same
+code path a real fetch would take.</p>
+
+<h3>5 &middot; Fork, and ask the solver</h3>
+<p>Wherever the model branches on something symbolic, the executor <b>forks</b>: it continues
+down both sides, accumulating the condition that guards each. After each fork it asks Z3 whether
+the path so far is still satisfiable, and abandons the path as soon as it is not.</p>
+<div class="key"><b>This is what &ldquo;aiming&rdquo; means.</b> The path condition for the
+divide-by-zero case is <code>x11 == 0</code>; for signed overflow it is
+<code>x10 == INT_MIN &amp;&amp; x11 == -1</code>. The solver is asked to satisfy that condition,
+so the operands are <em>derived from the behaviour</em> rather than chosen and checked.</div>
+
+<h3>6 &middot; Read back a concrete state</h3>
+<p>For each surviving path, Z3 returns a model &mdash; concrete values for every symbolic
+variable. Those become the test's initial register values, and the register state the model
+reached becomes the expected final values.</p>
+
+<h3>7 &middot; Emit and materialise</h3>
+<p>The object emitter writes assembly: the preamble that installs the trap vector and loads the
+initial values, the opcode under test, the comparison against the expected final state, the trap
+vector itself, and the HTIF <code>tohost</code> write that reports the verdict. The toolchain
+named in the <code>.toml</code> assembles and links it.</p>
+<pre>isla-testgen -A riscv-ir/riscv64.ir -C riscv-ir/riscv64.toml -a riscv64 \
+  --memory-region 0x80020000-0x80030000 \
+  -o /tmp/out -n 1 0x00100093        # addi x1, x0, 1</pre>
+<p><code>--test-file</code> instead of an ELF gives a plain-text dump of the solved initial and
+final state &mdash; no toolchain needed, and the fastest way to check that a generated test means
+what you think it means.</p>
+</section>
+
+<section>
+<h2>Where it stops</h2>
+<div class="scroll"><table>
+<thead><tr><th>Limit</th><th>Cause</th><th>Consequence</th></tr></thead><tbody>
+<tr><td class="a">129-bit values</td><td>isla's concrete bitvector representation is bounded</td><td>VLEN 256 and 512 cannot be represented at all</td></tr>
+<tr><td class="a">Vector state</td><td>Vector length is run-time state the symbolic path cannot fix</td><td>Anything reaching <code>read_vreg</code> fails outright</td></tr>
+<tr><td class="a">Floating point</td><td>The model calls SoftFloat; the engine has no binding for it</td><td>FP terminates with a missing function</td></tr>
+<tr><td class="a">Compressed control flow</td><td>The engine does not model a compressed instruction's control-flow effect</td><td><code>c.jr</code>/<code>c.jalr</code> emerge with the jump target unconstrained</td></tr>
+<tr><td class="a">Cost</td><td>Solver time per test, memory-bound before time-bound</td><td>Seconds per test against milliseconds for the oracle</td></tr>
+</tbody></table></div>
+<p>Each of these is why a target routes elsewhere. They are representational limits recorded
+with the routing decision, not defects to be fixed.</p>
+</section>
+
+<footer>Commands and file names taken from the isla-gen-extension README and
+<code>riscv-ir/riscv64.toml</code>; entry points from <code>src/target.rs</code>.</footer>
+</div>

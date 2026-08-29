@@ -1,0 +1,19 @@
+item,kind,detail,source
+sys_pmp_count,configuration,"{0, 16, 64} = config memory.pmp.count",pmp/pmp_regs.sail:12
+sys_pmp_usable_count,configuration,"range(0, 64) = config memory.pmp.usable_count",pmp/pmp_regs.sail:17
+sys_pmp_grain,configuration,"range(0, 63) = config memory.pmp.grain",pmp/pmp_regs.sail:21
+Pmpcfg_ent,bitfield,PMP entry configuration,pmp/pmp_regs.sail:34
+pmpcfg_n,register,"vector(64, Pmpcfg_ent)",pmp/pmp_regs.sail:44
+pmpaddr_n,register,"vector(64, xlenbits)",pmp/pmp_regs.sail:45
+Pmpcfg_ent.L,bitfield_field,PMP permission/lock/match field,pmp/pmp_regs.sail:36
+Pmpcfg_ent.A,bitfield_field,PMP permission/lock/match field,pmp/pmp_regs.sail:37
+Pmpcfg_ent.X,bitfield_field,PMP permission/lock/match field,pmp/pmp_regs.sail:40
+Pmpcfg_ent.W,bitfield_field,PMP permission/lock/match field,pmp/pmp_regs.sail:41
+Pmpcfg_ent.R,bitfield_field,PMP permission/lock/match field,pmp/pmp_regs.sail:42
+PmpAddrMatchType.OFF,address_match_mode,PmpAddrMatchType,pmp/pmp_regs.sail:25
+PmpAddrMatchType.TOR,address_match_mode,PmpAddrMatchType,pmp/pmp_regs.sail:25
+PmpAddrMatchType.NA4,address_match_mode,PmpAddrMatchType,pmp/pmp_regs.sail:25
+PmpAddrMatchType.NAPOT,address_match_mode,PmpAddrMatchType,pmp/pmp_regs.sail:25
+pmpAddrMatch.PMP_NoMatch,match_result,pmpAddrMatch,pmp/pmp_control.sail:54
+pmpAddrMatch.PMP_PartialMatch,match_result,pmpAddrMatch,pmp/pmp_control.sail:54
+pmpAddrMatch.PMP_Match,match_result,pmpAddrMatch,pmp/pmp_control.sail:54

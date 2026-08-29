@@ -1,13 +1,29 @@
-# Python bytecode
 __pycache__/
-*.py[cod]
+*.pyc
+.pytest_cache/
 
-# Generated test corpora and sweep output live in ~/.cache/riscv-sweep, not
-# here, but these show up if a sweep is ever pointed at the repo.
-/out/
-*.elf
-*.o
+# Pipeline output generated in place. The reviewable copies live in
+# documentation/python-isla/results/ and are committed deliberately.
+# Extensions are listed explicitly: a `testplan.*` glob would also match
+# testplan.py, which is the tool itself.
+python-isla/testplan.json
+python-isla/testplan.csv
+python-isla/testplan.md
+python-isla/testplan.html
+python-isla/testplan.xlsx
+python-isla/*-spans.csv
+python-isla/uncov*.txt
+python-isla/span-exclusions.txt
+out/
+build/
+build-coverage/
 
-# Sail coverage artefacts
-sail_coverage
-*.branch_info
+# Generated test artefacts. The .s files are the reviewable form and are
+# committed; .elf/.o are toolchain output and are rebuilt by the runners.
+demo/**/*.elf
+demo/**/*.o
+demo/**/*.ld
+
+# LibreOffice lock files and conversion byproducts
+.~lock.*#
+PROPOSAL/*.pdf

@@ -559,9 +559,15 @@ the full PTE feature set as contractual content.
 
 ## 7.3 Privileged coverage by extension and configuration
 
-The Golden Model declares **28 privileged-related extensions**. This table states our commitment
-for each, against each XLEN. It reconciles to 28 so that a reader can see the whole set rather
-than infer the residual.
+The Golden Model declares **28 named privileged extensions** — 4 `Sm*`, 12 `Ss*` and 12 `Sv*`
+**[V]**. With the three privilege-mode extensions `S`, `U` and `H`, the privileged portion of the
+model's extension enum totals 31, which is the figure §9.6.1 uses when partitioning all 125 declared
+extensions. The two counts describe the same set at different boundaries; this table enumerates the
+28 named extensions, since `S`, `U` and `H` are covered by the mode-transition scenarios of §7.1 and
+§7.2 rather than as extensions in their own right.
+
+This table states our commitment for each, against each XLEN. It reconciles to 28 so that a reader
+can see the whole set rather than infer the residual.
 
 **Key.** ✅ committed this RFQ · ○ future within this RFQ (delivered if schedule permits, otherwise
 deferred with recorded justification) · **—** not applicable, enforced by the model · ✗ out of scope.
@@ -800,12 +806,189 @@ a single percentage is misleading (§9.4), progress is reported as a structure r
 meaningful commitment and would invite exactly the misreading §9.4 forbids. The commitment is to
 **measured, attributed and reproducible improvement, with the residual honestly enumerated.**
 
-## 9.6 Coverage-guided generation
+## 9.6 The reachable denominator
 
-**Out of the core deliverable.** The RFQ does not require it, and measured evidence does not
-support prioritising it above contractual deliverables. Defined as future work with a clean
-interface: the uncovered-span report is machine-readable so a future consumer can exist without
-redesign.
+**Principle: a coverage figure is meaningless without a stated denominator, and the denominator is
+different for every configuration.** §9.4 establishes what a coverage figure does not mean. This
+section establishes what it is a proportion *of*, and makes that quantity a computed artefact rather
+than an assumption.
+
+**This step runs before generation, not after measurement.** Its output is an input to the
+generator, not a footnote on the report.
+
+### 9.6.1 Enumerable target sets
+
+The model exposes several target sets that are finite, machine-readable and countable. Each is a
+candidate denominator. Counts below are measured at model revision `44fc6ccb`:
+
+| Target set | Count | Derivation |
+|---|---:|---|
+| Extensions declared | 125 | `enum clause extension` in `model/core/extensions.sail` **[V]** |
+| — privileged | 31 | 3 privilege modes (`S`, `U`, `H`) + 4 `Sm*` + 12 `Ss*` + 12 `Sv*` **[V]** |
+| — unprivileged | 94 | remainder **[V]** |
+| Instruction declarations | 355 | `union clause instruction` **[V]** |
+| Encoding clauses | 397 | `mapping clause encdec` **[V]** |
+| Instruction forms resolved | 1,280 | model parser output **[V]** |
+| Source spans | 15,157 | model span manifest **[V]** |
+| CSRs | 344 | `mapping clause csr_name_map` **[V]** |
+| Exception causes | 21 | `E_*` constructors **[V]** |
+| Interrupt causes | 11 | `I_*` constructors **[V]** |
+| Operand kinds | 8 | `reg freg vreg cfreg imm csr mem lit` **[V]** |
+
+**Note the asymmetry that shapes §7.** The entire privileged specification contributes **9
+instructions** to the model — `ECALL`, `EBREAK`, `MRET`, `SRET`, `WFI`, `SFENCE.VMA` in
+`extensions/I/base_insts.sail`, and three `Svinval` fences **[V]**. Privileged behaviour is reached
+by establishing machine state, not by selecting opcodes. A generator organised around instructions
+will emit nine tests and report the privileged specification complete.
+
+### 9.6.2 Configuration-gated exclusion
+
+A substantial part of the model cannot execute in any given configuration, by construction:
+
+| Guard | Sites | Unreachable in |
+|---|---:|---|
+| `xlen == 64` | 115 | every RV32 configuration **[V]** |
+| `xlen == 32` | 129 | every RV64 configuration **[V]** |
+| `Ext_Sv48` / `Ext_Sv57` | 13 | configurations not enabling them **[V]** |
+
+**Consequence, stated normatively: a goal of "100% coverage per configuration" fails on every run
+by construction, and any plan committing to it is committing to a defect.** The denominator must be
+computed per configuration before it can be a denominator at all.
+
+### 9.6.3 The exclusion register
+
+The output of this stage is a machine-readable register, one entry per excluded target, each
+carrying its reason from a closed vocabulary:
+
+| Reason | Meaning |
+|---|---|
+| `config-gated` | Guarded on a configuration predicate false in this configuration |
+| `extension-absent` | Belongs to an extension not enabled here |
+| `not-implemented` | Declared but unimplemented upstream — currently `H` alone (§7.4) |
+| `platform-description` | Platform or device description code, outside the ISA |
+| `out-of-scope` | Excluded by written scope policy, with justification |
+
+This register discharges the §9.2 *Exclusions* capability and supplies the §9.5 *explicit uncovered
+list*. It is reviewable line by line: a reader who disagrees with an exclusion can contest that
+entry specifically rather than the aggregate figure.
+
+**Every published coverage figure is a proportion of the reachable denominator, and cites the
+exclusion register revision that produced it.**
+
+## 9.7 Completable coverage — the enumerated matrices
+
+§9.4 and §9.5 correctly refuse a span-coverage percentage target. That refusal creates an obligation:
+if the project commits to no completable number, a reviewer cannot tell finished work from
+abandoned work. This section supplies the completable numbers.
+
+### 9.7.1 Why span coverage cannot carry this alone
+
+Span coverage is coverage of *one implementation* of the ISA, and two classes of architectural
+corner case are invisible to it.
+
+**Corner cases that are not branches.** Base integer addition in the model is:
+
+```sail
+function clause execute RTYPE(rs2, rs1, rd, op) = {
+  X(rd) = match op {
+    ADD  => X(rs1) + X(rs2),
+```
+
+Zero branches **[V]**. A test computing `1 + 1` achieves complete span coverage of RISC-V integer
+addition, leaving signed overflow, the `x0` destination case, and the RV64 32-bit sign-extension
+boundary untested. By contrast `DIV` encodes both of its corner cases — division by zero and signed
+overflow — as explicit conditionals **[V]**, so span coverage does detect them.
+
+**Whether a corner case is visible therefore depends on how the model author wrote that line.** The
+metric cannot distinguish the two situations, and silently rewards arithmetic.
+
+**Behaviour the model omits.** Where the model is missing a case the architecture requires, no span
+exists to cover, and complete span coverage is reported on a defective model. This is not
+hypothetical: it is the shape of a model defect this framework has already found and raised upstream
+(§18). Only differential execution against an independent simulator detects this class (§8.3).
+
+### 9.7.2 The matrices
+
+Each matrix below is finite, enumerable from §9.6.1, and **completable**. These are the quantities
+against which the project commits to 100%.
+
+| Matrix | Cells | Construction |
+|---|---:|---|
+| **Trap matrix** | ~126 | 21 exception causes × delegated / not delegated × originating privilege **[I]** from **[V]** counts. Each cell requires a test producing exactly that cause with the correct `xepc`, `xtval` and resulting privilege |
+| **CSR access matrix** | 344 × access form × privilege | Each CSR under read, write, set and clear, from each privilege level. Illegal combinations are themselves tests: the access must trap correctly |
+| **Translation matrix** | mode × page size × permission × A/D × PMP | Bare, Sv32, Sv39, Sv48, Sv57 against page size, permission bits, accessed/dirty state, and PMP interaction during the walk |
+| **Interrupt matrix** | 11 causes × delegation × enable state | Delivery, delegation, and masking for each interrupt cause |
+| **Operand boundary partition** | ~51,000 **[I]** | See §9.7.3 |
+
+Cell counts are upper bounds before exclusion; the reachable count per configuration comes from
+§9.6.
+
+### 9.7.3 The operand boundary partition
+
+Exhaustive operand coverage is not available. Two 64-bit operands give 2^128 pairs for a single
+instruction **[I]** — beyond enumeration by any margin that matters, before machine state is
+considered at all.
+
+The standard resolution is equivalence-class partitioning: assert that behaviour is uniform within a
+class, then cover every class. A defensible partition per integer operand is `0`, `1`, `-1`, `2`,
+`INT_MAX`, `INT_MIN`, `INT_MAX-1`, `INT_MIN+1`, all-ones, and the 32-bit sign-extension boundaries —
+twelve classes, giving 144 pairs for a two-operand instruction and roughly 51,000 across 355
+instruction declarations **[I]**.
+
+**The partition is published as part of the deliverable.** Its correctness is a matter for technical
+argument, and a reviewer must be able to contest it directly. A partition that cannot be inspected
+is not evidence.
+
+### 9.7.4 Mutation as the audit
+
+Every quantity above measures what the suite *reached*. Only mutation measures whether reaching it
+detected anything: a fault is injected into the model, the suite is run, and the suite must fail.
+
+**Mutation is therefore the audit on §9.6 and §9.7.** Full matrices combined with a poor mutation
+score demonstrates that the partitions were wrong, not that the work is complete. The framework has
+already measured the failure mode this guards against — a substantial fraction of an earlier corpus
+executed spans, raised the coverage figure, and could not have failed (§8.2).
+
+### 9.7.5 What is and is not committed
+
+| Committed | Refused |
+|---|---|
+| 100% of the reachable denominator (§9.6), each exclusion individually justified | Any span-coverage percentage target (§9.4, §9.5) |
+| 100% of the enumerated matrices (§9.7.2), with unreachable cells registered | Any claim of complete ISA coverage |
+| A published operand partition | A claim that the partition is exhaustive |
+| A mutation score, measured and reported | A mutation score target before a baseline exists |
+
+**Complete ISA coverage is not claimed and is not achievable by any method.** "ISA conditions" is
+not an enumerable set — the architecture specification is prose — so no percentage of it can be
+computed. Every number this project publishes is a proportion of a denominator it states.
+
+## 9.8 Coverage-directed regeneration
+
+The uncovered list from §9.5 is a work queue. How it is consumed determines whether coverage
+measurement is a report or a control loop.
+
+**Routing by cause is in the core deliverable. Speculative path enumeration is not.** These were
+previously conflated under "coverage-guided generation" and deprioritised together; measurement
+separates them.
+
+Each uncovered target is classified before regeneration:
+
+| Cause | Route | Basis |
+|---|---|---|
+| **Requires machine state** | Preamble builder (§7) | Expected to dominate. The preamble work is contractual regardless, so routing here consumes no additional scope |
+| **Requires operand values** | Boundary partition (§9.7.3) | Reaches the class of corner case span coverage cannot see |
+| **Requires path enumeration** | `isla --all-paths-for` | Real but narrow; applies where one span has several feasible paths |
+| **Unreachable in this configuration** | Exclusion register (§9.6.3) | Recorded with justification, not pursued |
+
+**Evidence for the split.** Measured against a hand-written baseline at I+M RV32, the framework was
+short by 194 spans. Path enumeration was predicted to close the gap and recovered 5; re-running an
+existing generator with corrected machine state recovered 104 **[V]**. The bottleneck was machine
+state the generator never established, not solver capability.
+
+**Consequence for the design.** A single "generate tests for uncovered spans" feedback path encodes
+the assumption that uncovered spans are a solver problem. That assumption was tested and did not
+hold, which is why the classification above exists and why the dominant route is the preamble
+builder rather than the solver.
 
 ---
 

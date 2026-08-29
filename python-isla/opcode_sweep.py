@@ -567,6 +567,17 @@ def main():
                           "instructions retire, so their final value can never match the single "
                           "value isla solved -- without this they fail identically on Sail and "
                           "Spike, which is the tell that the expectation is what's wrong.")
+    ap.add_argument("--isla-arg", action="append", default=[], metavar="FLAG",
+                    help="Pass a flag straight through to isla-testgen for every "
+                         "instruction in the sweep; repeatable. The privilege level a "
+                         "test runs at is a sweep dimension, not a property of an "
+                         "instruction: the model's ECALL, SRET, WFI and SFENCE.VMA all "
+                         "branch on cur_privilege and on mstatus bits, so the same "
+                         "opcode swept at M, S and U reaches arms that are dead by "
+                         "construction in a single-privilege run. "
+                         "E.g. --isla-arg --run-in-supervisor --isla-arg --pmp-allow-all "
+                         "(the two go together: Supervisor is subject to PMP, which "
+                         "M-mode's unmatched-access allowance hides).")
     ap.add_argument("--extra-march", default="",
                      help="Extra extension name(s) to append to both the assembler's -march and "
                           "Spike's --isa for this sweep, on top of whatever EXTENSION_MARCH "
@@ -681,7 +692,8 @@ def main():
             isla_toml=isla_toml,
             pending_interrupt=insn.union_name in PENDING_INTERRUPT,
             extra_args=(list(XRET_SETUP.get(insn.union_name, ()))
-                        + (["--inhibit-counters"] if args.inhibit_counters else [])),
+                        + (["--inhibit-counters"] if args.inhibit_counters else [])
+                        + list(args.isla_arg)),
             # An f-register operand is the reliable signal that the harness
             # needs mstatus.FS on -- more reliable than the extension label,
             # since C's `c.flw`/`c.fsd` are FP instructions living in the C

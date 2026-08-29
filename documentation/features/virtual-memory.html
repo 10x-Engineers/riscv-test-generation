@@ -1,0 +1,537 @@
+<title>Virtual Memory, End to End</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;450;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --paper:#f4f6f8; --surface:#fff; --sunk:#eaeef2;
+  --ink:#14181d; --body:#333c47; --muted:#647082;
+  --rule:#d6dce4; --rule-firm:#b6bfcb;
+  --accent:#3b5bb5; --accent-bg:#e6ecfa;
+  --ok:#0f7368; --ok-bg:#dff0ed;
+  --warn:#9a6114; --warn-bg:#f7efe0;
+  --alert:#a5372b; --alert-bg:#fae9e6;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
+  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
+  --rule:#262d38; --rule-firm:#39424f;
+  --accent:#8fa7e8; --accent-bg:#1a2340;
+  --ok:#5cbdb0; --ok-bg:#0f2b28;
+  --warn:#d8a75a; --warn-bg:#2b2417;
+  --alert:#e5877a; --alert-bg:#2e1c19;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--body);
+  font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  font-weight:450;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:940px;margin:0 auto;padding:0 26px 80px}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(1.9rem,3.8vw,2.5rem);font-weight:600;letter-spacing:-.02em;line-height:1.12}
+h2{font-size:1.32rem;font-weight:600;letter-spacing:-.012em}
+h3{font-size:1.02rem;font-weight:600;margin-top:24px}
+p{margin:0 0 12px;max-width:76ch}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+code{font-size:.85em;background:var(--sunk);padding:.08em .32em;border-radius:2px;overflow-wrap:anywhere}
+header{padding:50px 0 20px;border-bottom:2px solid var(--ink);margin-bottom:30px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px}
+.standfirst{font-size:1.04rem;color:var(--muted);max-width:66ch;margin-top:11px}
+section{margin-top:48px;border-top:1px solid var(--rule);padding-top:24px}
+section:first-of-type{border-top:none;padding-top:0}
+.secnum{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);margin:12px 0 16px}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:"IBM Plex Mono",monospace;font-size:.65rem;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--sunk)}
+tbody tr:last-child td{border-bottom:0}
+td.a{white-space:nowrap;font-weight:600;color:var(--ink)}
+td.m{font-family:"IBM Plex Mono",monospace;font-size:.79rem;color:var(--ink)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+tr.neg td{background:var(--alert-bg)}
+.key{border-left:3px solid var(--accent);background:var(--accent-bg);padding:12px 16px;margin:14px 0}
+.key b{color:var(--ink)}
+.warn{border-left:3px solid var(--warn);background:var(--warn-bg);padding:12px 16px;margin:14px 0}
+.warn b{color:var(--ink)}
+.gap{border-left:3px solid var(--alert);background:var(--alert-bg);padding:12px 16px;margin:14px 0}
+.gap b{color:var(--ink)}
+pre{background:var(--surface);border:1px solid var(--rule);padding:12px 15px;overflow-x:auto;
+  font-size:.78rem;line-height:1.6;margin:12px 0;font-family:"IBM Plex Mono",monospace}
+pre b{color:var(--accent)}
+figure{margin:16px 0}
+figcaption{font-size:.85rem;color:var(--muted);margin-top:11px;max-width:72ch}
+svg{max-width:100%;height:auto;display:block}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-size:.82rem;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Feature walkthrough &middot; 2 of 6</div>
+  <h1>Virtual Memory, End to End</h1>
+  <p class="standfirst">Sv39 address translation: the six files it lives in, how the preamble
+  builds a page table, where permissions are actually decided, and why virtual memory cannot be
+  tested apart from PMP.</p>
+</header>
+
+<section>
+<div class="secnum">First, two things people get wrong</div>
+<h2>Page tables are not the whole state, and this is not a separate feature from PMP</h2>
+<div class="scroll"><table>
+<thead><tr><th>The assumption</th><th>What the model actually does</th></tr></thead><tbody>
+<tr><td class="a">&ldquo;The PTE bits decide the outcome&rdquo;</td>
+    <td>Three <code>mstatus</code> bits change the answer without touching a page table: <b>MXR</b> makes execute-only pages readable, <b>SUM</b> lets Supervisor read User pages, and <b>MPRV</b> changes which privilege the check even runs at. Identical page tables, different results</td></tr>
+<tr><td class="a">&ldquo;Translation and PMP are separate campaigns&rdquo;</td>
+    <td>The walker's own PTE reads are physical accesses, and go through PMP. That is <code>Load(PageTableEntry)</code> &mdash; arms 3 and 7 of <code>pmpCheckRWX</code>. A PMP denial <em>during a walk</em> produces an <b>access</b> fault where every other failure produces a <b>page</b> fault, and that pair is only reachable with both features configured at once</td></tr>
+<tr><td class="a">&ldquo;A test can run in M-mode like the others&rdquo;</td>
+    <td><code>translationMode</code> opens with <code>if priv == Machine then Bare</code>. Machine mode does not translate at all. Every virtual-memory test must first drop to Supervisor, which is why <code>--run-in-supervisor</code> is not optional here</td></tr>
+</tbody></table></div>
+<div class="key"><b>The ordering, which the model states directly.</b> Translation runs
+<em>first</em>; PMP and PMA then run on the physical address it produced. A comment in
+<code>update_PTE_Bits</code> says so while explaining a different problem: <em>&ldquo;the PMA/PMP
+checks are done after address translation&rdquo;</em>. So a virtual address passes through two
+independent protection systems in sequence, and a test that configures only one of them is
+measuring half the path.</div>
+</section>
+
+<section>
+<div class="secnum">The shape of the problem</div>
+<h2>Six files, 588 spans &mdash; 2.6&times; the size of PMP</h2>
+<p>There is no <code>vmem/</code> directory. The implementation is spread across five files in
+<code>sys/</code> and one in <code>core/</code>, and it is the largest single feature in the
+privileged model.</p>
+<div class="scroll"><table>
+<thead><tr><th>File</th><th>What lives there</th><th class="n">Spans</th></tr></thead><tbody>
+<tr><td class="m">sys/vmem.sail</td><td>The walker <code>pt_walk</code>, the <code>satp</code> CSR, <code>translateAddr</code> &mdash; the entry point every load, store and fetch goes through</td><td class="n">181</td></tr>
+<tr><td class="m">sys/vmem_pte.sail</td><td>PTE layout, the validity rules, <b><code>check_PTE_permission</code></b>, A/D bit updates</td><td class="n">178</td></tr>
+<tr><td class="m">sys/vmem_utils.sail</td><td><code>vmem_read</code>/<code>vmem_write</code> &mdash; what an instruction actually calls, plus misalignment handling</td><td class="n">73</td></tr>
+<tr><td class="m">sys/vmem_ptw.sail</td><td><code>translationException</code>: turns a walk failure into an exception cause</td><td class="n">60</td></tr>
+<tr><td class="m">core/vmem_types.sail</td><td>Sv mode widths, <code>mem_payload</code>, page-based memory types</td><td class="n">48</td></tr>
+<tr><td class="m">sys/vmem_tlb.sail</td><td>A 64-entry TLB with ASID and global matching, and <code>sfence.vma</code> flush semantics</td><td class="n">48</td></tr>
+<tr><td class="a">total</td><td>&nbsp;</td><td class="n"><b>588</b></td></tr>
+</tbody></table></div>
+<div class="warn"><b>Worth knowing before scoping.</b> PMP is <b>226</b> spans and the RFP lists it
+as <em>required</em>. Virtual memory is <b>588</b> and is listed as <em>highly desirable</em>. The
+larger feature is the optional one, so it needs a stated position in the plan rather than an
+implicit one.</div>
+</section>
+
+<section>
+<div class="secnum">Step 1</div>
+<h2>The foundation: three things the generator had to learn</h2>
+<p>Unlike PMP, nothing here was blocked by the symbolic engine. The obstacles were all about
+getting the machine into a state where translation is <em>on</em>.</p>
+<div class="scroll"><table>
+<thead><tr><th>Capability</th><th>Where</th><th>Why it was needed</th></tr></thead><tbody>
+<tr><td class="a">Enter in Supervisor mode</td><td class="m">--run-in-supervisor</td>
+    <td>M-mode translates nothing. The preamble sets <code>mepc</code> and <code>mstatus.MPP</code> and <code>mret</code>s into the test instead of jumping to it</td></tr>
+<tr><td class="a">Build a page table</td><td class="m">--sv39</td>
+    <td>There is nothing to walk otherwise. The preamble emits a real 512-entry root table into <code>.data</code></td></tr>
+<tr><td class="a">Keep the harness alive</td><td class="m">--pmp-allow-all</td>
+    <td>Below Machine mode, PMP denies every unmatched access &mdash; including the fetch of the test's own next instruction. Every VM scenario carries a PMP allow-all whether or not it is testing PMP</td></tr>
+</tbody></table></div>
+<div class="key"><b>That third row is the coupling made concrete.</b> There is no such thing as a
+pure virtual-memory test in this model. Dropping to Supervisor to enable translation
+simultaneously switches PMP from permissive to default-deny, so the PMP configuration becomes
+part of every VM test's setup whether you meant it to or not.</div>
+</section>
+
+<section>
+<div class="secnum">Step 2</div>
+<h2>Building the page table in the preamble</h2>
+<p>The generator emits an <b>identity map</b> &mdash; every virtual address translates to the
+same physical address &mdash; so that translation is genuinely active while every address the
+test already uses stays valid.</p>
+<pre>.data
+.balign 4096                 <span style="opacity:.6">a page table must be page-aligned; satp holds only its PPN</span>
+root_page_table:
+  .dword 0x00000000000000cf  <span style="opacity:.6">entry 0: VA 0x00000000 → PA 0x00000000, 1 GiB (ROM, CLINT)</span>
+  &hellip;
+  .dword 0x00000000200000cf  <span style="opacity:.6">entry 2: VA 0x80000000 → PA 0x80000000, 1 GiB (code + data)</span>
+  &hellip;                        <span style="opacity:.6">the other 509 entries stay zero — V=0, invalid</span></pre>
+<p>Then it is installed and the TLB is flushed:</p>
+<pre>la    x31, root_page_table
+srli  x31, x31, 12          <span style="opacity:.6">satp holds the PPN, i.e. address >> 12</span>
+li    x30, 8
+slli  x30, x30, 60          <span style="opacity:.6">MODE = 8 = Sv39, in the top 4 bits</span>
+or    x31, x31, x30
+csrw  satp, x31
+<b>sfence.vma</b>                  <span style="opacity:.6">an implementation may have cached the old satp</span></pre>
+
+<h3>Four decisions in that table, and what each buys</h3>
+<div class="scroll"><table>
+<thead><tr><th>Decision</th><th>Reason</th></tr></thead><tbody>
+<tr><td class="a">Leaf PTEs at the <b>root</b> level</td>
+    <td>An Sv39 root entry covers 1 GiB. Making it a leaf gives a <b>gigapage</b>, so the whole identity map is one entry per gigabyte with no second-level tables to emit at all</td></tr>
+<tr><td class="a">Only <b>two</b> of 512 entries mapped</td>
+    <td>Leaving the other 509 invalid is what makes an unmapped-page test possible. Pick any address outside those two gigabytes and the walk faults &mdash; no extra machinery needed</td></tr>
+<tr><td class="a"><code>U</code> stays <b>clear</b> (flags <code>0xcf</code> = D|A|X|W|R|V)</td>
+    <td>This is a Supervisor mapping. Setting <code>U</code> would make the page <em>inaccessible</em> to S-mode, not more permissive &mdash; the opposite of the intuition</td></tr>
+<tr><td class="a"><code>D</code> and <code>A</code> <b>pre-set</b></td>
+    <td>Avoids the A/D update path on every access. Clearing them is how that path gets tested deliberately &mdash; see Step 6</td></tr>
+</tbody></table></div>
+<div class="warn"><b>The shadow-stack alias is worth noting as a technique.</b> Entry 1 optionally
+maps VA <code>0x40000000</code> to the same physical RAM as entry 2, but with flags
+<code>0xc5</code> = D|A|W|V &mdash; <code>R=0 W=1 X=0</code>, the reserved encoding Zicfiss
+defines as a shadow-stack page. It is an <em>alias</em> rather than a permission change on entry
+2 because a shadow-stack page rejects normal loads and stores; converting the identity map would
+break every other test. The same physical memory is reachable two ways, and a test picks its
+view by which virtual address it uses.</div>
+</section>
+
+<section>
+<div class="secnum">Step 3</div>
+<h2>How the walk works</h2>
+<p>An Sv39 virtual address is not a number to be looked up &mdash; it is three 9-bit indices and
+a page offset, consumed one level at a time.</p>
+
+<figure>
+<svg viewBox="0 0 780 240" role="img" aria-label="An Sv39 virtual address splits into three nine-bit page-table indices and a twelve-bit page offset. satp points at the root table; VPN 2 indexes it, VPN 1 the next level, VPN 0 the last, and the page offset passes through unchanged into the physical address.">
+  <defs>
+    <marker id="va" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <polygon points="0,1 8,4 0,7" fill="currentColor"/>
+    </marker>
+  </defs>
+
+  <!-- bit range labels -->
+  <text x="115" y="26" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="var(--muted)">63:39</text>
+  <text x="245" y="26" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="var(--muted)">38:30</text>
+  <text x="355" y="26" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="var(--muted)">29:21</text>
+  <text x="465" y="26" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="var(--muted)">20:12</text>
+  <text x="595" y="26" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="var(--muted)">11:0</text>
+
+  <!-- VA bar -->
+  <rect x="40" y="34" width="150" height="30" fill="var(--sunk)" stroke="var(--rule-firm)"/>
+  <rect x="190" y="34" width="110" height="30" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <rect x="300" y="34" width="110" height="30" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <rect x="410" y="34" width="110" height="30" fill="var(--accent-bg)" stroke="var(--accent)"/>
+  <rect x="520" y="34" width="150" height="30" fill="var(--ok-bg)" stroke="var(--ok)"/>
+  <text x="115" y="54" text-anchor="middle" font-size="11" fill="var(--muted)">must sign-extend</text>
+  <text x="245" y="54" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--ink)">VPN[2]</text>
+  <text x="355" y="54" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--ink)">VPN[1]</text>
+  <text x="465" y="54" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--ink)">VPN[0]</text>
+  <text x="595" y="54" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--ink)">page offset</text>
+  <text x="20" y="54" text-anchor="end" font-size="11" font-weight="600" fill="var(--ink)">VA</text>
+
+  <!-- drops: each VPN field indexes one level; the offset bypasses the walk -->
+  <g stroke="currentColor" fill="none" stroke-width="1.3" marker-end="url(#va)">
+    <line x1="245" y1="64" x2="245" y2="112"/>
+    <line x1="355" y1="64" x2="355" y2="112"/>
+    <line x1="465" y1="64" x2="465" y2="112"/>
+    <line x1="595" y1="64" x2="595" y2="112"/>
+    <line x1="174" y1="145" x2="198" y2="145"/>
+    <line x1="290" y1="145" x2="308" y2="145"/>
+    <line x1="400" y1="145" x2="418" y2="145"/>
+    <line x1="510" y1="145" x2="536" y2="145"/>
+  </g>
+  <text x="299" y="138" text-anchor="middle" font-size="9" font-family="IBM Plex Mono, monospace" fill="var(--muted)">PPN</text>
+  <text x="409" y="138" text-anchor="middle" font-size="9" font-family="IBM Plex Mono, monospace" fill="var(--muted)">PPN</text>
+
+  <!-- satp -->
+  <rect x="40" y="118" width="132" height="54" fill="var(--surface)" stroke="var(--rule-firm)" stroke-width="1.4"/>
+  <text x="106" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">satp</text>
+  <text x="106" y="157" text-anchor="middle" font-size="10.5" fill="var(--muted)">MODE=8, root PPN</text>
+
+  <!-- levels -->
+  <rect x="200" y="118" width="90" height="54" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="245" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">level 2</text>
+  <text x="245" y="157" text-anchor="middle" font-size="10.5" fill="var(--muted)">1 GiB each</text>
+
+  <rect x="310" y="118" width="90" height="54" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="355" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">level 1</text>
+  <text x="355" y="157" text-anchor="middle" font-size="10.5" fill="var(--muted)">2 MiB each</text>
+
+  <rect x="420" y="118" width="90" height="54" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="465" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">level 0</text>
+  <text x="465" y="157" text-anchor="middle" font-size="10.5" fill="var(--muted)">4 KiB each</text>
+
+  <!-- PA -->
+  <rect x="540" y="118" width="130" height="54" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.6"/>
+  <text x="605" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">physical</text>
+  <text x="605" y="157" text-anchor="middle" font-size="10.5" fill="var(--muted)">PPN @ offset</text>
+
+  <!-- leaf-early notes -->
+  <text x="245" y="196" text-anchor="middle" font-size="10.5" fill="var(--warn)">leaf here = gigapage</text>
+  <text x="355" y="196" text-anchor="middle" font-size="10.5" fill="var(--warn)">leaf here = megapage</text>
+  <text x="465" y="196" text-anchor="middle" font-size="10.5" fill="var(--muted)">leaf here = normal page</text>
+  <line x1="200" y1="180" x2="510" y2="180" stroke="var(--rule)" stroke-width="1"/>
+  <text x="355" y="222" text-anchor="middle" font-size="11" fill="var(--body)">a leaf PTE at <tspan font-weight="600">any</tspan> level ends the walk &mdash; the preamble's identity map uses level-2 leaves</text>
+</svg>
+<figcaption>Sv39: three 9-bit indices and a 12-bit offset. The walk stops at whichever level
+holds a leaf PTE, which is what makes superpages possible &mdash; and what makes a
+<em>misaligned</em> superpage its own failure case.</figcaption>
+</figure>
+
+<h3>Every way the walk can end</h3>
+<div class="scroll"><table>
+<thead><tr><th>Exit</th><th>Condition</th><th>Where</th></tr></thead><tbody>
+<tr><td class="a">Success</td><td>A leaf PTE whose permissions allow the access</td><td class="m">Ok(struct {ppn, pte, &hellip;})</td></tr>
+<tr class="neg"><td class="a">PTW_No_Access</td><td>The PTE read itself was refused &mdash; <b>this is PMP</b></td><td class="m">read_pte &rarr; Err</td></tr>
+<tr class="neg"><td class="a">PTW_Invalid_PTE</td><td>Any of the eight conditions in Step 5; also a non-leaf PTE at level 0; also a NAPOT bit set above level 0</td><td class="m">pte_is_invalid</td></tr>
+<tr class="neg"><td class="a">PTW_Misaligned</td><td>A superpage whose low PPN bits are not zero</td><td class="m">ppn[low_bits-1 .. 0] != zeros()</td></tr>
+<tr class="neg"><td class="a">PTW_No_Permission</td><td>Privilege or R/W/X check failed &mdash; Step 4</td><td class="m">check_PTE_permission</td></tr>
+<tr class="neg"><td class="a">PTW_Invalid_Addr</td><td>The VA's top bits are not a sign-extension of bit 38</td><td class="m">translateAddr, before the walk</td></tr>
+</tbody></table></div>
+</section>
+
+<section>
+<div class="secnum">Step 4</div>
+<h2>Where permissions are actually decided</h2>
+<p><code>check_PTE_permission</code> is the virtual-memory counterpart to
+<code>pmpCheckRWX</code>, and it is three gates in sequence &mdash; steps 6, 7 and 8 of the
+architecture's translation algorithm. Each reads a different part of the machine.</p>
+
+<figure>
+<svg viewBox="0 0 780 290" role="img" aria-label="check_PTE_permission runs three sequential gates: a privilege check reading the PTE user bit and mstatus SUM, a shadow-stack check reading the reserved R0 W1 X0 encoding, and a permission check reading R W X after mstatus MXR is folded in. Each gate has its own failure exit.">
+  <defs>
+    <marker id="pg" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <polygon points="0,1 8,4 0,7" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g stroke="currentColor" fill="none" stroke-width="1.4" marker-end="url(#pg)">
+    <line x1="96" y1="96" x2="140" y2="96"/>
+    <line x1="290" y1="96" x2="334" y2="96"/>
+    <line x1="484" y1="96" x2="528" y2="96"/>
+    <line x1="678" y1="96" x2="716" y2="96"/>
+    <line x1="215" y1="130" x2="215" y2="176"/>
+    <line x1="409" y1="130" x2="409" y2="176"/>
+    <line x1="603" y1="130" x2="603" y2="176"/>
+  </g>
+
+  <text x="48" y="92" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">access</text>
+  <text x="48" y="107" text-anchor="middle" font-size="10.5" fill="var(--muted)">valid PTE</text>
+
+  <!-- gate 1 -->
+  <rect x="140" y="62" width="150" height="68" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="215" y="82" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="var(--muted)">STEP 6</text>
+  <text x="215" y="99" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">privilege</text>
+  <text x="215" y="117" text-anchor="middle" font-size="10.5" fill="var(--muted)">pte.U, priv, SUM</text>
+
+  <!-- gate 2 -->
+  <rect x="334" y="62" width="150" height="68" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="409" y="82" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="var(--muted)">STEP 7</text>
+  <text x="409" y="99" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">shadow stack</text>
+  <text x="409" y="117" text-anchor="middle" font-size="10.5" fill="var(--muted)">R=0 W=1 X=0?</text>
+
+  <!-- gate 3 -->
+  <rect x="528" y="62" width="150" height="68" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="603" y="82" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="var(--muted)">STEP 8</text>
+  <text x="603" y="99" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)">permission</text>
+  <text x="603" y="117" text-anchor="middle" font-size="10.5" fill="var(--muted)">R/W/X, after MXR</text>
+
+  <text x="740" y="92" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ok)">Success</text>
+
+  <!-- failure exits -->
+  <rect x="140" y="180" width="150" height="34" fill="var(--alert-bg)" stroke="var(--alert)" stroke-width="1.3"/>
+  <text x="215" y="202" text-anchor="middle" font-size="10.5" font-family="IBM Plex Mono, monospace" fill="var(--alert)">PTE_No_Permission</text>
+
+  <rect x="334" y="180" width="150" height="34" fill="var(--alert-bg)" stroke="var(--alert)" stroke-width="1.3"/>
+  <text x="409" y="196" text-anchor="middle" font-size="10.5" font-family="IBM Plex Mono, monospace" fill="var(--alert)">PTE_No_Access</text>
+  <text x="409" y="209" text-anchor="middle" font-size="9.5" fill="var(--muted)">16 arms, exhaustive</text>
+
+  <rect x="528" y="180" width="150" height="34" fill="var(--alert-bg)" stroke="var(--alert)" stroke-width="1.3"/>
+  <text x="603" y="202" text-anchor="middle" font-size="10.5" font-family="IBM Plex Mono, monospace" fill="var(--alert)">PTE_No_Permission</text>
+
+  <line x1="140" y1="242" x2="678" y2="242" stroke="var(--rule-firm)" stroke-width="1"/>
+  <text x="409" y="264" text-anchor="middle" font-size="11.5" fill="var(--body)">Step 7 <tspan font-weight="600">returns</tspan> rather than falling through &mdash; a shadow-stack page is W=1 R=0,</text>
+  <text x="409" y="279" text-anchor="middle" font-size="11.5" fill="var(--body)">which step 8 would reject on the very access the encoding exists for</text>
+</svg>
+<figcaption>Three sequential gates, each reading different state. The step 7 early return is the
+subject of model defect A4 &mdash; without it, step 8's <code>pte_W &amp; pte_R</code> test
+re-denies every shadow-stack atomic that step 7 just permitted.</figcaption>
+</figure>
+
+<h3>Step 6: privilege &mdash; and the asymmetry inside SUM</h3>
+<pre>let priv_ok : bool = match priv {
+  User       => pte_U,
+  Supervisor => not(pte_U) | (do_sum &amp; <b>is_load_store(access)</b>),
+  Machine    => internal_error(&hellip;),   <span style="opacity:.6">unreachable: M-mode never translates</span>
+};</pre>
+<div class="key"><b><code>mstatus.SUM</code> lets Supervisor touch a User page &mdash; but only
+for loads and stores, never an instruction fetch.</b> That single <code>is_load_store</code>
+guard is one branch, and reaching it needs a User page, S-mode, SUM set, and a <em>fetch</em>
+rather than a load. It is precisely the kind of case a hand-written testplan omits and a derived
+one finds by construction.</div>
+
+<h3>Step 8: the access table, after MXR</h3>
+<pre>let pte_R = pte_R | (pte_X &amp; <b>mxr</b>);      <span style="opacity:.6">Make eXecutable Readable</span>
+match access {
+  Load(_)             => pte_R,        Store(_)              => pte_W,
+  LoadReserved(_)     => pte_R,        StoreConditional(_)   => pte_W,
+  Atomic(_)           => pte_W &amp; pte_R, InstructionFetch(_)  => pte_X,
+  CacheAccess(CB_zero())    => pte_W,
+  CacheAccess(CB_manage(_)) => pte_R | pte_W,
+  CacheAccess(CB_prefetch(p)) => match p { PREFETCH_R =&gt; pte_R,
+                                           PREFETCH_W =&gt; pte_W,
+                                           PREFETCH_I =&gt; pte_X },
+}</pre>
+<p>Structurally the same five permission patterns as PMP &mdash; R, W, X, R&amp;W, R|W &mdash;
+but with one extra input PMP does not have: <b>MXR</b> rewrites <code>pte_R</code> before the
+table is consulted, so an execute-only page becomes readable without any PTE changing.</p>
+</section>
+
+<section>
+<div class="secnum">Step 5</div>
+<h2>The eight ways a PTE is invalid</h2>
+<p><code>pte_is_invalid</code> is not one check. It is eight independent disjuncts, and each is
+a separate test case &mdash; reached before permissions are consulted at all.</p>
+<div class="scroll"><table>
+<thead><tr><th class="n">#</th><th>Condition</th><th>What it catches</th><th>Needs</th></tr></thead><tbody>
+<tr><td class="n">1</td><td class="m">V == 0</td><td>An unmapped page &mdash; the ordinary case</td><td>&mdash;</td></tr>
+<tr><td class="n">2</td><td class="m">R=0 W=1 X=0 &amp; menvcfg.SSE == 0</td><td>The shadow-stack encoding used <em>without</em> Zicfiss enabled</td><td><b>config</b>: SSE off</td></tr>
+<tr><td class="n">3</td><td class="m">R=0 W=1 X=1</td><td>Reserved in all circumstances</td><td>&mdash;</td></tr>
+<tr><td class="n">4</td><td class="m">non-leaf &amp; (A|D|U set, or ext bits nonzero)</td><td>A pointer PTE carrying leaf-only flags</td><td>&mdash;</td></tr>
+<tr><td class="n">5</td><td class="m">N set &amp; not Svnapot</td><td>A NAPOT PTE on a machine without the extension</td><td><b>config</b>: Svnapot off</td></tr>
+<tr><td class="n">6</td><td class="m">PBMT set &amp; (PBMTE == 0 | bad encoding)</td><td>Page-based memory type when it is not enabled, or encoding 3</td><td><b>config</b> or CSR</td></tr>
+<tr><td class="n">7</td><td class="m">RSW_60t59b set &amp; not Svrsw60t59b</td><td>Software-reserved bits without the extension</td><td><b>config</b>: extension off</td></tr>
+<tr><td class="n">8</td><td class="m">reserved != 0</td><td>Any other reserved bit set</td><td>&mdash;</td></tr>
+</tbody></table></div>
+<div class="warn"><b>Four of the eight are only reachable with a specific configuration.</b>
+Conditions 2, 5, 6 and 7 all test &ldquo;this bit is set but the extension is <em>off</em>&rdquo;.
+No page table alone can produce them &mdash; they need a build or a <code>menvcfg</code> write
+that turns the feature off. That makes them <b>configuration-dependent targets</b>, the same
+category as PMP's extension-gated access kinds, and it is why the 16-config CI matrix matters for
+coverage rather than just for compatibility.</div>
+</section>
+
+<section>
+<div class="secnum">Step 6</div>
+<h2>A read that writes: the A and D bits</h2>
+<p>After a successful walk, <code>update_and_write_pte</code> may <b>write the PTE back</b>
+&mdash; so a load can perform a hidden store, and that store is itself subject to PMP.</p>
+<div class="scroll"><table>
+<thead><tr><th>Access</th><th>Sets D?</th><th>Sets A?</th><th>Why</th></tr></thead><tbody>
+<tr><td class="m">InstructionFetch, Load, LoadReserved</td><td>no</td><td class="a">yes</td><td>Read-only accesses mark the page accessed, not dirty</td></tr>
+<tr><td class="m">Store, StoreConditional, Atomic</td><td class="a">yes</td><td class="a">yes</td><td>The ordinary write case</td></tr>
+<tr><td class="m">CacheAccess(CB_zero())</td><td class="a">yes</td><td class="a">yes</td><td>The spec has <code>cbo.zero</code> check and set both</td></tr>
+<tr><td class="m">CacheAccess(CB_manage(_))</td><td>no</td><td class="a">yes</td><td>&ldquo;does not check the dirty bit and neither raises an exception nor sets the bit&rdquo;</td></tr>
+<tr><td class="m">CacheAccess(CB_prefetch(_))</td><td>no</td><td>no</td><td>The only access that touches neither</td></tr>
+</tbody></table></div>
+<div class="key"><b>This is why the preamble pre-sets A and D.</b> With both already set,
+<code>update_PTE_Bits</code> returns <code>None()</code> and no write happens &mdash; keeping
+every other test simple. Clearing them is how this path gets tested <em>deliberately</em>, and
+the pair <code>Svade</code>/<code>Svadu</code> decides whether the hardware performs the update or
+faults instead. Neither is exercised today.</div>
+<div class="warn"><b>One case the model flags against itself.</b> A comment in
+<code>update_PTE_Bits</code> notes that for a failing <code>sc.w</code> the spec leaves it
+UNSPECIFIED whether the D bit is set, and the model chooses to set it because the PMP and PMA
+checks happen later and it cannot yet know the outcome. That is a deliberate, documented choice
+&mdash; a test asserting the other behaviour would be wrong, and it belongs in the exclusion list
+with that reasoning attached.</div>
+</section>
+
+<section>
+<div class="secnum">Step 7</div>
+<h2>Access fault or page fault: the distinction that catches real bugs</h2>
+<p><code>translationException</code> has roughly thirty arms, but the entire structure is one
+question asked over every access kind:</p>
+<div class="scroll"><table>
+<thead><tr><th>Failure</th><th>Becomes</th><th>Cause</th><th>Reachable only by</th></tr></thead><tbody>
+<tr><td class="m">PTW_No_Access</td><td class="a">Access Fault</td><td class="n">1, 5, 7</td><td><b>PMP denying the walker's own PTE read</b></td></tr>
+<tr><td class="m">everything else</td><td class="a">Page Fault</td><td class="n">12, 13, 15</td><td>Invalid PTE, no permission, misaligned superpage</td></tr>
+</tbody></table></div>
+<p>The access kind then selects which of the pair: load, store/AMO, or fetch. Shadow-stack
+accesses are deliberately reported <em>as stores</em>, even the ones that only read.</p>
+<div class="key"><b>Getting this pair backwards is a classic implementation bug, and it is only
+reachable with both features configured.</b> The test is: build a valid page table, then use PMP
+to deny the region the <em>page table itself</em> lives in. A correct implementation reports
+cause 5 or 7; a wrong one reports 13. No amount of page-table variation finds it, and no amount
+of PMP variation finds it &mdash; it needs both, which is the concrete payoff of treating them as
+one campaign.</div>
+</section>
+
+<section>
+<div class="secnum">Step 8</div>
+<h2>The TLB, and why it makes results order-dependent</h2>
+<p>The model caches translations in a 64-entry TLB. That means <b>the same access can take two
+entirely different paths depending on whether it ran before</b> &mdash; the first time it walks,
+the second time it hits.</p>
+<div class="scroll"><table>
+<thead><tr><th>Element</th><th>Detail</th><th>Test consequence</th></tr></thead><tbody>
+<tr><td class="a">Size</td><td>2<sup>6</sup> = 64 entries, hashed on the VPN</td><td>Eviction is reachable, but needs 65 distinct pages</td></tr>
+<tr><td class="a">ASID matching</td><td>An entry matches on ASID unless its <code>global</code> bit is set</td><td>Two <code>satp</code> values with different ASIDs must not see each other's entries</td></tr>
+<tr><td class="a">Global bit</td><td>Accumulated down the walk &mdash; <em>any</em> level setting G makes the result global</td><td>A G bit on a non-leaf PTE still propagates; easy to implement wrongly</td></tr>
+<tr><td class="a"><code>sfence.vma</code></td><td>Flushes by ASID, by address, by both, or everything</td><td>Four distinct flush behaviours, each its own branch</td></tr>
+</tbody></table></div>
+<div class="gap"><b>Nothing here is tested today.</b> The preamble issues one
+<code>sfence.vma</code> after writing <code>satp</code> and never revisits the TLB. All 48 spans
+in <code>vmem_tlb.sail</code> are reachable only by a test that translates the same address
+twice, or changes <code>satp</code> mid-test &mdash; neither of which the generator can currently
+express.</div>
+</section>
+
+<section>
+<div class="secnum">Step 9</div>
+<h2>Executing and checking: what exists today</h2>
+<p>Five scenarios, three positive and two negative controls.</p>
+<div class="scroll"><table>
+<thead><tr><th>Scenario</th><th>Flags</th><th>Expectation</th></tr></thead><tbody>
+<tr><td class="m">m3_supervisor_bare</td><td class="m">--run-in-supervisor --pmp-allow-all</td><td>Load succeeds with translation <em>off</em> &mdash; the baseline</td></tr>
+<tr><td class="m">m3_sv39_mapped</td><td class="m">&hellip; --sv39</td><td>Same load succeeds <em>through</em> a real walk</td></tr>
+<tr><td class="m">m3_sv39_page_fault</td><td class="m">&hellip; --sv39, unmapped address</td><td>Cause <b>13</b>, load page fault; the trap is the result</td></tr>
+<tr class="neg"><td class="m">m3_NEG_no_translation</td><td class="m">same, but <b>without</b> --sv39</td><td><b>Must fail.</b> Cause 13 needs a real walk; without translation the same access faults differently</td></tr>
+<tr class="neg"><td class="m">m3_NEG_mapped_address</td><td class="m">--sv39, but a <b>mapped</b> address</td><td><b>Must fail.</b> A mapped address does not fault at all</td></tr>
+</tbody></table></div>
+<div class="key"><b>The two controls do specific work.</b> A page-fault test that passes proves
+nothing on its own &mdash; a test that traps for the wrong reason, or one where
+<code>--sv39</code> silently did not take effect, looks identical to a correct pass. The first
+control proves the fault came from translation; the second proves it came from <em>this</em>
+address being unmapped rather than from something incidental.</div>
+</section>
+
+<section>
+<div class="secnum">Step 10</div>
+<h2>What the 588 spans say is missing</h2>
+<p>Three positive scenarios against the largest feature in the privileged model. The gaps are
+not subtle, and they rank cleanly by cost.</p>
+<div class="scroll"><table>
+<thead><tr><th class="n">&nbsp;</th><th>Gap</th><th>What it needs</th><th>Cost</th></tr></thead><tbody>
+<tr><td class="n">1</td><td>Only <code>lw</code> is ever translated</td><td>Vary the access: store, AMO, fetch. Step 8's table has five permission patterns and one is exercised</td><td>Low</td></tr>
+<tr><td class="n">2</td><td>Permission failures never happen</td><td>A second page table with restrictive PTEs &mdash; currently every mapped page is D|A|X|W|R|V, so no permission check can fail</td><td>Low &mdash; more PTE entries</td></tr>
+<tr><td class="n">3</td><td>MXR and SUM untested</td><td>Two <code>mstatus</code> bits, plus a U page and an execute-only page to test them against</td><td>Low</td></tr>
+<tr><td class="n">4</td><td>Access-vs-page fault pair</td><td>PMP denying the page table's own region &mdash; the joint case from Step 7</td><td>Medium &mdash; couples two features</td></tr>
+<tr><td class="n">5</td><td>Seven of eight invalidity disjuncts</td><td>Malformed PTEs, four of which also need an extension turned off</td><td>Medium &mdash; config matrix</td></tr>
+<tr><td class="n">6</td><td>All 48 TLB spans</td><td>Repeat access, ASID switch, <code>sfence.vma</code> variants</td><td>Medium &mdash; new generator capability</td></tr>
+<tr><td class="n">7</td><td>Sv32, Sv48, Sv57</td><td>The model supports all four; the generator emits only Sv39. Sv32 is the RV32 path and currently has no VM tests at all</td><td>Medium</td></tr>
+<tr><td class="n">8</td><td>Superpage misalignment, NAPOT, PBMT</td><td>Leaf PTEs at level 1 and 2 with deliberately wrong low PPN bits</td><td>Low once (2) exists</td></tr>
+</tbody></table></div>
+<div class="key"><b>Rows 1&ndash;3 are the same shape as PMP's biggest win: the machinery exists,
+and the work is varying what the test does with it.</b> The preamble already builds a page table
+and drops to Supervisor. Adding restrictive PTEs and a different instruction under test reaches
+step 6 and step 8's failure paths without any new generator capability.</div>
+</section>
+
+<section>
+<div class="secnum">Summary</div>
+<h2>The whole thing in one table</h2>
+<div class="scroll"><table>
+<thead><tr><th>Question</th><th>Answer</th></tr></thead><tbody>
+<tr><td class="a">Where does it live?</td><td>Six files, no dedicated folder: five in <code>sys/</code>, one in <code>core/</code></td></tr>
+<tr><td class="a">How big?</td><td><b>588 spans</b> &mdash; 2.6&times; PMP, and the largest feature in the privileged model</td></tr>
+<tr><td class="a">Who builds the page table?</td><td>The preamble, arithmetically. 512 entries, two mapped as gigapages, 509 left invalid on purpose</td></tr>
+<tr><td class="a">Why identity-mapped?</td><td>Translation is genuinely active while every address the test already uses stays valid</td></tr>
+<tr><td class="a">Where are permissions decided?</td><td><code>check_PTE_permission</code>: three gates &mdash; privilege, shadow stack, R/W/X</td></tr>
+<tr><td class="a">What else changes the answer?</td><td><code>mstatus</code>: <b>MXR</b>, <b>SUM</b>, <b>MPRV</b>. None of them touch a page table</td></tr>
+<tr><td class="a">Can it be tested alone?</td><td><b>No.</b> Dropping to Supervisor arms PMP's default-deny, and the walker's PTE reads are PMP-checked</td></tr>
+<tr><td class="a">What runs first?</td><td>Translation, then PMP and PMA on the resulting physical address</td></tr>
+<tr><td class="a">What exists today?</td><td>Three positive scenarios and two negative controls, all using one <code>lw</code></td></tr>
+<tr><td class="a">Biggest gap?</td><td>No permission failure is reachable &mdash; every mapped page is fully permissive</td></tr>
+</tbody></table></div>
+</section>
+
+<footer>Span counts derived from <code>build-coverage/sail_riscv_model.branch_info</code>; the
+walk and permission logic read from <code>sys/vmem.sail</code>, <code>sys/vmem_pte.sail</code>,
+<code>sys/vmem_ptw.sail</code> and <code>sys/vmem_tlb.sail</code>; the page-table preamble from
+<code>isla-gen-extension/src/generate_object_riscv.rs</code>; scenarios from
+<code>python-isla/scenario_tests.py</code>. Coverage percentages are deliberately omitted &mdash;
+the current <code>sail_coverage</code> is from a partial replay and needs a full corpus run before
+any figure for these files is quotable.</footer>
+</div>

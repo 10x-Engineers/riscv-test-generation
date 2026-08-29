@@ -1,0 +1,6 @@
+mode,source,entry_mechanism,return_mechanism
+User,core/types.sail:71,Not directly derivable from Sail,Not directly derivable from Sail
+VirtualUser,core/types.sail:71,Not directly derivable from Sail,Not directly derivable from Sail
+Supervisor,core/types.sail:71,Not directly derivable from Sail,Not directly derivable from Sail
+VirtualSupervisor,core/types.sail:71,Not directly derivable from Sail,Not directly derivable from Sail
+Machine,core/types.sail:71,Not directly derivable from Sail,Not directly derivable from Sail

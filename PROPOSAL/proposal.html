@@ -1,0 +1,963 @@
+<title>Sail Golden Model Test Generation</title>
+<style>
+:root{
+  --ground:#F5F7F9; --panel:#FFFFFF; --panel-2:#ECF0F4;
+  --ink:#1A2029; --ink-2:#47525E; --ink-3:#717D8A;
+  --rule:#C5CDD6; --rule-2:#DCE2E9;
+  --req:#2E6DA4; --req-bg:#E7EFF7;
+  --com:#3F7A46; --com-bg:#E8F2E9;
+  --fut:#A9700F; --fut-bg:#FAF1E1;
+  --out:#B0443B; --out-bg:#FAEAE8;
+  --sym:#4A5CC7; --dif:#0F7A83;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0F1318; --panel:#171C23; --panel-2:#1E242C;
+  --ink:#E5E9EF; --ink-2:#A9B3BF; --ink-3:#86909D;
+  --rule:#323B46; --rule-2:#262E37;
+  --req:#82AEDC; --req-bg:#16222E; --com:#7FBE87; --com-bg:#18291B;
+  --fut:#E0A94A; --fut-bg:#31270F; --out:#E8877C; --out-bg:#35201D;
+  --sym:#9AA6F0; --dif:#4FC0C9;
+}}
+:root[data-theme="dark"]{
+  --ground:#0F1318; --panel:#171C23; --panel-2:#1E242C;
+  --ink:#E5E9EF; --ink-2:#A9B3BF; --ink-3:#86909D;
+  --rule:#323B46; --rule-2:#262E37;
+  --req:#82AEDC; --req-bg:#16222E; --com:#7FBE87; --com-bg:#18291B;
+  --fut:#E0A94A; --fut-bg:#31270F; --out:#E8877C; --out-bg:#35201D;
+  --sym:#9AA6F0; --dif:#4FC0C9;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+     font-size:13.5px;line-height:1.52;-webkit-font-smoothing:antialiased}
+.doc{max-width:880px;margin:0 auto;padding:0 26px 60px}
+.pg{border-top:1px solid var(--rule-2);margin-top:24px;padding-top:26px}
+.pg:first-of-type{border-top:none;margin-top:0;padding-top:34px}
+.pgn{font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+     color:var(--ink-3);margin-bottom:15px}
+h1{font-size:27px;line-height:1.13;margin:0 0 8px;letter-spacing:-.021em;font-weight:650;text-wrap:balance}
+h2{font-size:16.5px;margin:24px 0 8px;letter-spacing:-.013em;font-weight:645;text-wrap:balance}
+h2:first-of-type{margin-top:0}
+h3{font-size:12.5px;margin:16px 0 6px;font-weight:660;font-family:var(--mono);
+   text-transform:uppercase;letter-spacing:.055em;color:var(--ink-2)}
+p{margin:0 0 9px;max-width:76ch}
+.lede{font-size:14.5px;color:var(--ink-2);max-width:70ch;margin-bottom:10px}
+.meta{font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:.06em;
+      text-transform:uppercase;padding-bottom:15px;border-bottom:2px solid var(--ink);margin-bottom:20px}
+code{font-family:var(--mono);font-size:.9em}
+b{font-weight:645}
+ul,ol{margin:0 0 9px;padding-left:18px}
+li{margin-bottom:3.5px;max-width:74ch}
+table{border-collapse:collapse;width:100%;margin:9px 0 13px;background:var(--panel);
+      border:1px solid var(--rule-2);font-size:12.3px}
+th,td{padding:6px 9px;text-align:left;border-bottom:1px solid var(--rule-2);vertical-align:top}
+th{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;
+   color:var(--ink-3);font-weight:650;background:var(--panel-2)}
+td{color:var(--ink-2)}
+td b,td strong{color:var(--ink)}
+tr:last-child td{border-bottom:none}
+.c{text-align:center}
+.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+.scroll{overflow-x:auto}
+.key{background:var(--panel-2);border-left:3px solid var(--ink);padding:9px 13px;
+     margin:10px 0 13px;font-size:13px;color:var(--ink-2)}
+.key b{color:var(--ink)}
+.claim{background:var(--panel);border:1.5px solid var(--ink);padding:13px 15px;margin:12px 0;border-radius:3px}
+.claim .t{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+          color:var(--ink-3);margin-bottom:5px}
+.claim p{margin:0;font-size:14.5px;color:var(--ink)}
+.no{background:var(--out-bg);border-left:3px solid var(--out);padding:9px 13px;margin:10px 0;
+    font-size:12.6px;color:var(--ink-2)}
+.no b{color:var(--out)}
+.tbd{background:var(--fut-bg);border-left:3px solid var(--fut);padding:9px 13px;margin:10px 0;
+     font-size:12.6px;color:var(--ink-2)}
+.tbd b{color:var(--fut)}
+.tag{font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;
+     padding:2px 5px;border-radius:2px;border:1px solid currentColor;white-space:nowrap;font-weight:650}
+.t-req{color:var(--req);background:var(--req-bg)}
+.t-com{color:var(--com);background:var(--com-bg)}
+.t-fut{color:var(--fut);background:var(--fut-bg)}
+.t-out{color:var(--out);background:var(--out-bg)}
+.flow{background:var(--panel);border:1px solid var(--rule-2);border-radius:3px;padding:13px 15px;
+      overflow-x:auto;margin:10px 0 13px}
+.flow pre{margin:0;font-family:var(--mono);font-size:11px;line-height:1.42;color:var(--ink-2);white-space:pre}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:10px 0 13px}
+.card{background:var(--panel);border:1px solid var(--rule-2);border-radius:3px;padding:10px 12px;
+      border-left:3px solid var(--ink-3)}
+.card.s{border-left-color:var(--sym)} .card.o{border-left-color:var(--fut)}
+.card.d{border-left-color:var(--dif)} .card.x{border-left-color:var(--out)}
+.card h4{margin:0 0 5px;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+         letter-spacing:.05em;font-weight:700;color:var(--ink)}
+.card p{margin:0 0 5px;font-size:11.8px;line-height:1.4}
+.card p:last-child{margin-bottom:0}
+foot{display:block;margin-top:26px;padding-top:13px;border-top:1px solid var(--rule-2);
+     font-family:var(--mono);font-size:10px;color:var(--ink-3);line-height:1.65}
+@media (max-width:700px){.grid2{grid-template-columns:1fr}}
+@media print{.pg{page-break-before:always}.pg:first-of-type{page-break-before:auto}}
+</style>
+
+<div class="doc">
+
+<!-- ============ 1 ============ -->
+<section class="pg">
+<h1>Automated test generation from the RISC-V Sail Golden Model</h1>
+<p class="lede">Technical proposal in response to the Request for Quotation. Derived from the
+project's Master Technical Plan, which remains the authoritative engineering source and is
+referenced throughout as the appendix set.</p>
+<div class="meta">Proposal · design intent · no delivery date, cost or unverified result is stated in this document</div>
+
+<h2>1 · Executive Summary</h2>
+
+<p>We propose to build a configuration-aware test-generation framework driven by the upstream RISC-V
+Sail Golden Model, focused on the Privileged Architecture, and to integrate that capability into the
+Golden Model's own CI.</p>
+
+<p>Four decisions shape the engineering strategy. Each is forced by evidence recorded in the Master
+Technical Plan rather than by preference.</p>
+
+<table><thead><tr><th style="width:31%">Decision</th><th>Why</th></tr></thead><tbody>
+<tr><td><b>Configuration is an architecture, not a set of constants</b></td><td>One configuration object, loaded from the Golden Model's own JSON, derives every downstream artefact — model invocation, generator legality set, toolchain flags, simulator ISA string, test metadata and coverage scope. Configuration is presently re-derived independently in four places, which produces failures indistinguishable from model defects: the most expensive false signal a verification framework can emit</td></tr>
+<tr><td><b>The model dependency is made upstreamable before anything is built on it</b></td><td>The framework requires model entry points that do not exist upstream. Goals 1 and Deliverable 5 are both gated on decomposing and merging those changes, and merge latency is outside our control — so this work starts in the first phase and runs continuously</td></tr>
+<tr><td><b>Validation integrity is a deliverable, not a quality attribute</b></td><td>The framework must make it structurally impossible to report a passing suite that checks nothing. Every coverage and pass-rate claim depends on it, so it gates all reporting work</td></tr>
+<tr><td><b>Coverage is a reporting capability, not a control loop</b></td><td>The RFQ requires per-ELF and suite coverage. It does not require coverage-guided generation, which is scoped as future work behind a defined interface rather than built now</td></tr>
+</tbody></table>
+
+<h3>The completeness position</h3>
+<div class="claim"><span class="t">Primary completeness claim</span>
+<p>100% of the enumerated reachable denominators for each required configuration, with every
+unreachable target explicitly justified.</p></div>
+
+<p>The framework measures four distinct quantities and reports them separately: <b>reachable
+architectural coverage</b>, <b>Sail branch coverage</b>, <b>fault sensitivity</b>, and
+<b>differential agreement with an independent simulator</b>. Section 5 explains why these are not
+interchangeable and why the first, not the second, carries the completeness claim.</p>
+
+<div class="no"><b>We do not claim complete ISA coverage,</b> and no target percentage is set for
+branch coverage. Exhaustive testing of a single <code>ADD</code> at RV64 spans 2<sup>128</sup>
+operand pairs, so no finite percentage over the operand space is meaningful; "ISA conditions" have no
+enumerable denominator, the specification being prose; and model branch coverage can reach 100% while
+required architectural behaviour is absent from the model entirely.</p></div>
+
+<h3>What is being delivered</h3>
+<p>Five deliverables, unchanged from the Master Technical Plan. <b>Two of them — CI integration and
+the required Golden Model changes — are satisfied only when merged upstream</b>, and therefore carry
+the programme's highest risk regardless of engineering effort applied. This is stated here rather
+than discovered later.</p>
+
+<h3>Scope, stated up front</h3>
+<div class="grid2">
+<div class="card"><h4><span class="tag t-req">required</span> M-mode</h4>
+<p>CSR access across the model-derived register set, trap entry and return, privilege transitions, PMP enforcement, PMA scenarios, interrupt delivery and delegation, trap-cause enumeration — both XLENs.</p></div>
+<div class="card"><h4><span class="tag t-com">committed</span> S-mode</h4>
+<p>Sv32 and Sv39 address translation with negative controls. Sv32 unblocks the entire RV32 privileged path and is the highest-value single item in the privileged track.</p></div>
+<div class="card o"><h4><span class="tag t-fut">future in RFQ</span> Depth</h4>
+<p>Sv48, Sv57, PTE content features, full fault taxonomy, pointer masking, and the remaining privileged extensions — delivered if schedule permits, otherwise deferred with recorded justification.</p></div>
+<div class="card x"><h4><span class="tag t-out">out of scope</span> Hypervisor</h4>
+<p>Not implemented, not costed, not scheduled. The RFQ permits this. An orphaned upstream draft exists and must be evaluated before any from-scratch proposal, should it later be required.</p></div>
+</div>
+
+<p>Of the 28 named privileged extensions the Golden Model declares, <b>14 are committed for this
+RFQ and 14 are future within it</b>. Section 4 gives the full reconciliation, per extension and per
+XLEN, so that what we are not committing to is as visible as what we are.</p>
+</section>
+
+<!-- ============ 2 ============ -->
+<section class="pg">
+<div class="pgn">2 — Understanding of the RFQ</div>
+
+<h2>2 · Understanding of the RFQ</h2>
+
+<h3>2.1 What is being asked</h3>
+<p>The RFQ seeks a test-generation framework driven by the Sail Golden Model, evaluated primarily on
+coverage of the Privileged Architecture ISA extensions <i>as implemented by that model</i>. The
+qualification is load-bearing: the evaluation target is the model, which is enumerable, rather than
+the architecture specification, which is prose and is not.</p>
+
+<p>The remaining criteria — maintainability, open-source integration, demonstrated community skill,
+cost and delivery — indicate the deliverable is expected to outlive the engagement and be maintained
+by the Golden Model community.</p>
+
+<h3>2.2 The structural problem that determines the design</h3>
+
+<div class="key"><b>The Privileged Architecture is machine state, not instructions.</b> Several
+privileged extensions define no instructions at all and are reachable only through specific CSR
+addresses. Trap behaviour, address translation, protection checking and interrupt delivery are
+reached by <i>establishing machine state</i> and then executing an ordinary instruction. This is why
+CSR access is the first M-mode capability in the delivery order, and why trap and privilege-transition
+infrastructure precedes everything that depends on it — not because they are easy, but because
+nothing else in the privileged track is complete without them.</div>
+
+<div class="key"><b>Sail occupies three roles at once</b> — the source of the instruction set, the
+oracle for expected behaviour, and the coverage target. A single model change moves three numbers
+simultaneously. The framework therefore attributes every artefact to a model revision, and
+distinguishes evolution from regression rather than allowing them to be confused.</div>
+
+<h3>2.3 What we take the RFQ to require</h3>
+<div class="scroll"><table><thead><tr><th style="width:34%">Requirement</th><th>Our reading</th></tr></thead><tbody>
+<tr><td>Use the current up-to-date Golden Model</td><td>Consumed from upstream and tracked; no private fork sustained as an end state. Required model changes are decomposed and submitted upstream</td></tr>
+<tr><td>Generate valid RISC-V ELF files</td><td>Valid means it assembles, links and executes on a simulator the project did not write</td></tr>
+<tr><td>Organise tests by ISA extension where practical</td><td>Suite selectable by extension and configuration from metadata alone</td></tr>
+<tr><td>Support Golden Model configurations, particularly those in Golden Model CI</td><td>Every configuration in the committed set passes all pipeline stages, or is reported unsupported with the failing stage and an architectural reason</td></tr>
+<tr><td>Focus on the privileged ISA</td><td>M-mode required; S-mode virtual memory highly desirable; Hypervisor out of scope. Section 4</td></tr>
+<tr><td>Coverage for an individual ELF and an entire suite</td><td>Isolated per-ELF replay with a reconciliation invariant, plus configuration-, extension- and revision-attributed suite coverage</td></tr>
+<tr><td>Open-source licence compatible with the Golden Model</td><td>Attributions complete, items requiring legal review identified</td></tr>
+</tbody></table></div>
+
+<h3>2.4 Four categories kept distinct throughout</h3>
+<div class="scroll"><table><thead><tr><th>Category</th><th>How it appears in this document</th></tr></thead><tbody>
+<tr><td><b>What the RFQ requires</b></td><td>Stated as requirement, traced in Section 14</td></tr>
+<tr><td><b>What the proposed framework will do</b></td><td>Future tense; the substance of Sections 4–9</td></tr>
+<tr><td><b>What has already been demonstrated</b></td><td>Section 3.3 only, drawn from the Master Technical Plan's recorded evidence, with its own status column. <b>Prototype evidence informing production implementation — not a claim of completion</b></td></tr>
+<tr><td><b>What remains to be implemented</b></td><td>Everything in the phase plan, Section 11</td></tr>
+</tbody></table></div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section class="pg">
+<div class="pgn">3 — Objectives, success criteria, current baseline</div>
+
+<h2>3 · Technical Objectives and Success Criteria</h2>
+
+<h3>3.1 Goals, as the RFQ states them</h3>
+<div class="scroll"><table><thead><tr><th class="c">#</th><th>Goal</th><th>Owning phases</th></tr></thead><tbody>
+<tr><td class="c">1</td><td>Use the current up-to-date Sail RISC-V Golden Model</td><td>P2</td></tr>
+<tr><td class="c">2</td><td>Generate valid RISC-V ELF files</td><td>P4</td></tr>
+<tr><td class="c">3</td><td>Organise generated tests by ISA extension where practical</td><td>P4, P9</td></tr>
+<tr><td class="c">4</td><td>Support Golden Model configurations, particularly those used by Golden Model CI</td><td>P1, P10</td></tr>
+<tr><td class="c">5</td><td>Focus on the privileged ISA — M-mode required, S-mode virtual memory highly desirable, Hypervisor out of scope</td><td>P6, P7</td></tr>
+<tr><td class="c">6</td><td>Coverage for an individual ELF and for an entire generated suite</td><td>P8</td></tr>
+<tr><td class="c">7</td><td>Open-source licence compatible with the Golden Model</td><td>P11</td></tr>
+</tbody></table></div>
+
+<h3>3.2 Success criteria — measurable, not judgement calls</h3>
+<p>Thirteen success metrics are defined in the Master Technical Plan (Appendix G). Each is measurable
+by execution or by observable upstream state. The ones an evaluator is most likely to want:</p>
+<div class="scroll"><table><thead><tr><th class="c">#</th><th>Metric</th><th>Success condition</th></tr></thead><tbody>
+<tr><td class="c">1</td><td>Clean-environment usability</td><td>Install → configure → generate → execute → coverage completes on a machine that has never built the project, with no file editing and no undocumented prerequisite</td></tr>
+<tr><td class="c">2</td><td>Configuration end-to-end support</td><td>Every configuration in the committed set passes all nine pipeline stages, <b>or</b> is reported unsupported with the failing stage and an architectural reason</td></tr>
+<tr><td class="c">3</td><td>Privileged capability</td><td>Every required M-mode capability and Sv32 + Sv39 pass on the Golden Model and an independent simulator, <b>with every negative control failing</b></td></tr>
+<tr><td class="c">4</td><td>Validation integrity</td><td>100% of sampled tests fail under expectation mutation; 100% of controls fail; validated count reconciles with executed count</td></tr>
+<tr><td class="c">5</td><td>Per-ELF coverage correctness</td><td>Union of per-ELF span sets equals the suite total, asserted on every run</td></tr>
+<tr><td class="c">6</td><td>Coverage attribution</td><td>Emitting a figure without configuration, model revision and exclusion scope is <b>impossible</b>, not merely discouraged</td></tr>
+<tr><td class="c">7</td><td>Privileged coverage improvement</td><td>Measured increase over a recorded baseline, with the residual enumerated and classified</td></tr>
+<tr><td class="c">10</td><td>Maintainability</td><td>An engineer outside the project adds a backend and a privileged scenario from the developer documentation alone</td></tr>
+<tr><td class="c">12–13</td><td>Deliverables 5 and 4</td><td>Upstream repository state: <b>merged</b>. The only two metrics the project cannot satisfy by engineering effort alone</td></tr>
+</tbody></table></div>
+<p><b>No target percentage is set for coverage</b>, for the reasons in Section 5.4.</p>
+
+<h3>3.3 Current baseline — what prototype work has established</h3>
+<p>The following is recorded evidence from prototype work, carried forward from the Master Technical
+Plan. <b>It is not a claim of completion.</b> It is stated so the evaluator can distinguish what is
+known to be feasible from what is proposed.</p>
+<div class="scroll"><table><thead><tr><th style="width:26%">Area</th><th>Evidence</th><th style="width:20%">Status</th></tr></thead><tbody>
+<tr><td>ELF generation</td><td>Generated files are valid ELF32/ELF64, type EXEC, machine RISC-V, correct entry point and sections, and execute on an independent simulator</td><td><b>Demonstrated</b></td></tr>
+<tr><td>Per-ELF and suite coverage</td><td>Isolated per-ELF replay with absolute and marginal contribution, and a reconciliation invariant asserting the suite union equals the union of per-ELF sets</td><td><b>Demonstrated</b></td></tr>
+<tr><td>Privileged scenarios</td><td>Memory-protection violation, trap entry and return, privilege transitions, interrupt delivery and delegation, and 64-bit address translation — passing on the Golden Model <i>and</i> an independent simulator, with negative controls failing as required</td><td><b>Demonstrated at one XLEN</b></td></tr>
+<tr><td>Backend routing</td><td>Floating point provably fails through the symbolic path and provably succeeds through the oracle</td><td><b>Demonstrated</b></td></tr>
+<tr><td>Model-sourced instruction extraction</td><td>Instruction set derived from the model's own assembly declarations, with unparsed clauses reported rather than silently skipped</td><td><b>Prototype</b></td></tr>
+<tr><td>Configuration consumption</td><td>The oracle consumes Golden Model configuration JSON directly, proving the format is usable unchanged</td><td><b>Partial</b></td></tr>
+<tr><td>Circularity awareness</td><td>Tooling warns when only the Golden Model was run, because expectations derive from it</td><td><b>Demonstrated</b></td></tr>
+</tbody></table></div>
+
+<h3>3.4 Known limitations the plan exists to resolve</h3>
+<p>Twelve limitations are recorded in full in Appendix A. The four that shape the phase order:
+configuration is re-derived independently in four places; the framework currently requires a modified
+Golden Model; there is no mechanical anti-vacuity enforcement, and a prior corpus passed at scale
+while comparing empty expected-state tables; and address translation exists only for the 64-bit
+scheme, so RV32 translation scenarios <i>skip</i> — indistinguishable from success in a summary.</p>
+<p><b>Two are structural boundaries rather than defects:</b> the symbolic engine cannot represent
+vector lengths above its bitvector bound, and cannot execute floating-point arithmetic or vector
+element paths. These force the hybrid generation methodology of Section 6 and are documented as
+architecture, not treated as work items.</p>
+</section>
+
+<!-- ============ 4 ============ -->
+<section class="pg">
+<div class="pgn">4 — Proposed architecture</div>
+
+<h2>4 · Proposed Architecture</h2>
+
+<div class="flow"><pre>            UPSTREAM SAIL MODEL
+                     │
+                     ▼
+             Configuration object          single source of truth; derives every
+                     │                     downstream artefact, validated at load
+                     ▼
+          Reachable denominator            enumerate targets → remove
+                     │                     config-impossible → exclusion register
+                     ▼
+          Capability-routed                symbolic (Isla+Z3) │ concrete oracle │
+          test generation                  template backstop  + preamble builder
+                     │
+                     ▼
+               Valid ELFs                  gate: no test enters without
+                     │                     non-empty expected state
+          ┌──────────┴──────────┐
+          ▼                     ▼
+        Sail           Spike · QEMU · CVA6
+   instrumented        independent targets
+          │                     │
+          └──────────┬──────────┘
+                     ▼
+              Differential                 agree → pass
+               comparison                  disagree → defect candidate → upstream
+                     │
+                     ▼
+           Coverage + results              four axes, reported separately
+                     │
+                     ▼
+            Feedback routing  ─────────►   generation
+                     │                     (interface defined; consumer is
+                     │                      future work — see §5.5)
+                     ▼
+          Configuration sweep  ─────────►  repeat, each configuration with its own
+                                           denominator, register and figure</pre></div>
+
+<h3>4.1 Reading the pipeline — what each stage does and why it is there</h3>
+<p>The ten stages are not a workflow diagram drawn after the fact. Each exists because omitting it
+produces a specific, identifiable failure, named in the third column.</p>
+<div class="scroll"><table><thead><tr><th class="c" style="width:4%">#</th><th style="width:17%">Stage</th><th style="width:30%">What it does</th><th style="width:27%">Why it is there — what its absence causes</th><th>Produces</th></tr></thead><tbody>
+<tr><td class="c"><b>01</b></td><td><b>Read inputs</b></td><td>Ingests the unmodified upstream Sail model and one Golden Model configuration JSON for this run. The configuration is loaded once into a validated object that rejects illegal combinations</td><td>Configuration re-derived independently in several places lets a test pass on Sail and fail on the independent simulator purely from framework disagreement — <b>a false signal indistinguishable from a model defect</b></td><td>Validated configuration object; provenance record</td></tr>
+<tr><td class="c"><b>02</b></td><td><b>Compute the reachable denominator</b></td><td>Enumerates every measurable target from the model's own declarations, evaluates each against the configuration predicates, and removes what cannot execute — <i>before</i> anything is generated</td><td>Without it a per-configuration 100% target is <b>unreachable by construction</b>, since configuration-gated code cannot execute. The framework then reports failure on every run and cannot distinguish a real gap from a structural impossibility</td><td>Reachable denominator; exclusion register with a reason per entry</td></tr>
+<tr><td class="c"><b>03</b></td><td><b>Generate, routed by capability</b></td><td>Selects a backend per target from a declarative routing table: symbolic (Isla + Z3), concrete oracle, or template backstop. The preamble builder runs across all three, establishing machine state</td><td>No single mechanism reaches the whole ISA. The symbolic engine cannot execute floating-point arithmetic or vector element paths, and cannot represent vector lengths above its bitvector bound — <b>recorded structural boundaries, not defects</b></td><td>Candidate tests: preamble + instruction sequence + expected state</td></tr>
+<tr><td class="c"><b>04</b></td><td><b>Gate: reject tests that cannot fail</b></td><td>Checks every generated test before it enters the suite. Empty expected state is rejected; rejections are recorded with cause</td><td>A test with no expected state still executes and still raises the coverage figure, but cannot report a defect. <b>A prior corpus passed at scale while comparing empty expected-state tables</b></td><td>Validated corpus; rejection record</td></tr>
+<tr><td class="c"><b>05</b></td><td><b>Execute on two targets</b></td><td>Runs each ELF on the instrumented Golden Model and on an independently written simulator, under the same configuration</td><td>Generating from Sail, running on Sail and measuring against Sail is a <b>closed loop that cannot find a model defect</b> — every check passes on consistently wrong behaviour</td><td>Two execution records; executed branch spans</td></tr>
+<tr><td class="c"><b>06</b></td><td><b>Compare</b></td><td>Differentially compares the two records. Agreement passes; divergence is triaged, minimised to a reproducer and submitted upstream. The Golden Model is never patched privately</td><td>Where the model <i>omits</i> required behaviour there is no branch to cover, so <b>no metric derived from the model can detect it</b>. Divergence is the only signal that surfaces it</td><td>Verdicts; model-defect candidates with evidence</td></tr>
+<tr><td class="c"><b>07</b></td><td><b>Measure</b></td><td>Reachable architectural coverage (matrices), Sail branch coverage, fault sensitivity, and differential agreement — computed and reported separately</td><td>One number cannot carry this. Branch coverage measures the implementation and moves with how the model is written; only mutation establishes whether reaching a target verified anything</td><td>Matrix fill rates; coverage figures carrying configuration, revision and exclusion scope; mutation score</td></tr>
+<tr><td class="c"><b>08</b></td><td><b>Report</b></td><td>Per-ELF records, suite summary, exclusion register and defect reports. Failures split into <b>model fault</b> and <b>framework fault</b></td><td>A single pass/fail count is not actionable, because the two fault classes require entirely different responses</td><td>Machine-readable result file; generated human summary</td></tr>
+<tr><td class="c"><b>09</b></td><td><b>Classify and route feedback</b></td><td>Classifies each uncovered target by cause — needs machine state, needs path enumeration, needs different operands, or unreachable here — rather than treating every gap identically</td><td>A single generic feedback path assumes every uncovered target is a generation-capability problem, when most privileged gaps are machine state the generator never established</td><td>Classified work queue. <b>Interface only in this RFQ — see below</b></td></tr>
+<tr><td class="c"><b>10</b></td><td><b>Iterate across configurations</b></td><td>Repeats the pipeline across the agreed matrix. Each configuration carries its own denominator, exclusion register and coverage figure</td><td>Averaging configurations with different denominators produces a quantity that is not meaningful and conceals where the gaps are</td><td>Per-configuration status matrix, generated by execution</td></tr>
+</tbody></table></div>
+
+<div class="key"><b>Three points where the architecture diagram is broader than what this RFQ
+commits to.</b> The figure describes the framework's design; Section 5 states the contractual scope,
+and where they differ Section 5 governs.
+<ul style="margin-top:6px;margin-bottom:0">
+<li><b>Stage 03, preamble builder.</b> The figure shows page-table construction for Bare, Sv32, Sv39,
+Sv48 and Sv57. <b>Sv32 and Sv39 are committed; Sv48 and Sv57 are future within this RFQ</b> — the same
+harness serves them, which is why they appear in the design, but they are delivered only if the
+schedule permits.</li>
+<li><b>Stage 03, concrete oracle.</b> The figure shows the vector instruction set as a routing target.
+<b>Vector is deferred this iteration</b> — every vector entry in the Section 5.3 tables is marked
+future. The oracle is the correct route for it when it is in scope, and the routing table needs no
+change at that point.</li>
+<li><b>Stage 09, feedback routing.</b> Shown closing the loop back to generation. <b>The RFQ requires
+per-ELF and suite coverage, not coverage-guided generation.</b> Stage 09's classification and its
+machine-readable uncovered list are delivered; the automated consumer that regenerates from them is
+scoped as future work behind that interface. This is the eighth extension point in Section 8.2.</li>
+</ul></div>
+
+<h3>4.2 Architectural principle</h3>
+<div class="key"><b>ISA-independent generation infrastructure is separated from privileged-specific
+scenario definitions.</b> Instruction sourcing, encoding, emission, execution, validation and coverage
+form a core that carries no privileged assumption. Privileged behaviour is expressed as scenario
+<i>data</i> consumed by that core, not as logic embedded in it. This is what makes later
+unprivileged-ISA generation a matter of adding inputs rather than restructuring the framework, and it
+is the foundation of the maintainability argument in Section 8.</div>
+
+<h3>4.3 Configuration as the single source of truth</h3>
+<p>One configuration object, loaded from the Golden Model's own JSON and validated at load so illegal
+combinations are rejected before anything is generated. From it derive: model invocation, generator
+legality set, toolchain flags, simulator ISA string, test metadata and coverage scope.</p>
+<p>The alternative — the present state — is configuration re-derived independently in four places. A
+test can then pass on the Golden Model and fail on the independent simulator purely because the
+framework disagreed with itself, and that failure is indistinguishable from a model defect. Removing
+that class of false signal is why configuration architecture is the first phase.</p>
+
+<h3>4.4 Committed configuration scope</h3>
+<p>Two questions must not be conflated: <b>generation support</b> means the framework can produce
+tests for a configuration; <b>end-to-end support</b> means generation, compilation, ELF, Golden Model
+execution, independent-simulator execution, validation and coverage all succeed.
+<b>Only end-to-end support is claimed as supported.</b></p>
+<div class="scroll"><table><thead><tr><th>Configuration</th><th>Commitment</th><th>Basis</th></tr></thead><tbody>
+<tr><td><b>RV32</b></td><td><span class="tag t-com">end-to-end committed</span></td><td>Generation, execution on two simulators and coverage demonstrated at this XLEN</td></tr>
+<tr><td><b>RV64</b></td><td><span class="tag t-com">end-to-end committed</span></td><td>As above</td></tr>
+<tr><td><b>F/D at RV64</b></td><td><span class="tag t-com">end-to-end committed</span></td><td>Generation and independent-simulator execution demonstrated via the oracle backend</td></tr>
+<tr><td><b>F/D at RV32</b></td><td><span class="tag t-fut">target, not committed</span></td><td><b>Unknown — requires verification.</b> Resolved in P10; if it fails, recorded as unsupported with the failing stage named</td></tr>
+<tr><td><b>Vector length / element width combinations in the model's own matrix</b></td><td><span class="tag t-fut">target, with a stated bound</span></td><td>Oracle path demonstrated at a non-default vector length. The symbolic path has a hard representational upper bound, so configurations above it are oracle-only by design</td></tr>
+<tr><td>Combinations the Golden Model itself excludes</td><td><span class="tag t-out">not committed</span></td><td>Excluded upstream for runtime reasons; included only if separately justified</td></tr>
+</tbody></table></div>
+<p><b>The populated matrix is generated by execution in P10, not asserted here.</b> Populating it in
+advance would be exactly the unsupported claim this plan forbids. An unsupported configuration will be
+reported as unsupported, not omitted.</p>
+</section>
+
+<!-- ============ 5 ============ -->
+<section class="pg">
+<div class="pgn">5 — Privileged ISA coverage strategy (1 of 3)</div>
+
+<h2>5 · Privileged ISA Coverage Strategy</h2>
+<p class="lede">This is the RFQ's primary evaluation criterion and receives the most space in this
+proposal.</p>
+
+<h3>5.1 Delivery order for M-mode — <span class="tag t-req">required</span></h3>
+<p>Ordered by technical dependency, not by visibility.</p>
+<div class="scroll"><table><thead><tr><th class="c">#</th><th>Capability</th><th>Why in this position</th></tr></thead><tbody>
+<tr><td class="c">1</td><td><b>CSR access</b> across the model-derived register set, both XLENs</td><td>Several privileged extensions define no instructions at all and are reachable only through specific CSR addresses. Nothing else in M-mode is complete without it</td></tr>
+<tr><td class="c">2</td><td><b>Trap entry, trap return, privilege transitions</b></td><td>Infrastructure for everything below — subsequent scenarios need a trap handler and a way to change privilege</td></tr>
+<tr><td class="c">3</td><td><b>PMP enforcement</b></td><td>Required by the RFQ; observable only from a lower privilege mode, so it depends on 2</td></tr>
+<tr><td class="c">4</td><td><b>PMA scenarios</b>, both XLENs</td><td>Region attributes are configuration-driven; requires the configuration architecture to vary them legitimately</td></tr>
+<tr><td class="c">5</td><td><b>Interrupt delivery and delegation</b></td><td>Requires trap infrastructure; delegation additionally requires supervisor entry</td></tr>
+<tr><td class="c">6</td><td><b>Trap-cause enumeration</b></td><td>Breadth pass once the mechanisms exist</td></tr>
+</tbody></table></div>
+<div class="key"><b>An architectural constraint we document rather than solve.</b> Machine-level
+interrupt delegation is prevented by the model's own legalisation of the delegation register.
+Delegation scenarios therefore target supervisor-level interrupts. This is recorded so that it is not
+re-investigated by a future maintainer.</div>
+
+<h3>5.2 Delivery order for S-mode — <span class="tag t-req">highly desirable</span></h3>
+<div class="scroll"><table><thead><tr><th class="c">#</th><th>Capability</th><th>Commitment</th><th>Rationale</th></tr></thead><tbody>
+<tr><td class="c">1</td><td><b>Sv32</b></td><td><span class="tag t-com">committed</span></td><td>Unblocks the entire RV32 privileged path. Without it, RV32 translation scenarios <i>skip</i>, which is indistinguishable from success in a summary. <b>Highest-value single item in the privileged track</b></td></tr>
+<tr><td class="c">2</td><td><b>Sv39</b></td><td><span class="tag t-com">committed</span></td><td>RV64 baseline translation scheme</td></tr>
+<tr><td class="c">3</td><td>Sv48, Sv57</td><td><span class="tag t-fut">future in RFQ</span></td><td>Depth variants against the same harness; low marginal cost once 1–2 exist</td></tr>
+<tr><td class="c">4</td><td>PTE content features — hardware A/D update, trap on improper A/D, NAPOT contiguity, page-based memory types, reserved-for-software bits</td><td><span class="tag t-fut">future in RFQ</span></td><td>Content variants requiring a working walk harness</td></tr>
+<tr><td class="c">5</td><td>Fault taxonomy — page faults, access faults, permission violations, U/S access rules</td><td><span class="tag t-fut">future in RFQ</span></td><td>Breadth pass across 1–4</td></tr>
+</tbody></table></div>
+<p>Every S-mode item depends on M-mode items 1 and 2. Items 1–2 appear in the Definition of Done and
+in success metric 3. <b>Items 3–5 are future within this RFQ: delivered if the schedule permits,
+otherwise explicitly deferred with recorded justification rather than silently omitted.</b> This
+distinction exists so that no stakeholder is led to expect Sv48/Sv57 and the full PTE feature set as
+contractual content.</p>
+
+<h3>5.3 Coverage by extension — the full reconciliation</h3>
+<p>The Golden Model declares 28 named privileged extensions — 4 <code>Sm*</code>, 12 <code>Ss*</code>
+and 12 <code>Sv*</code>. With the three privilege-mode extensions <code>S</code>, <code>U</code> and
+<code>H</code>, the privileged portion of the model's extension enum totals 31 of 125 declared
+extensions. The table reconciles to all 28 named extensions so a reader sees the whole set rather
+than inferring the residual. <b>XLEN applicability is taken from the model, not from convention.</b></p>
+<p><span class="tag t-com">✅ committed</span> &nbsp; <span class="tag t-fut">○ future in RFQ</span>
+&nbsp; <b>—</b> not applicable, enforced by the model &nbsp; <span class="tag t-out">✗ out of scope</span></p>
+</section>
+
+<!-- ============ 6 ============ -->
+<section class="pg">
+<div class="pgn">5 — Privileged ISA coverage strategy (2 of 3)</div>
+
+<h3><div class="key"><b>Why the privileged architecture is reached through state, not opcodes.</b>
+This model implements the entire privileged architecture through <b>nine instructions</b> &mdash;
+<code>ECALL</code>, <code>EBREAK</code>, <code>MRET</code>, <code>SRET</code>, <code>WFI</code>,
+<code>SFENCE.VMA</code>, and <code>Svinval</code>'s <code>SINVAL.VMA</code>,
+<code>SFENCE.W.INVAL</code> and <code>SFENCE.INVAL.IR</code>. Counting only those meaningful
+exclusively in a privileged context gives seven. Almost the entire privileged surface is
+therefore reached through machine state and CSR addresses the preamble constructs, not through
+opcode selection. That is why the extensions below map overwhelmingly to no instruction at all,
+and why the preamble builder rather than the instruction generator is the load-bearing
+component of this section.</div>
+
+M-mode — required</h3>
+<div class="scroll"><table><thead><tr><th>Extension / capability</th><th class="c">RV32</th><th class="c">RV64</th><th class="c">F/D</th><th class="c">V</th><th>How it is reached</th></tr></thead><tbody>
+<tr><td><b>PMP</b> <i>(base architecture)</i></td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>Enforcement scenario + controls</td></tr>
+<tr><td><b>PMA</b> <i>(base)</i></td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>Region-attribute configurations</td></tr>
+<tr><td><b>Traps / exceptions</b> <i>(base)</i></td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>Expected-cause scenarios</td></tr>
+<tr><td><b>Interrupts + delegation</b> <i>(base)</i></td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>Delivery and delegation scenarios</td></tr>
+<tr><td><b>Privilege transitions</b> <i>(base)</i></td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td><code>mret</code> / <code>sret</code> into M, S, U</td></tr>
+<tr><td>S (supervisor mode)</td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>Privilege transitions + S-mode entry</td></tr>
+<tr><td>U (user mode)</td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>Privilege transitions</td></tr>
+<tr><td>Zicsr</td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>Instruction sweep (6 mnemonics)</td></tr>
+<tr><td>Zicntr</td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>CSR sweep — RV32 adds high-half registers</td></tr>
+<tr><td>Zihpm</td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>CSR sweep</td></tr>
+<tr><td>Stateen (Sm/Ss)</td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>CSR sweep — RV32 adds high-half registers</td></tr>
+<tr><td>Smcntrpmf</td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>CSR sweep — RV32 adds high-half registers</td></tr>
+<tr><td>Sscofpmf</td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>CSR sweep</td></tr>
+<tr><td>Sscounterenw</td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>CSR sweep</td></tr>
+<tr><td>Ssqosid</td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>CSR sweep</td></tr>
+<tr><td>Sstc</td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>CSR sweep — RV32 adds the high-half register</td></tr>
+<tr><td>Sstvala</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td>CSR-field guarantee; needs trap-scenario inspection</td></tr>
+<tr><td><b>Pointer masking</b> — Smmpm, Smnpm, Ssnpm</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td><b>No new instructions.</b> Re-runs existing instruction tests under a masking configuration</td></tr>
+</tbody></table></div>
+
+<h3>S-mode — highly desirable</h3>
+<div class="scroll"><table><thead><tr><th>Extension</th><th class="c">RV32</th><th class="c">RV64</th><th class="c">F/D</th><th class="c">V</th><th>Notes</th></tr></thead><tbody>
+<tr><td><b>Sv32</b></td><td class="c">✅</td><td class="c">—</td><td class="c">✅</td><td class="c">○</td><td>RV32-only by model gating. <b>Unblocks the entire RV32 privileged path</b></td></tr>
+<tr><td><b>Sv39</b></td><td class="c">—</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>RV64 baseline translation scheme</td></tr>
+<tr><td>Sv48</td><td class="c">—</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td>Depth variant on the same harness</td></tr>
+<tr><td>Sv57</td><td class="c">—</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td>Depth variant on the same harness</td></tr>
+<tr><td>Svbare</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td>No-translation mode — implicitly the state of every test today, never deliberately verified</td></tr>
+<tr><td>Svinval</td><td class="c">✅</td><td class="c">✅</td><td class="c">✅</td><td class="c">○</td><td>Has 3 instructions; covered by the instruction sweep</td></tr>
+<tr><td>Svade</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td>PTE content: trap on improper A/D</td></tr>
+<tr><td>Svadu</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td>PTE content: hardware A/D update</td></tr>
+<tr><td>Svnapot</td><td class="c">—</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td>PTE content: NAPOT contiguity. RV64-only by model gating</td></tr>
+<tr><td>Svpbmt</td><td class="c">—</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td>PTE content: page-based memory types. RV64-only by model gating</td></tr>
+<tr><td>Svrsw60t59b</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td>PTE content: reserved-for-software bits</td></tr>
+<tr><td>Svvptc</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td>Obviating re-fence after PTE update</td></tr>
+<tr><td>Ssccptr</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td class="c">○</td><td>Hardware PTE-read guarantee; a memory property, not an opcode set</td></tr>
+</tbody></table></div>
+
+<div class="grid2">
+<div class="card"><h4>Reconciliation</h4>
+<p>Committed this RFQ — <b>14</b><br>Future within this RFQ — <b>14</b><br><b>Total named privileged extensions — 28</b></p></div>
+<div class="card"><h4><h3>The configuration matrix, enumerated</h3>
+<p>&ldquo;Per configuration&rdquo; appears throughout this document. These are the configurations
+meant, taken from the Golden Model's own test suite rather than invented here. The model ties
+XLEN to ELEN and skips VLEN&nbsp;512 with ELEN&nbsp;32, which gives <b>seven</b> configurations
+rather than the sixteen a free cross-product would suggest.</p>
+<div class="scroll"><table>
+<thead><tr><th>#</th><th>Configuration</th><th>XLEN</th><th>VLEN</th><th>ELEN</th><th>Symbolic path</th></tr></thead>
+<tbody>
+<tr><td class="n">1</td><td><code>rv32d_v64_e32</code></td><td class="n">32</td><td class="n">64</td><td class="n">32</td><td>Available</td></tr>
+<tr><td class="n">2</td><td><code>rv64d_v64_e64</code></td><td class="n">64</td><td class="n">64</td><td class="n">64</td><td>Available</td></tr>
+<tr><td class="n">3</td><td><code>rv32d_v128_e32</code></td><td class="n">32</td><td class="n">128</td><td class="n">32</td><td>Available</td></tr>
+<tr><td class="n">4</td><td><code>rv64d_v128_e64</code></td><td class="n">64</td><td class="n">128</td><td class="n">64</td><td>Available</td></tr>
+<tr><td class="n">5</td><td><code>rv32d_v256_e32</code></td><td class="n">32</td><td class="n">256</td><td class="n">32</td><td>Oracle only &mdash; VLEN exceeds the engine's 129-bit bound</td></tr>
+<tr><td class="n">6</td><td><code>rv64d_v256_e64</code></td><td class="n">64</td><td class="n">256</td><td class="n">64</td><td>Oracle only</td></tr>
+<tr><td class="n">7</td><td><code>rv64d_v512_e64</code></td><td class="n">64</td><td class="n">512</td><td class="n">64</td><td>Oracle only</td></tr>
+</tbody></table></div>
+<p>All seven are committed: each gets its own reachable target list, its own exclusion list and
+its own coverage figures, never averaged together. The right-hand column is a routing
+consequence rather than a coverage gap &mdash; the concrete oracle runs the model directly and
+has no width bound, so configurations 5 to 7 are generated and measured like any other.</p>
+
+On the F/D and V columns</h4>
+<p>Privileged behaviour is largely orthogonal to floating point, but not entirely: <code>mstatus.FS</code> affects illegal-instruction trapping, so privileged scenarios run under F/D-enabled configurations as part of the configuration matrix rather than as separate work. <b>Every V entry is ○ because vector is deferred this iteration</b> — privileged scenarios are not blocked by vector, but privileged × vector combinations are not committed.</p></div>
+</div>
+<p><b>Hypervisor is out of scope for this iteration.</b> The RFQ permits this. Not implemented, not
+costed, not scheduled. If later required, an orphaned upstream draft implementation exists and must be
+evaluated before any from-scratch proposal.</p>
+</section>
+
+<!-- ============ 7 ============ -->
+<section class="pg">
+<div class="pgn">5 — Privileged ISA coverage strategy (3 of 3): how it is measured</div>
+
+<h3>5.4 Why coverage needs a denominator before generation begins</h3>
+<p>A coverage figure is a proportion, and a proportion requires a denominator. The denominator is not
+a constant: a substantial part of the model cannot execute in a given configuration, by construction.
+The model gates <code>Sv32</code> on <code>xlen == 32</code>, and <code>Sv39</code>, <code>Sv48</code>,
+<code>Sv57</code>, <code>Svnapot</code> and <code>Svpbmt</code> on <code>xlen == 64</code>; a large
+number of further sites are guarded on XLEN directly.</p>
+
+<div class="key"><b>Without this step a per-configuration 100% target is unreachable by construction,
+because configuration-gated code cannot execute.</b> A framework that adopts 100% as a goal without
+first computing reachability reports failure on every run, and cannot distinguish a genuine gap from a
+structural impossibility.</div>
+
+<p><b>Procedure, before generation:</b> enumerate all measurable targets from the model's own
+declarations; evaluate each target's reachability under the configuration predicates; remove what
+cannot execute; emit an <b>exclusion register</b> with one entry per excluded target and a reason from
+a closed vocabulary — <code>config-gated</code>, <code>extension-absent</code>,
+<code>not-implemented</code>, <code>platform-description</code>, <code>out-of-scope</code>.</p>
+
+<p><b>Why each exclusion needs a reason.</b> The register is reviewable line by line. A reader who
+disagrees contests one entry, on its stated grounds, rather than disputing an aggregate figure with no
+visible basis. Free-text justification is not permitted, which is why the vocabulary is closed.</p>
+
+<h3>5.5 Four measurement axes, reported separately</h3>
+<div class="scroll"><table><thead><tr><th style="width:15%">Axis</th><th style="width:26%">What it answers</th><th>Construction and status</th></tr></thead><tbody>
+<tr><td><b>A · Reachable architectural coverage</b></td><td>Did we reach every enumerated target that this configuration can execute?</td><td><b>Completable — this axis carries the completeness claim.</b> Trap matrix (exception causes × delegated/not × originating privilege); CSR access matrix across the model-derived register set; translation matrix (mode × page size × permissions × A/D × PMP interaction); operand boundary partitions. Fill rate reported per configuration against the reachable denominator</td></tr>
+<tr><td><b>B · Sail branch coverage</b></td><td>What model behaviour has the suite not reached?</td><td><b>Measured and reported; never the objective.</b> Per-ELF isolated replay with the reconciliation invariant, plus suite coverage attributed by configuration, extension and model revision. Every figure carries configuration, model revision and exclusion scope — emitting one without them is impossible by construction</td></tr>
+<tr><td><b>C · Fault sensitivity</b></td><td>Would the suite notice if the model were wrong?</td><td><b>The audit on A and B.</b> Sampled expectation mutation; 100% of sampled tests must fail. Full matrix fill combined with poor fault sensitivity indicates the partitions are wrong, not that the work is complete</td></tr>
+<tr><td><b>D · Differential agreement</b></td><td>Does an independently written implementation agree?</td><td><b>The only axis that can detect absent model behaviour.</b> Agreement rate with an independent simulator, every divergence classified. Section 7</td></tr>
+</tbody></table></div>
+
+<h3>5.6 Why the matrices give a more defensible claim than "branch coverage = X%"</h3>
+<p>Three reasons, each independent.</p>
+<ul>
+<li><b>The matrices are completable; branch coverage is not.</b> A trap matrix cell is either filled by
+a test producing exactly that cause with the correct trap value and resulting privilege, or it is
+registered as unreachable with a reason. There is no third state. A branch-coverage percentage has no
+such structure — it is a ratio whose numerator and denominator both move when the model changes.</li>
+<li><b>Branch coverage measures the implementation, not the architecture.</b> Whether an architectural
+corner case is visible to it depends on how the model author wrote the line: an operation implemented
+as a single expression has no branches, so one trivial test achieves complete branch coverage of it
+while leaving overflow and boundary behaviour untested. A matrix cell is defined by architectural
+meaning, so it does not move with implementation style.</li>
+<li><b>Branch coverage cannot see absent behaviour.</b> Where the model omits required behaviour there
+is no branch to cover, and a complete figure is reported on a defective model. Axis D exists for
+precisely this case.</li>
+</ul>
+
+<h3>5.7 How privileged progress is reported</h3>
+<p>As a structure, never as one number: a measured baseline at a stated model revision and
+configuration before privileged work begins; per-extension coverage so a gap attributes to a specific
+extension; matrix fill rates per configuration; marginal contribution per capability delivered;
+negative-control status for every scenario family, where a control that passes is reported as a
+framework defect; an explicit uncovered list with each entry classified reachable, unreachable here, or
+out of scope; and trend across model revisions so evolution is distinguishable from progress.</p>
+
+<div class="no"><b>We do not claim complete ISA coverage.</b> Exhaustive testing of a single
+<code>ADD</code> at RV64 spans 2<sup>128</sup> operand pairs — for one instruction, before machine
+state is considered — so no finite percentage over the operand space is meaningful. Equivalence-class
+partitioning is the necessary response, and we publish the partition so its adequacy can be argued
+with rather than assumed. "ISA conditions" provide no enumerable denominator, the specification being
+prose. Every figure this framework publishes is a proportion of a denominator it states.</div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section class="pg">
+<div class="pgn">6 — Test generation strategy</div>
+
+<h2>6 · Test Generation Strategy</h2>
+
+<p>No single mechanism solves the whole ISA, and the plan does not pretend otherwise. Backends are
+selected by a <b>declarative routing table</b> rather than by hard-coded dispatch, which is also what
+makes a backend replaceable (Section 8).</p>
+
+<div class="grid2">
+<div class="card s"><h4>Symbolic · Isla + Z3</h4>
+<p>Isla executes the Sail model symbolically: instead of concrete register values it carries unknowns and accumulates the constraints a chosen execution path implies. Handing those to the Z3 solver yields concrete operands that drive the model down that path — which is what is wanted when the target is a specific model behaviour.</p>
+<p><b>Requires model entry points that do not exist upstream.</b> See Section 9 and the fallback position.</p></div>
+<div class="card o"><h4>Concrete oracle</h4>
+<p>Selects values and runs the model to obtain the resulting architectural state, which becomes the test's expected state. Builds no constraint system, so solver-level representational limits do not apply.</p>
+<p>Consumes Golden Model configuration JSON directly — <b>demonstrated</b>, which is what establishes that the format is usable unchanged.</p></div>
+</div>
+
+<div class="key"><b>Routing is forced by two recorded structural boundaries, not by preference.</b> The
+symbolic engine cannot represent vector lengths above its bitvector bound, and cannot execute
+floating-point arithmetic or vector element paths. Floating point provably fails through the symbolic
+path and provably succeeds through the oracle — this is recorded evidence, and it is why the
+methodology is hybrid. Configurations above the vector bound are <b>oracle-only by design</b>, stated
+as an architectural boundary rather than as a defect to be fixed.</div>
+
+<h3>6.1 Template backstop</h3>
+<p>A small, capped set of builders for constructs neither engine reaches cleanly. <b>Growth in this
+tier is treated as a routing defect signal rather than as progress</b>, and the count is reported in
+every suite summary for that reason.</p>
+
+<h3>6.2 Privileged preamble construction</h3>
+<p>Because privileged behaviour is reached by machine state, the component that establishes machine
+state determines privileged coverage. The preamble builder constructs privilege level, status-register
+fields, page tables for the committed translation schemes, PMP regions, PMA configuration, delegation
+configuration and pending-interrupt state.</p>
+<p><b>Machine state is written into the preamble rather than asserted as a solver constraint.</b> Two
+consequences: state setup stays independent of which backend produces the instruction body, so all
+routes benefit; and constructing a page table directly is more predictable than asking a constraint
+solver to discover one. Where the symbolic backend is unavailable — the fallback position of
+Section 9 — privileged scenarios relying on solved state move to preamble construction, which is a
+capability reduction rather than a failure.</p>
+
+<h3>6.3 ELF emission and portability</h3>
+<p>One assembly format across all backends, with annotation that leaves the encoding byte-identical.
+Implementation-dependent operations — boot, termination, interrupt conventions — are isolated in their
+own layer, which is what makes generated tests portable to a simulator the project did not write and
+what supports Architectural Certification Test compatibility.</p>
+
+<h3>6.4 The quality gate</h3>
+<div class="key"><b>The framework must make it structurally impossible to ship a test that cannot
+fail.</b> A prior corpus passed at scale while comparing empty expected-state tables. Mechanical
+anti-vacuity enforcement is therefore a deliverable in its own right: no test enters the suite without
+a non-empty expected state, rejections are recorded with cause, and pass rates are computed only over
+validated tests. <b>Introducing this is expected to reduce apparent pass rates, and that is disclosed
+in advance rather than presented as a regression.</b></div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section class="pg">
+<div class="pgn">7 — Validation and differential execution</div>
+
+<h2>7 · Validation and Differential Execution</h2>
+
+<h3>7.1 Why Sail-only execution is insufficient</h3>
+<div class="key"><b>Generating from Sail, running on Sail and measuring against Sail is a closed loop
+that cannot find a model defect.</b> If expected state derives from the model, executes on the model,
+and is scored against the model's own coverage instrumentation, then any behaviour the model implements
+incorrectly is reproduced consistently at every stage and every check passes. The framework already
+warns when only the Golden Model has been run, for exactly this reason.</div>
+
+<p><b>The subtler case is absent behaviour.</b> Where the model omits something the architecture
+requires, there is no branch to cover, so no metric computed from the model can point at it. Divergence
+against an independently written implementation is the only mechanism in this design capable of
+surfacing it.</p>
+
+<h3>7.2 The two targets</h3>
+<div class="grid2">
+<div class="card"><h4>Sail — instrumented</h4>
+<p>Reference behaviour and the executed span record. Coverage collection is decoupled from reporting so an alternative coverage source can be added without redesign.</p></div>
+<div class="card d"><h4>Independent simulator</h4>
+<p>The same ELF under the same configuration, executed by an independently implemented model. Required by Deliverable 3, which specifies a simulator the project did not write.</p>
+<p>Execution backends sit behind an interface, so additional simulators are an extension rather than a rewrite.</p></div>
+</div>
+
+<h3>7.3 Comparison and outcomes</h3>
+<div class="scroll"><table><thead><tr><th style="width:22%">Outcome</th><th>Action</th></tr></thead><tbody>
+<tr><td><b>Agree</b></td><td>Test passes. Coverage recorded against the reachable denominator for that configuration</td></tr>
+<tr><td><b>Disagree</b></td><td>Model-defect candidate. Triaged, minimised to a reproducer, and submitted upstream. <b>The Golden Model is not patched privately</b> — a locally patched model is no longer the Golden Model, and coverage measured against it is not comparable</td></tr>
+<tr><td><b>Only Sail available</b></td><td><b>Reported inconclusive, never pass.</b> This is an explicit acceptance condition of Deliverable 3</td></tr>
+</tbody></table></div>
+<p>Divergence is not automatically a model defect. Triage distinguishes a Sail defect, an independent-
+simulator defect, a framework fault — most commonly configuration disagreement, which the
+single-source configuration object of Section 4.2 is designed to eliminate — and a legitimate
+implementation-defined difference. The classification is recorded per divergence with its evidence.</p>
+
+<h3>7.4 Validation integrity as a gating deliverable</h3>
+<p>Failures are classified into <b>model fault</b> and <b>framework fault</b> and reported separately;
+a single pass/fail count without that split is not actionable, since the two require entirely different
+responses. Negative controls accompany every privileged scenario family, and a control that passes is
+reported as a framework defect rather than absorbed.</p>
+<div class="key"><b>One structural problem, stated rather than hidden.</b> The model's coverage record
+is written only on clean exit, so failing tests contribute no coverage. Because negative controls must
+fail, the very tests that prove the suite is non-vacuous are structurally invisible to coverage.
+Coverage accounting therefore separates the validated corpus from the control corpus, and every figure
+is published with its scope and with the statement that it reflects passing tests only.</div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section class="pg">
+<div class="pgn">8 — Maintainability and Sail evolution</div>
+
+<h2>8 · Maintainability and Sail Evolution</h2>
+<p class="lede">Directly addressing RFQ criterion 2. The framework is expected to be maintained by the
+Golden Model community after delivery.</p>
+
+<h3>8.1 The response when upstream Sail changes</h3>
+<div class="flow"><pre>  New Sail functionality
+          ↓
+  Model analysis                  instruction set and declarations re-read from the model
+          ↓
+  New targets become visible      without a maintainer editing any list
+          ↓
+  Reachable denominator updated   per configuration; exclusion register regenerated
+          ↓
+  Existing generation             generic backends attempt the new targets first
+  capabilities attempt coverage
+          ↓
+  New capability adapter          only where a genuinely new architectural mechanism
+  only where genuinely required   requires special initialisation</pre></div>
+
+<p>The maintenance burden in a framework of this kind is not the generation engines — it is keeping the
+framework's understanding of the model synchronised with a model under active development.
+Hand-maintained lists of instructions, CSRs and extensions are the artefacts that rot. <b>Instruction
+sourcing is therefore model-driven: the instruction set is derived from the model's own assembly
+declarations, with unparsed clauses reported rather than silently skipped</b>, so a new extension
+appears without framework change.</p>
+
+<h3>8.2 The eight extension points</h3>
+<div class="scroll"><table><thead><tr><th style="width:27%">Extension point</th><th style="width:30%">What can be added later</th><th>Why it is an interface now</th></tr></thead><tbody>
+<tr><td>Instruction source</td><td>New ISA extensions</td><td>Instruction set derived from the model, so a new extension appears without framework change</td></tr>
+<tr><td>Generation backend</td><td>New generation strategies</td><td>Backends selected by a declarative routing table</td></tr>
+<tr><td>Scenario definition</td><td>New privileged scenarios; Hypervisor scenarios</td><td>Scenarios are declarative state descriptors, not fixed encodings</td></tr>
+<tr><td>Machine-state descriptor</td><td>Floating-point state, vector state, Hypervisor state</td><td>State requirements are configuration-derived fields</td></tr>
+<tr><td>Implementation-dependent operations</td><td>Alternative boot / termination / interrupt conventions</td><td>Isolates portability from generation</td></tr>
+<tr><td>Execution backend</td><td>Additional simulators</td><td>Required anyway by Deliverable 3</td></tr>
+<tr><td>Validation mechanism</td><td>Trace-based or other pass/fail schemes</td><td>The RFQ permits schemes other than self-checking</td></tr>
+<tr><td>Coverage source</td><td>Alternative coverage mechanisms</td><td>Reporting decoupled from collection</td></tr>
+</tbody></table></div>
+<div class="key"><b>Scope discipline.</b> These are interfaces, not implementations. No Hypervisor,
+floating-point, vector or additional-simulator capability is built in this project beyond what the RFQ
+requires. The distinction is deliberate: an interface that is defined but unexercised is honest;
+an implementation claimed but not built is not.</div>
+
+<h3>8.3 Model evolution handled explicitly</h3>
+<p>Sail's triple role means one model change moves three numbers at once. Every artefact therefore
+carries model-revision attribution, coverage figures are revision-qualified, and differences between
+revisions are classified as evolution or regression rather than left ambiguous. Regeneration against a
+newer model revision is exercised as an acceptance activity, not assumed to work.</p>
+
+<h3>8.4 Maintainability proven, not asserted</h3>
+<p>Two acceptance conditions test this directly rather than taking it on trust: <b>an engineer outside
+the project adds a backend and a privileged scenario using the developer documentation alone</b>, and a
+clean machine completes install → configure → generate → execute → coverage from documentation alone,
+with no file editing and no undocumented prerequisite. The framework's own test suite runs green in CI
+and gates every change, with a deliberately introduced regression demonstrating that it catches one.</p>
+</section>
+
+<!-- ============ 11 ============ -->
+<section class="pg">
+<div class="pgn">9 — Open source integration</div>
+
+<h2>9 · Open Source Integration</h2>
+<p class="lede">Directly addressing RFQ criterion 3. <b>Invoking a project is not integrating with
+it</b>, so relationships are stated at the level the actual interaction supports.</p>
+
+<div class="scroll"><table><thead><tr><th style="width:24%">Project</th><th style="width:20%">Relationship</th><th>Basis</th></tr></thead><tbody>
+<tr><td><code>riscv/sail-riscv</code></td><td><b>UPSTREAMING</b></td><td>Required framework changes and any model defects found are submitted as pull requests; CI integration is a merged deliverable</td></tr>
+<tr><td><code>riscv-non-isa/riscv-arch-test</code></td><td><b>INTEGRATION</b>, contribution assessed</td><td>Generated tests made portable through the implementation-dependent operations layer; contribution decided by evaluation, not assumed</td></tr>
+<tr><td><b>Isla</b></td><td><b>CONTRIBUTION assessed</b></td><td>The project extends the symbolic generator; extensions of general value are assessed for upstream contribution, with a recorded decision either way</td></tr>
+<tr><td><b>Spike</b></td><td><b>USE</b></td><td>Independent execution reference. No contribution anticipated — <b>a relationship classified USE is stated as USE</b></td></tr>
+<tr><td>Golden Model community workflows</td><td><b>INTEGRATION</b></td><td>The framework fits existing conventions rather than introducing parallel ones</td></tr>
+</tbody></table></div>
+<p>Each relationship carries an owner and a recorded outcome. <b>No community acceptance, merged
+contribution or endorsement is claimed in this proposal.</b> Deliverables 4 and 5 are defined by
+upstream merge state precisely so that the claim, when it can be made, is verifiable by inspection of a
+public repository rather than by assertion.</p>
+
+<h3>9.1 The upstream dependency, stated concretely</h3>
+<p>This is the question a Golden Model reviewer asks first, so it is answered here rather than deferred.
+<b>The framework's symbolic generation path currently cannot run against unmodified upstream:</b> the
+two entry-point functions it requires are absent, and the IR build step requires them by name.</p>
+<div class="scroll"><table><thead><tr><th style="width:20%">Change</th><th style="width:14%">Invasiveness</th><th style="width:16%">Upstreamable</th><th>Fallback if rejected</th></tr></thead><tbody>
+<tr><td><b>Symbolic entry points</b> — an initialisation and a step entry point for external symbolic tooling</td><td><b>Low</b> — additive, no change to existing behaviour</td><td>Likely</td><td>Symbolic backend unavailable; the framework operates oracle-only. Privileged scenarios relying on solved state move to preamble construction. <b>Capability reduction, not project failure</b></td></tr>
+<tr><td><b>CSR accessor restructuring</b> — consolidation of scattered accessor definitions</td><td><b>High</b> — large, touches a widely used area</td><td><b>Unknown — requires verification.</b> The most likely change to be rejected</td><td>CSR-driven symbolic generation unavailable; CSR coverage moves entirely to the oracle path. <b>P2 must first test whether this change is eliminable</b></td></tr>
+<tr><td><b>Reset-behaviour fix</b> — correction in memory-protection register reset</td><td><b>Low</b> — narrow</td><td>Likely; carries its own justification</td><td>Not required by the framework; submitted as a standalone contribution regardless</td></tr>
+<tr><td>Remaining files in the change set</td><td>Unknown</td><td>Unknown</td><td>Per-file triage is the first task of P2</td></tr>
+</tbody></table></div>
+<div class="key"><b>The project does not assume any of these will be accepted.</b> P2's first task is
+to determine which are eliminable and remove them; the remainder are decomposed into single-purpose
+reviewable pull requests ordered least-contentious first. The present change set is a single large
+multi-file commit and is <b>not reviewable upstream as submitted</b> — decomposing it is scheduled work,
+not an afterthought. The high-invasiveness change is the one genuine threat to the symbolic backend, and
+is stated as such rather than presented as a formality.</div>
+
+<h3>9.2 Technical competencies required to execute</h3>
+<p>Stated as the capability set the plan demands, so an evaluator can assess fit against RFQ criterion 4.
+<b>Evidence of these competencies in the delivering team is supplied separately with verifiable
+references; none is asserted here.</b></p>
+<div class="scroll"><table><thead><tr><th>Domain</th><th>Where the plan demands it</th></tr></thead><tbody>
+<tr><td>RISC-V privileged architecture</td><td>Scenario design, trap and translation semantics, delegation, PMP/PMA — Section 5</td></tr>
+<tr><td>Sail language and the Golden Model</td><td>Model-sourced instruction extraction, coverage instrumentation, upstream change decomposition — Sections 6, 9</td></tr>
+<tr><td>Symbolic execution and SMT</td><td>Isla and Z3 integration, representational bounds, backend routing — Section 6</td></tr>
+<tr><td>ELF generation and toolchain</td><td>Assembly, linking, portability layer, certification-test conventions — Section 6.3</td></tr>
+<tr><td>Differential testing</td><td>Independent-simulator integration, divergence triage — Section 7</td></tr>
+<tr><td>Functional coverage methodology</td><td>Denominators, matrices, mutation, attribution — Section 5</td></tr>
+<tr><td>Python automation and verification infrastructure</td><td>Orchestration, reporting, CI — Sections 10, 11</td></tr>
+<tr><td>Open-source contribution process</td><td>PR decomposition, upstream review engagement — Section 9.1</td></tr>
+</tbody></table></div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section class="pg">
+<div class="pgn">10 — Deliverables and acceptance</div>
+
+<h2>10 · Deliverables and Acceptance Criteria</h2>
+<p>Five deliverables, unchanged from the Master Technical Plan. Acceptance is by demonstration, not by
+assertion.</p>
+
+<div class="scroll"><table><thead><tr><th class="c" style="width:4%">#</th><th style="width:20%">Deliverable</th><th style="width:22%">Why it matters</th><th>Acceptance evidence</th></tr></thead><tbody>
+<tr><td class="c"><b>1</b></td><td><b>Repository with framework, user documentation and developer documentation</b></td><td>The framework must be maintainable by the community after delivery — RFQ criterion 2</td><td>A clean machine completes clone → documented install → build → configure → generate → execute → coverage with no file editing and no undocumented prerequisite. Framework test suite green in CI. Developer documentation passes its acceptance test: <b>an outside maintainer adds a backend and a privileged scenario from the documentation alone</b>. Licence, attributions and notices complete, with items requiring legal review identified</td></tr>
+<tr><td class="c"><b>2</b></td><td><b>Example scripts generating a suite from a given configuration</b></td><td>Demonstrates the configuration architecture works in practice, not only in design</td><td>A single documented command generates an extension-organised, manifested, provenance-stamped suite from <b>any</b> valid Golden Model configuration. Provenance sufficient to regenerate byte-identically. <b>Verified across the configuration matrix, not on one example</b></td></tr>
+<tr><td class="c"><b>3</b></td><td><b>Example scripts executing a suite, collecting results, summarising</b></td><td>Closes the loop from generation to a verdict a human can read</td><td>A single documented command executes a suite on a named simulator and produces per-test verdicts with runtime and failure classification, a machine-readable result file, and a human-readable summary. <b>Must operate on an independent simulator, and must report inconclusive rather than pass when only the Golden Model is available</b></td></tr>
+<tr><td class="c"><b>4</b></td><td><b>Golden Model CI integration</b></td><td>Makes the capability part of the Golden Model's own workflow rather than an external artefact</td><td>States tracked distinctly: local implementation → PR created → reviewed → approved → <b>merged</b>. <b>Only merged satisfies this deliverable</b></td></tr>
+<tr><td class="c"><b>5</b></td><td><b>Required Golden Model changes</b></td><td>Removes the private-fork dependency; Goal 1 depends on it</td><td>Per change: not required / identified / implemented locally / PR created / reviewed / approved / <b>merged</b>. <b>Only merged satisfies this deliverable.</b> Each required change carries a documented fallback for non-acceptance</td></tr>
+</tbody></table></div>
+
+<div class="key"><b>For Deliverables 4 and 5, PR created ≠ complete; reviewed ≠ complete; approved ≠
+complete; merged = complete.</b> These states are tracked separately from engineering progress
+throughout, so that programme status is never reported as complete on the strength of work that has been
+submitted but not accepted.</div>
+
+<h2>11 · Timeline and Milestones</h2>
+<p>Twelve phases across four tracks, totalling <b>15 engineering-weeks</b> from kickoff &mdash; one number rather than a range, so it can be held to. Per-phase durations below are stated as effort-bearing sequence and dependency, not as calendar dates. The figure assumes human-plus-AI-augmented delivery, realistic where a phase is well-scoped and mechanical, and most of this roadmap is. Upstream review does not compress the same way engineering effort does; that latency is tracked as risk, not folded into the 15 weeks.</p>
+<div class="scroll"><table><thead><tr><th class="c" style="width:5%">Ph</th><th style="width:21%">Objective</th><th style="width:24%">Key deliverable contribution</th><th>Acceptance evidence</th></tr></thead><tbody>
+<tr><td class="c"><b>P1</b></td><td>Configuration architecture</td><td>Foundation for D1–D3</td><td>A single validated configuration object derives every downstream artefact; illegal combinations rejected at load; single-point derivation proven</td></tr>
+<tr><td class="c"><b>P2</b></td><td>Model integration and upstream decomposition</td><td><b>D5</b></td><td>Per-file triage complete; eliminable changes removed; remainder decomposed into single-purpose reviewable PRs, submitted; ecosystem map recorded</td></tr>
+<tr><td class="c"><b>P3</b></td><td>Framework productization and self-verification</td><td>D1</td><td>Installable in a clean environment; framework test suite green and gating; dependency manifest present</td></tr>
+<tr><td class="c"><b>P4</b></td><td>Generation core and backend routing</td><td>D1, D2</td><td>Configuration-aware core with declarative routing; ELF validity verified by execution on an independent simulator; one assembly format across backends</td></tr>
+<tr><td class="c"><b>P5</b></td><td>Validation integrity</td><td>D3</td><td>Shipping a test that cannot fail is structurally impossible; mutation sampling and control checks pass; validated count reconciles with executed count</td></tr>
+<tr><td class="c"><b>P6</b></td><td><b>M-mode privileged capability</b></td><td><b>Criterion 1</b></td><td>Every required M-mode capability passes on two simulators at both XLENs, with every negative control failing</td></tr>
+<tr><td class="c"><b>P7</b></td><td><b>S-mode address translation</b></td><td><b>Criterion 1</b></td><td>Sv32 and Sv39 scenarios pass on two simulators with controls failing; RV32 translation no longer skips</td></tr>
+<tr><td class="c"><b>P8</b></td><td>Coverage architecture</td><td>D1, criterion 1</td><td>Per-ELF isolated replay with reconciliation invariant; configuration-, extension- and revision-attributed suite coverage; per-extension privileged view</td></tr>
+<tr><td class="c"><b>P9</b></td><td>Suite, provenance and result architecture</td><td>D3</td><td>Reproducible self-describing suites; unified result record; generated human summary</td></tr>
+<tr><td class="c"><b>P10</b></td><td>Configuration matrix validation</td><td>D2, criterion 1</td><td>Per-stage matrix generated by execution; unsupported configurations reported with the failing stage and an architectural reason</td></tr>
+<tr><td class="c"><b>P11</b></td><td>Turn-key packaging, examples, documentation</td><td><b>D1, D2, D3</b></td><td>One command per configuration; both documentation tracks pass their acceptance tests; licensing complete</td></tr>
+<tr><td class="c"><b>P12</b></td><td>Golden Model CI integration</td><td><b>D4</b></td><td><b>Merged</b> pull request</td></tr>
+</tbody></table></div>
+</section>
+
+<!-- ============ 13 ============ -->
+<section class="pg">
+<div class="pgn">11–13 — Critical path, cost, risk</div>
+
+<h3>11.1 Critical path and dependencies</h3>
+<div class="flow"><pre>ENGINEERING CHAIN
+  P1 ──► P4 ──► P5 ──► P9 ──► P10 ──► P11 ──► P12 (submit) ──► P12 (MERGED)
+                       │                                            ▲
+  P6, P7 (privileged) ─┘  depend on P1, P4, P5                      │
+  P8 (coverage) ───────┘                                            │
+                                                                    │
+MERGE CHAIN                                                         │
+  P2 (triage → decompose → submit) ──► review ──► approval ──► merge ┘
+       feeds Deliverable 5 and unblocks any model-dependent element of P12</pre></div>
+<div class="key"><b>The binding constraint is the merge chain, not the engineering chain.</b> Its
+duration is set by third-party review and cannot be compressed by engineering effort. Two consequences
+for execution: the upstream track starts in the first phase and runs continuously rather than being
+scheduled at the end, and every required model change carries a documented fallback so that rejection
+degrades capability rather than stopping delivery.</div>
+<p><b>Highest-risk critical-path items:</b> P5, which may invalidate existing measurements and force
+rework in P6–P8; P10, which may reveal unsupportable configurations; and P12, whose completion is
+outside our control.</p>
+
+<h2>12 · Cost and Commercial Assumptions</h2>
+<div class="tbd"><b>No cost figure is stated in this proposal.</b> The Master Technical Plan
+deliberately assigns no costs and no dates, and inventing them here would misrepresent the basis on
+which they can be derived. What follows is the model by which a fixed price will be produced.</div>
+
+<h3>12.1 Effort model</h3>
+<div class="flow"><pre>Total = Σ (phase effort × blended day rate)
+      + configuration-matrix validation effort        scales with the agreed matrix
+      + upstream engagement allowance                 review response, PR decomposition
+      + contingency                                   against §13 risks</pre></div>
+<p>The <b>upstream engagement allowance is separated deliberately</b>: its duration is set by
+third-party review latency, and folding it into engineering effort would make the estimate look more
+predictable than it is.</p>
+
+<h3>12.2 Cost drivers, in order of influence</h3>
+<div class="scroll"><table><thead><tr><th style="width:34%">Driver</th><th>Effect</th></tr></thead><tbody>
+<tr><td><b>Size of the agreed configuration matrix</b></td><td>P10 effort and per-configuration validation scale directly with it</td></tr>
+<tr><td><b>How many "future within RFQ" privileged items become committed</b></td><td>The 14 currently-future extensions are the largest discretionary block in the plan</td></tr>
+<tr><td><b>Extent of required Golden Model change</b></td><td>P2 triage may eliminate changes, reducing effort; the high-invasiveness change may require substantial redesign of CSR handling if rejected</td></tr>
+<tr><td><b>Upstream review latency</b></td><td>Affects elapsed time and engagement effort, not engineering effort. Outside our control</td></tr>
+<tr><td><b>Choice of independent simulator(s)</b></td><td>Two simulators are unverified for execution and are scoped as verification tasks; a negative result adds integration work</td></tr>
+</tbody></table></div>
+
+<h3>12.3 What is required to finalise a fixed price</h3>
+<ol>
+<li>The agreed configuration matrix — which configurations must be end-to-end supported.</li>
+<li>Which of the 14 "future within RFQ" privileged items are contractual rather than best-effort.</li>
+<li>The agreed independent simulator, and whether more than one is required.</li>
+<li>Whether Deliverables 4 and 5 are accepted as <i>merged</i> or as <i>submitted in good faith</i> — this materially changes risk exposure and therefore contingency.</li>
+<li>Agreed start date, staffing profile and concurrency.</li>
+<li>Whether framework maintenance beyond delivery is in scope.</li>
+</ol>
+<div class="tbd"><b>Delivery date.</b> Derivable from the phase structure and critical path once a start
+date and staffing profile are agreed. <b>It cannot be fixed independently of items 1, 2 and 4 above</b>,
+and — for Deliverables 4 and 5 — depends on upstream review latency that no supplier can commit to on a
+third party's behalf. We would rather state this plainly than quote a date we cannot control.</div>
+
+<h2>13 · Risks and Dependencies</h2>
+<div class="scroll"><table><thead><tr><th style="width:22%">Risk</th><th style="width:18%">Impact</th><th style="width:32%">Mitigation</th><th>Residual dependency</th></tr></thead><tbody>
+<tr><td><b>Upstream rejects structural model changes</b></td><td>Strands the symbolic backend</td><td>Eliminate what can be eliminated in P2; decompose so rejection is isolated to one PR; documented fallback per change</td><td><b>Maintainer decision.</b> Residual: oracle-only operation, a capability reduction</td></tr>
+<tr><td><b>Merge latency for Deliverables 4 and 5</b></td><td>Cannot be compressed by effort</td><td>Upstream track starts in P1 and runs continuously; states tracked separately from engineering progress</td><td><b>Review capacity.</b> Sets the programme's elapsed duration</td></tr>
+<tr><td><b>Golden Model CI integration not accepted</b></td><td>Deliverable 4 unmet</td><td>CI consumes pre-generated pinned suites so runtime cost to upstream is bounded; generation runs on a schedule, not per commit</td><td><b>Maintainer decision</b> on CI policy</td></tr>
+<tr><td><b>Generation capability limits</b> — vector length bound, no symbolic FP</td><td>Configuration matrix cannot be fully served symbolically</td><td>Documented architectural boundary; oracle routing above the bound; recorded rather than re-investigated</td><td>None — accepted as architecture</td></tr>
+<tr><td><b>Privileged machine-state complexity</b></td><td>P6–P7 effort exceeds estimate</td><td>Capabilities ordered by dependency so partial delivery degrades scope rather than blocking; scenario families independently deliverable</td><td>Scope reduction visible in the committed/future split</td></tr>
+<tr><td><b>Configuration-specific reachability</b></td><td>Goal 4 partially unmet</td><td>Per-stage matrix with a documented architectural reason per failing stage, rather than a single supported/unsupported flag</td><td>Reported, not hidden</td></tr>
+<tr><td><b>Vacuity enforcement invalidates existing numbers</b></td><td>Apparent large regression</td><td><b>Expected and disclosed in advance</b>; pass rates computed only over validated tests from that point</td><td>None — a reporting correction</td></tr>
+<tr><td><b>Sail's triple role</b> — source, oracle, coverage target</td><td>One model change moves three numbers at once</td><td>Model-revision attribution on every artefact; evolution-versus-regression classification</td><td>Model release cadence</td></tr>
+<tr><td><b>Carried-forward unknowns resolve negatively</b></td><td>Capability narrower than hoped</td><td>Each scoped as an explicit verification task in P6, P9 or P10; result recorded either way</td><td>Four open items, listed in Appendix A</td></tr>
+</tbody></table></div>
+<p>The full engineering risk register is Appendix E.</p>
+</section>
+
+<!-- ============ 14 ============ -->
+<section class="pg">
+<div class="pgn">14–15 — Traceability and conclusion</div>
+
+<h2>14 · RFQ Evaluation Criteria Traceability</h2>
+<div class="scroll"><table><thead><tr><th class="c" style="width:4%">#</th><th style="width:20%">Criterion</th><th style="width:38%">Where addressed</th><th>Acceptance evidence</th></tr></thead><tbody>
+<tr><td class="c"><b>1</b></td><td><b>Coverage of privileged ISA extensions implemented by Sail</b></td><td>§5 in full — delivery order (5.1–5.2), per-extension reconciliation (5.3), reachable denominator (5.4), four measurement axes (5.5), why matrices beat a branch percentage (5.6), progress reporting (5.7). Phases P6, P7, P8</td><td>Scenarios pass on two simulators with every negative control failing; per-extension privileged coverage against a recorded baseline; 14 committed extensions reconciled against 28</td></tr>
+<tr><td class="c"><b>2</b></td><td><b>Long-term maintainability and extensibility</b></td><td>§8 in full — model-driven instruction sourcing, eight extension points, ISA-independent core separated from privileged scenario data, model-revision attribution. §4.2 single-source configuration. Phases P3, P11</td><td><b>An outside maintainer adds a backend and a privileged scenario from documentation alone.</b> Clean-machine run with no file editing. Framework suite green in CI, catching a deliberately introduced regression</td></tr>
+<tr><td class="c"><b>3</b></td><td><b>Integration with open source communities</b></td><td>§9 — USE / INTEGRATION / CONTRIBUTION / UPSTREAMING classification per project, with the upstream dependency stated concretely in 9.1. Phases P2, P12</td><td><b>Merged</b> pull requests for Deliverables 4 and 5 — verifiable by inspecting a public repository. Ecosystem map with a recorded outcome per relationship</td></tr>
+<tr><td class="c"><b>4</b></td><td><b>Demonstrated technical skill in the targeted ecosystems</b></td><td>§9.2 competency map; §3.3 recorded prototype evidence; §6 routing decisions justified from tool properties. <b>No artificial tasks are created to manufacture evidence</b></td><td>Emerges from merged PRs, CI integration and reproducible examples. Team credentials supplied separately with verifiable references</td></tr>
+<tr><td class="c"><b>5</b></td><td><b>Cost</b></td><td>§12 — effort model, five cost drivers in order of influence, six items required to finalise a fixed price. Phase structure makes effort derivable</td><td>Transparent basis. <b>No cost invented</b></td></tr>
+<tr><td class="c"><b>6</b></td><td><b>Date of delivery</b></td><td>§11 phase table with acceptance per phase; §11.1 critical path identifying the merge chain as the binding constraint; §12.3 the dependencies a date requires</td><td>Dependency-aware structure makes a schedule derivable on agreement of start date and staffing. <b>No date invented</b></td></tr>
+</tbody></table></div>
+
+<h2>15 · Conclusion</h2>
+<p>This proposal offers a framework whose completeness claim can be audited. The denominator is
+computed rather than assumed, per configuration, with every exclusion carrying a reason a reviewer can
+contest individually. Privileged coverage is reported per extension and per XLEN, against a recorded
+baseline, with 14 of 28 named privileged extensions committed and the remaining 14 identified as future
+rather than quietly implied. Every scenario carries a negative control, and a control that passes is
+reported as a defect in our framework rather than absorbed into a pass rate.</p>
+
+<p>Three positions in this document are commercially inconvenient and are stated anyway. Two of the five
+deliverables depend on decisions by upstream maintainers and are therefore not within our unilateral
+control. The one model change most likely to be rejected is identified as such, with its fallback. And
+the Hypervisor extension is excluded from scope entirely rather than included at a token level.</p>
+
+<div class="claim"><span class="t">The commitment</span>
+<p>100% of the enumerated reachable denominators for each required configuration, with every
+unreachable target explicitly justified — measured alongside Sail branch coverage, audited by mutation
+sensitivity, and cross-checked against an independently written simulator.</p></div>
+
+<p>We do not claim complete ISA coverage, because no methodology can deliver it and no honest
+denominator exists for the claim. We would rather state that boundary than imply we had crossed it.</p>
+
+<h3>Appendices — the Master Technical Plan</h3>
+<p>The 35-page Master Technical Plan is the authoritative engineering source and accompanies this
+proposal in full as Appendices A–H. This document references it rather than reproducing it.</p>
+</section>
+
+<foot>Quantities attributed to the Sail model are properties of the upstream source obtained by static analysis of its declarations, recomputed at the revision agreed at project start.<br>
+No delivery date, cost, coverage percentage, merged contribution or completed implementation is claimed in this document. Prototype evidence appears only in §3.3, with its status stated.</foot>
+</div>

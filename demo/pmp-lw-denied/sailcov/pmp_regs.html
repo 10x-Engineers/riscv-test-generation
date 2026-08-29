@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>pmp_regs</title></head>
+<body>
+<h1>pmp_regs.sail (40/144) 28%</h1>
+<code style="display: block">
+//&nbsp;=======================================================================================<br>
+//&nbsp;This&nbsp;Sail&nbsp;RISC-V&nbsp;architecture&nbsp;model,&nbsp;comprising&nbsp;all&nbsp;files&nbsp;and<br>
+//&nbsp;directories&nbsp;except&nbsp;where&nbsp;otherwise&nbsp;noted&nbsp;is&nbsp;subject&nbsp;the&nbsp;BSD<br>
+//&nbsp;two-clause&nbsp;license&nbsp;in&nbsp;the&nbsp;LICENSE&nbsp;file.<br>
+//<br>
+//&nbsp;SPDX-License-Identifier:&nbsp;BSD-2-Clause<br>
+//&nbsp;=======================================================================================<br>
+<br>
+//&nbsp;Platform&nbsp;configuration<br>
+<br>
+//&nbsp;How&nbsp;many&nbsp;PMP&nbsp;entries&nbsp;are&nbsp;implemented.&nbsp;This&nbsp;must&nbsp;be&nbsp;0,&nbsp;16&nbsp;or&nbsp;64&nbsp;(this&nbsp;is&nbsp;checked&nbsp;at&nbsp;runtime).<br>
+let&nbsp;sys_pmp_count&nbsp;:&nbsp;{0,&nbsp;16,&nbsp;64}&nbsp;=&nbsp;config&nbsp;memory.pmp.count<br>
+<br>
+//&nbsp;How&nbsp;many&nbsp;PMP&nbsp;entries&nbsp;are&nbsp;usable.&nbsp;&nbsp;This&nbsp;must&nbsp;be&nbsp;less&nbsp;than&nbsp;or&nbsp;equal<br>
+//&nbsp;to&nbsp;`memory.pmp.count`;&nbsp;entries&nbsp;higher&nbsp;than&nbsp;the&nbsp;usable&nbsp;count&nbsp;are<br>
+//&nbsp;read-only-zero.<br>
+let&nbsp;sys_pmp_usable_count&nbsp;:&nbsp;range(0,&nbsp;64)&nbsp;=&nbsp;config&nbsp;memory.pmp.usable_count<br>
+<br>
+//&nbsp;G&nbsp;parameter&nbsp;that&nbsp;specifies&nbsp;the&nbsp;PMP&nbsp;grain&nbsp;size.&nbsp;The&nbsp;grain&nbsp;size&nbsp;is&nbsp;2^(G+2),&nbsp;e.g.<br>
+//&nbsp;G=0&nbsp;-&gt;&nbsp;4&nbsp;bytes,&nbsp;G=10&nbsp;-&gt;&nbsp;4096&nbsp;bytes.<br>
+let&nbsp;sys_pmp_grain&nbsp;:&nbsp;range(0,&nbsp;63)&nbsp;=&nbsp;config&nbsp;memory.pmp.grain<br>
+<br>
+//&nbsp;PMP&nbsp;configuration&nbsp;entries<br>
+<br>
+private&nbsp;enum&nbsp;PmpAddrMatchType&nbsp;=&nbsp;{OFF,&nbsp;TOR,&nbsp;NA4,&nbsp;NAPOT}<br>
+<br>
+private&nbsp;mapping&nbsp;pmpAddrMatchType_encdec&nbsp;:&nbsp;PmpAddrMatchType&nbsp;&lt;-&gt;&nbsp;bits(2)&nbsp;=&nbsp;{<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 80%)">OFF</span>&nbsp;&nbsp;&nbsp;&lt;-&gt;&nbsp;0b00,<br>
+&nbsp;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">TOR</span>&nbsp;&nbsp;&nbsp;&lt;-&gt;&nbsp;0b01,<br>
+&nbsp;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">NA4</span>&nbsp;&nbsp;&nbsp;&lt;-&gt;&nbsp;0b10,<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 80%)">NAPOT</span>&nbsp;&lt;-&gt;&nbsp;0b11,<br>
+}<br>
+<br>
+bitfield&nbsp;Pmpcfg_ent&nbsp;:&nbsp;bits(8)&nbsp;=&nbsp;{<br>
+&nbsp;&nbsp;L&nbsp;:&nbsp;7,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;locking<br>
+&nbsp;&nbsp;A&nbsp;:&nbsp;4&nbsp;..&nbsp;3,&nbsp;&nbsp;&nbsp;//&nbsp;address&nbsp;match&nbsp;type,&nbsp;encoded&nbsp;as&nbsp;above<br>
+<br>
+&nbsp;&nbsp;//&nbsp;permissions<br>
+&nbsp;&nbsp;X&nbsp;:&nbsp;2,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;execute<br>
+&nbsp;&nbsp;W&nbsp;:&nbsp;1,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;write<br>
+&nbsp;&nbsp;R&nbsp;:&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;read<br>
+}<br>
+<br>
+register&nbsp;pmpcfg_n&nbsp;:&nbsp;vector(64,&nbsp;Pmpcfg_ent)<br>
+register&nbsp;pmpaddr_n&nbsp;:&nbsp;vector(64,&nbsp;xlenbits)<br>
+<br>
+//&nbsp;Packing&nbsp;and&nbsp;unpacking&nbsp;pmpcfg&nbsp;regs&nbsp;for&nbsp;xlen-width&nbsp;accesses<br>
+<br>
+function&nbsp;pmpReadCfgReg(n&nbsp;:&nbsp;range(0,&nbsp;15))&nbsp;-&gt;&nbsp;xlenbits&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;xlen&nbsp;==&nbsp;32<br>
+&nbsp;&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[n*4&nbsp;+&nbsp;3].bits&nbsp;@<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[n*4&nbsp;+&nbsp;2].bits&nbsp;@<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[n*4&nbsp;+&nbsp;1].bits&nbsp;@<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[n*4&nbsp;+&nbsp;0].bits<br>
+&nbsp;&nbsp;}</span><br>
+&nbsp;&nbsp;else&nbsp;<span style="background-color: hsl(120, 85%, 70%)">{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;assert(n&nbsp;%&nbsp;2&nbsp;==&nbsp;0,&nbsp;&quot;Unexpected&nbsp;pmp&nbsp;config&nbsp;reg&nbsp;read&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[n*4&nbsp;+&nbsp;7].bits&nbsp;@<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[n*4&nbsp;+&nbsp;6].bits&nbsp;@<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[n*4&nbsp;+&nbsp;5].bits&nbsp;@<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[n*4&nbsp;+&nbsp;4].bits&nbsp;@<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[n*4&nbsp;+&nbsp;3].bits&nbsp;@<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[n*4&nbsp;+&nbsp;2].bits&nbsp;@<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[n*4&nbsp;+&nbsp;1].bits&nbsp;@<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[n*4&nbsp;+&nbsp;0].bits<br>
+&nbsp;&nbsp;}</span></span><br>
+}</span><br>
+<br>
+function&nbsp;pmpReadAddrReg(n&nbsp;:&nbsp;range(0,&nbsp;63))&nbsp;-&gt;&nbsp;xlenbits&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
+&nbsp;&nbsp;let&nbsp;G&nbsp;=&nbsp;sys_pmp_grain;<br>
+&nbsp;&nbsp;let&nbsp;match_type&nbsp;=&nbsp;pmpcfg_n[n][A];<br>
+&nbsp;&nbsp;let&nbsp;addr&nbsp;=&nbsp;pmpaddr_n[n];<br>
+<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">match&nbsp;match_type[1]&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 70%)">0b1&nbsp;if&nbsp;G&nbsp;&gt;=&nbsp;2&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[G-2..0]&nbsp;read&nbsp;as&nbsp;all&nbsp;ones&nbsp;to&nbsp;form&nbsp;mask,&nbsp;therefore&nbsp;we&nbsp;need&nbsp;G-1&nbsp;bits.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;mask&nbsp;:&nbsp;xlenbits&nbsp;=&nbsp;zero_extend(ones(min(G&nbsp;-&nbsp;1,&nbsp;xlen)));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;addr&nbsp;|&nbsp;mask<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</span></span>,<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 70%)">0b0&nbsp;if&nbsp;G&nbsp;&gt;=&nbsp;1&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[G-1..0]&nbsp;read&nbsp;as&nbsp;all&nbsp;zeros&nbsp;to&nbsp;form&nbsp;mask,&nbsp;therefore&nbsp;we&nbsp;need&nbsp;G&nbsp;bits.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;mask&nbsp;:&nbsp;xlenbits&nbsp;=&nbsp;zero_extend(ones(min(G&nbsp;,&nbsp;xlen)));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;addr&nbsp;&&nbsp;~(mask)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</span></span>,<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 70%)">addr</span>,<br>
+&nbsp;&nbsp;}</span><br>
+}</span><br>
+<br>
+//&nbsp;Helpers&nbsp;to&nbsp;handle&nbsp;locked&nbsp;entries<br>
+private&nbsp;function&nbsp;pmpLocked(cfg:&nbsp;Pmpcfg_ent)&nbsp;-&gt;&nbsp;bool&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 80%)">cfg[L]&nbsp;==&nbsp;0b1</span><br>
+<br>
+private&nbsp;function&nbsp;pmpTORLocked(cfg:&nbsp;Pmpcfg_ent)&nbsp;-&gt;&nbsp;bool&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 80%)">(cfg[L]&nbsp;==&nbsp;0b1)&nbsp;&&nbsp;(<span style="background-color: hsl(0, 85%, 80%)">pmpAddrMatchType_encdec(cfg[A])&nbsp;==&nbsp;TOR</span>)</span><br>
+<br>
+private&nbsp;function&nbsp;pmpWriteCfg(cfg:&nbsp;Pmpcfg_ent,&nbsp;v:&nbsp;bits(8))&nbsp;-&gt;&nbsp;Pmpcfg_ent&nbsp;=<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 80%)">if&nbsp;pmpLocked(cfg)&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 80%)">cfg</span><br>
+&nbsp;&nbsp;else&nbsp;<span style="background-color: hsl(120, 85%, 75%)">{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Bits&nbsp;5&nbsp;and&nbsp;6&nbsp;are&nbsp;zero.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;cfg&nbsp;=&nbsp;Mk_Pmpcfg_ent(v&nbsp;&&nbsp;0x9f);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&quot;The&nbsp;R,&nbsp;W,&nbsp;and&nbsp;X&nbsp;fields&nbsp;form&nbsp;a&nbsp;collective&nbsp;WARL&nbsp;field&nbsp;for&nbsp;which&nbsp;the&nbsp;combinations&nbsp;with&nbsp;R=0&nbsp;and&nbsp;W=1&nbsp;are&nbsp;reserved.&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;if&nbsp;R=0&nbsp;and&nbsp;W=1,&nbsp;we&nbsp;allow&nbsp;two&nbsp;options&nbsp;currently:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;1.&nbsp;exit&nbsp;the&nbsp;simulation&nbsp;with&nbsp;a&nbsp;fatal&nbsp;error<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;2.&nbsp;R,&nbsp;W&nbsp;and&nbsp;X&nbsp;are&nbsp;all&nbsp;set&nbsp;to&nbsp;0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;cfg&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 70%)">if&nbsp;<span style="background-color: hsl(120, 85%, 65%)">cfg[W]&nbsp;==&nbsp;0b1&nbsp;&&nbsp;<span style="background-color: hsl(120, 85%, 60%)">cfg[R]&nbsp;==&nbsp;0b0</span></span>&nbsp;then&nbsp;(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">match&nbsp;pmp_write_only_reserved_behavior&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PMP_Fatal&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 75%)">reserved_behavior(&quot;pmpcfg&nbsp;with&nbsp;R=0,W=1&quot;)</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PMP_ClearPermissions&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 75%)">[cfg&nbsp;with&nbsp;X&nbsp;=&nbsp;0b0,&nbsp;W&nbsp;=&nbsp;0b0,&nbsp;R&nbsp;=&nbsp;0b0]</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;else&nbsp;<span style="background-color: hsl(120, 85%, 65%)">cfg</span></span>;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;We&nbsp;support&nbsp;disabling&nbsp;all&nbsp;modes&nbsp;globally,&nbsp;which&nbsp;is&nbsp;allowed&nbsp;since&nbsp;this<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;is&nbsp;a&nbsp;WARL&nbsp;field.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;mode_supported&nbsp;:&nbsp;bool&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 70%)">match&nbsp;pmpAddrMatchType_encdec(cfg[A])&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OFF&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 65%)">true</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TOR&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">config&nbsp;memory.pmp.tor_supported</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&quot;When&nbsp;G&nbsp;&gt;=&nbsp;1,&nbsp;the&nbsp;NA4&nbsp;mode&nbsp;is&nbsp;not&nbsp;selectable.&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NA4&nbsp;&nbsp;&nbsp;=&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">(config&nbsp;memory.pmp.na4_supported&nbsp;:&nbsp;bool)&nbsp;&&nbsp;<span style="background-color: hsl(0, 85%, 75%)">sys_pmp_grain&nbsp;==&nbsp;0</span></span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NAPOT&nbsp;=&gt;&nbsp;<span style="background-color: hsl(120, 85%, 65%)">config&nbsp;memory.pmp.napot_supported</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</span>;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;In&nbsp;this&nbsp;implementation&nbsp;we&nbsp;set&nbsp;the&nbsp;mode&nbsp;to&nbsp;OFF&nbsp;if&nbsp;an&nbsp;unsupported&nbsp;mode&nbsp;is&nbsp;selected.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;This&nbsp;is&nbsp;the&nbsp;least&nbsp;risky&nbsp;option&nbsp;from&nbsp;a&nbsp;security&nbsp;perspective.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;cfg&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 70%)">if&nbsp;mode_supported<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;then&nbsp;<span style="background-color: hsl(120, 85%, 65%)">cfg</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;<span style="background-color: hsl(0, 85%, 80%)">[cfg&nbsp;with&nbsp;A&nbsp;=&nbsp;pmpAddrMatchType_encdec(OFF)]</span></span>;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cfg<br>
+&nbsp;&nbsp;}</span></span><br>
+<br>
+function&nbsp;pmpWriteCfgReg(n&nbsp;:&nbsp;range(0,&nbsp;15),&nbsp;v&nbsp;:&nbsp;xlenbits)&nbsp;-&gt;&nbsp;unit&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;xlen&nbsp;==&nbsp;32<br>
+&nbsp;&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(i&nbsp;from&nbsp;0&nbsp;to&nbsp;3)&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;idx&nbsp;=&nbsp;n*4&nbsp;+&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;idx&nbsp;&lt;&nbsp;sys_pmp_usable_count&nbsp;then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[idx]&nbsp;&nbsp;=&nbsp;pmpWriteCfg(pmpcfg_n[idx],&nbsp;&nbsp;v[8*i+7&nbsp;..&nbsp;8*i])</span><span style="background-color: hsl(0, 85%, 80%)">&#171;Invisible branch not taken here&#187</span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}</span><br>
+&nbsp;&nbsp;else&nbsp;<span style="background-color: hsl(120, 85%, 70%)">{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;assert(n&nbsp;%&nbsp;2&nbsp;==&nbsp;0,&nbsp;&quot;Unexpected&nbsp;pmp&nbsp;config&nbsp;reg&nbsp;write&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;foreach&nbsp;(i&nbsp;from&nbsp;0&nbsp;to&nbsp;7)&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;let&nbsp;idx&nbsp;=&nbsp;n*4&nbsp;+&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 65%)">if&nbsp;idx&nbsp;&lt;&nbsp;sys_pmp_usable_count&nbsp;then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pmpcfg_n[idx]&nbsp;&nbsp;=&nbsp;pmpWriteCfg(pmpcfg_n[idx],&nbsp;&nbsp;v[8*i+7&nbsp;..&nbsp;8*i])</span><span style="background-color: hsl(0, 85%, 80%)">&#171;Invisible branch not taken here&#187</span>;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}</span></span><br>
+}</span><br>
+<br>
+private&nbsp;function&nbsp;pmpWriteAddr(locked:&nbsp;bool,&nbsp;tor_locked:&nbsp;bool,&nbsp;reg:&nbsp;xlenbits,&nbsp;v:&nbsp;xlenbits)&nbsp;-&gt;&nbsp;xlenbits&nbsp;=<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 80%)">if&nbsp;&nbsp;&nbsp;xlen&nbsp;==&nbsp;32<br>
+&nbsp;&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 80%)">{&nbsp;<span style="background-color: hsl(0, 85%, 75%)">if&nbsp;(<span style="background-color: hsl(0, 85%, 70%)">locked&nbsp;|&nbsp;<span style="background-color: hsl(0, 85%, 65%)">tor_locked</span></span>)&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 70%)">reg</span>&nbsp;else&nbsp;v</span>&nbsp;}</span><br>
+&nbsp;&nbsp;else&nbsp;<span style="background-color: hsl(120, 85%, 75%)">{&nbsp;<span style="background-color: hsl(120, 85%, 70%)">if&nbsp;(<span style="background-color: hsl(120, 85%, 65%)">locked&nbsp;|&nbsp;<span style="background-color: hsl(120, 85%, 60%)">tor_locked</span></span>)&nbsp;then&nbsp;<span style="background-color: hsl(0, 85%, 80%)">reg</span>&nbsp;else&nbsp;<span style="background-color: hsl(120, 85%, 65%)">zero_extend(v[53..0])</span></span>&nbsp;}</span></span><br>
+<br>
+function&nbsp;pmpWriteAddrReg(n&nbsp;:&nbsp;range(0,&nbsp;63),&nbsp;v&nbsp;:&nbsp;xlenbits)&nbsp;-&gt;&nbsp;unit&nbsp;=&nbsp;<span style="background-color: hsl(120, 85%, 80%)">{<br>
+&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 75%)">if&nbsp;n&nbsp;&lt;&nbsp;sys_pmp_usable_count&nbsp;then<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pmpaddr_n[n]&nbsp;=&nbsp;pmpWriteAddr(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pmpLocked(pmpcfg_n[n]),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: hsl(120, 85%, 70%)">if&nbsp;n&nbsp;+&nbsp;1&nbsp;&lt;&nbsp;64&nbsp;then&nbsp;<span style="background-color: hsl(120, 85%, 65%)">pmpTORLocked(pmpcfg_n[n&nbsp;+&nbsp;1])</span>&nbsp;else&nbsp;<span style="background-color: hsl(0, 85%, 80%)">false</span></span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pmpaddr_n[n],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;)</span><span style="background-color: hsl(0, 85%, 80%)">&#171;Invisible branch not taken here&#187</span>;<br>
+}</span><br>
+<br>
+//&nbsp;PMP&nbsp;CSRs<br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3A0&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(120, 85%, 80%)">&quot;pmpcfg0&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3A1&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg1&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3A2&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg2&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3A3&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg3&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3A4&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg4&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3A5&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg5&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3A6&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg6&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3A7&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg7&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3A8&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg8&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3A9&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg9&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3AA&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg10&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3AB&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg11&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3AC&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg12&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3AD&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg13&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3AE&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg14&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3AF&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpcfg15&quot;</span><br>
+<br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3B0&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(120, 85%, 80%)">&quot;pmpaddr0&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3B1&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(120, 85%, 80%)">&quot;pmpaddr1&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3B2&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr2&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3B3&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr3&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3B4&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr4&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3B5&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr5&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3B6&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr6&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3B7&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr7&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3B8&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr8&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3B9&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr9&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3BA&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr10&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3BB&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr11&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3BC&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr12&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3BD&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr13&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3BE&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr14&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3BF&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr15&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3C0&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr16&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3C1&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr17&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3C2&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr18&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3C3&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr19&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3C4&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr20&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3C5&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr21&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3C6&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr22&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3C7&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr23&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3C8&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr24&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3C9&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr25&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3CA&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr26&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3CB&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr27&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3CC&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr28&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3CD&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr29&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3CE&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr30&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3CF&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr31&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3D0&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr32&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3D1&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr33&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3D2&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr34&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3D3&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr35&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3D4&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr36&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3D5&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr37&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3D6&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr38&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3D7&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr39&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3D8&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr40&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3D9&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr41&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3DA&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr42&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3DB&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr43&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3DC&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr44&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3DD&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr45&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3DE&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr46&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3DF&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr47&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3E0&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr48&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3E1&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr49&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3E2&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr50&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3E3&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr51&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3E4&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr52&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3E5&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr53&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3E6&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr54&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3E7&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr55&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3E8&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr56&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3E9&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr57&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3EA&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr58&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3EB&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr59&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3EC&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr60&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3ED&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr61&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3EE&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr62&quot;</span><br>
+mapping&nbsp;clause&nbsp;csr_name_map&nbsp;=&nbsp;0x3EF&nbsp;&nbsp;&lt;-&gt;&nbsp;<span style="background-color: hsl(0, 85%, 80%)">&quot;pmpaddr63&quot;</span><br>
+<br>
+//&nbsp;pmpcfgN<br>
+<br>
+//&nbsp;pmpaddrN.&nbsp;Unfortunately&nbsp;the&nbsp;PMP&nbsp;index&nbsp;does&nbsp;not&nbsp;nicely&nbsp;align&nbsp;with&nbsp;the&nbsp;CSR&nbsp;index&nbsp;bits.<br>
+<br>
+<br>
+</code>
+</body>
+</html>

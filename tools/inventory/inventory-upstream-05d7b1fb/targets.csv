@@ -1,0 +1,1256 @@
+target_id,category,feature,target,required_mode,required_configuration,observable_result,source
+T00001,instruction,A,AMO#0,Not directly derivable from Sail,A,architectural state after retire or trap,extensions/A/zaamo_insts.sail:47
+T00002,instruction,A,AMO#1,Not directly derivable from Sail,A,architectural state after retire or trap,extensions/A/zaamo_insts.sail:47
+T00003,instruction,A,AMO#2,Not directly derivable from Sail,A,architectural state after retire or trap,extensions/A/zaamo_insts.sail:47
+T00004,instruction,A,AMO#3,Not directly derivable from Sail,A,architectural state after retire or trap,extensions/A/zaamo_insts.sail:47
+T00005,instruction,A,AMO#4,Not directly derivable from Sail,A,architectural state after retire or trap,extensions/A/zaamo_insts.sail:47
+T00006,instruction,A,AMO#5,Not directly derivable from Sail,A,architectural state after retire or trap,extensions/A/zaamo_insts.sail:47
+T00007,instruction,A,AMO#6,Not directly derivable from Sail,A,architectural state after retire or trap,extensions/A/zaamo_insts.sail:47
+T00008,instruction,A,AMO#7,Not directly derivable from Sail,A,architectural state after retire or trap,extensions/A/zaamo_insts.sail:47
+T00009,instruction,A,AMO#8,Not directly derivable from Sail,A,architectural state after retire or trap,extensions/A/zaamo_insts.sail:47
+T00010,instruction,A,AMO#9,Not directly derivable from Sail,A,architectural state after retire or trap,extensions/A/zaamo_insts.sail:47
+T00011,instruction,A,LOADRES,Not directly derivable from Sail,A,architectural state after retire or trap,extensions/A/zalrsc_insts.sail:26
+T00012,instruction,A,STORECON,Not directly derivable from Sail,A,architectural state after retire or trap,extensions/A/zalrsc_insts.sail:59
+T00013,instruction,B,SLLIUW,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zba_insts.sail:13
+T00014,instruction,B,ZBA_RTYPEUW,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zba_insts.sail:29
+T00015,instruction,B,ZBA_RTYPE,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zba_insts.sail:59
+T00016,instruction,B,RORIW,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:13
+T00017,instruction,B,RORI,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:29
+T00018,instruction,B,ZBB_RTYPEW#0,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:46
+T00019,instruction,B,ZBB_RTYPEW#1,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:46
+T00020,instruction,B,ZBB_RTYPE#0,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:79
+T00021,instruction,B,ZBB_RTYPE#1,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:79
+T00022,instruction,B,ZBB_RTYPE#2,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:79
+T00023,instruction,B,ZBB_RTYPE#3,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:79
+T00024,instruction,B,ZBB_RTYPE#4,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:79
+T00025,instruction,B,ZBB_RTYPE#5,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:79
+T00026,instruction,B,ZBB_RTYPE#6,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:79
+T00027,instruction,B,ZBB_RTYPE#7,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:79
+T00028,instruction,B,ZBB_RTYPE#8,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:79
+T00029,instruction,B,ZBB_EXTOP#0,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:161
+T00030,instruction,B,ZBB_EXTOP#1,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:161
+T00031,instruction,B,ZBB_EXTOP#2,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:161
+T00032,instruction,B,REV8,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:205
+T00033,instruction,B,ORCB,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:225
+T00034,instruction,B,CPOP,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:247
+T00035,instruction,B,CPOPW,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:263
+T00036,instruction,B,CLZ,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:279
+T00037,instruction,B,CLZW,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:295
+T00038,instruction,B,CTZ,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:311
+T00039,instruction,B,CTZW,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbb_insts.sail:327
+T00040,instruction,B,CLMUL,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbc_insts.sail:13
+T00041,instruction,B,CLMULH,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbc_insts.sail:30
+T00042,instruction,B,CLMULR,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbc_insts.sail:47
+T00043,instruction,B,ZBS_IOP#0,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbs_insts.sail:12
+T00044,instruction,B,ZBS_IOP#1,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbs_insts.sail:12
+T00045,instruction,B,ZBS_IOP#2,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbs_insts.sail:12
+T00046,instruction,B,ZBS_IOP#3,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbs_insts.sail:12
+T00047,instruction,B,ZBS_RTYPE#0,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbs_insts.sail:61
+T00048,instruction,B,ZBS_RTYPE#1,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbs_insts.sail:61
+T00049,instruction,B,ZBS_RTYPE#2,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbs_insts.sail:61
+T00050,instruction,B,ZBS_RTYPE#3,Not directly derivable from Sail,B,architectural state after retire or trap,extensions/B/zbs_insts.sail:61
+T00051,instruction,C,C_NOP,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:16
+T00052,instruction,C,C_ADDI4SPN,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:33
+T00053,instruction,C,C_LW,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:51
+T00054,instruction,C,C_LD,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:68
+T00055,instruction,C,C_SW,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:86
+T00056,instruction,C,C_SD,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:103
+T00057,instruction,C,C_ADDI,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:121
+T00058,instruction,C,C_JAL,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:139
+T00059,instruction,C,C_ADDIW,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:153
+T00060,instruction,C,C_LI,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:167
+T00061,instruction,C,C_ADDI16SP,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:183
+T00062,instruction,C,C_LUI,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:199
+T00063,instruction,C,C_SRLI,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:218
+T00064,instruction,C,C_SRAI,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:234
+T00065,instruction,C,C_ANDI,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:250
+T00066,instruction,C,C_SUB,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:266
+T00067,instruction,C,C_XOR,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:282
+T00068,instruction,C,C_OR,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:298
+T00069,instruction,C,C_AND,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:314
+T00070,instruction,C,C_SUBW,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:330
+T00071,instruction,C,C_ADDW,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:347
+T00072,instruction,C,C_J,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:364
+T00073,instruction,C,C_BEQZ,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:377
+T00074,instruction,C,C_BNEZ,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:390
+T00075,instruction,C,C_SLLI,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:403
+T00076,instruction,C,C_LWSP,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:418
+T00077,instruction,C,C_LDSP,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:434
+T00078,instruction,C,C_SWSP,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:450
+T00079,instruction,C,C_SDSP,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:465
+T00080,instruction,C,C_JR,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:481
+T00081,instruction,C,C_JALR,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:495
+T00082,instruction,C,C_MV,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:509
+T00083,instruction,C,C_EBREAK,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:525
+T00084,instruction,C,C_ADD,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zca_insts.sail:538
+T00085,instruction,C,C_LBU,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zcb_insts.sail:11
+T00086,instruction,C,C_LHU,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zcb_insts.sail:30
+T00087,instruction,C,C_LH,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zcb_insts.sail:49
+T00088,instruction,C,C_SB,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zcb_insts.sail:68
+T00089,instruction,C,C_SH,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zcb_insts.sail:87
+T00090,instruction,C,C_ZEXT_B,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zcb_insts.sail:106
+T00091,instruction,C,C_SEXT_B,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zcb_insts.sail:124
+T00092,instruction,C,C_ZEXT_H,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zcb_insts.sail:141
+T00093,instruction,C,C_SEXT_H,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zcb_insts.sail:158
+T00094,instruction,C,C_ZEXT_W,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zcb_insts.sail:175
+T00095,instruction,C,C_NOT,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zcb_insts.sail:192
+T00096,instruction,C,C_MUL,Not directly derivable from Sail,C,architectural state after retire or trap,extensions/C/zcb_insts.sail:210
+T00097,instruction,FD,F_MADD_TYPE_D#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00098,instruction,FD,F_MADD_TYPE_D#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00099,instruction,FD,F_MADD_TYPE_D#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00100,instruction,FD,F_MADD_TYPE_D#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00101,instruction,FD,F_MADD_TYPE_D#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00102,instruction,FD,F_MADD_TYPE_D#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00103,instruction,FD,F_MADD_TYPE_D#6,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00104,instruction,FD,F_MADD_TYPE_D#7,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00105,instruction,FD,F_MADD_TYPE_D#8,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00106,instruction,FD,F_MADD_TYPE_D#9,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00107,instruction,FD,F_MADD_TYPE_D#10,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00108,instruction,FD,F_MADD_TYPE_D#11,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00109,instruction,FD,F_MADD_TYPE_D#12,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00110,instruction,FD,F_MADD_TYPE_D#13,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00111,instruction,FD,F_MADD_TYPE_D#14,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00112,instruction,FD,F_MADD_TYPE_D#15,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00113,instruction,FD,F_MADD_TYPE_D#16,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00114,instruction,FD,F_MADD_TYPE_D#17,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00115,instruction,FD,F_MADD_TYPE_D#18,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00116,instruction,FD,F_MADD_TYPE_D#19,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00117,instruction,FD,F_MADD_TYPE_D#20,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00118,instruction,FD,F_MADD_TYPE_D#21,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00119,instruction,FD,F_MADD_TYPE_D#22,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00120,instruction,FD,F_MADD_TYPE_D#23,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:245
+T00121,instruction,FD,F_BIN_RM_TYPE_D#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00122,instruction,FD,F_BIN_RM_TYPE_D#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00123,instruction,FD,F_BIN_RM_TYPE_D#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00124,instruction,FD,F_BIN_RM_TYPE_D#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00125,instruction,FD,F_BIN_RM_TYPE_D#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00126,instruction,FD,F_BIN_RM_TYPE_D#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00127,instruction,FD,F_BIN_RM_TYPE_D#6,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00128,instruction,FD,F_BIN_RM_TYPE_D#7,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00129,instruction,FD,F_BIN_RM_TYPE_D#8,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00130,instruction,FD,F_BIN_RM_TYPE_D#9,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00131,instruction,FD,F_BIN_RM_TYPE_D#10,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00132,instruction,FD,F_BIN_RM_TYPE_D#11,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00133,instruction,FD,F_BIN_RM_TYPE_D#12,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00134,instruction,FD,F_BIN_RM_TYPE_D#13,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00135,instruction,FD,F_BIN_RM_TYPE_D#14,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00136,instruction,FD,F_BIN_RM_TYPE_D#15,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00137,instruction,FD,F_BIN_RM_TYPE_D#16,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00138,instruction,FD,F_BIN_RM_TYPE_D#17,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00139,instruction,FD,F_BIN_RM_TYPE_D#18,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00140,instruction,FD,F_BIN_RM_TYPE_D#19,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00141,instruction,FD,F_BIN_RM_TYPE_D#20,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00142,instruction,FD,F_BIN_RM_TYPE_D#21,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00143,instruction,FD,F_BIN_RM_TYPE_D#22,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00144,instruction,FD,F_BIN_RM_TYPE_D#23,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:313
+T00145,instruction,FD,F_UN_RM_FF_TYPE_D#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00146,instruction,FD,F_UN_RM_FF_TYPE_D#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00147,instruction,FD,F_UN_RM_FF_TYPE_D#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00148,instruction,FD,F_UN_RM_FF_TYPE_D#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00149,instruction,FD,F_UN_RM_FF_TYPE_D#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00150,instruction,FD,F_UN_RM_FF_TYPE_D#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00151,instruction,FD,F_UN_RM_FF_TYPE_D#6,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00152,instruction,FD,F_UN_RM_FF_TYPE_D#7,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00153,instruction,FD,F_UN_RM_FF_TYPE_D#8,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00154,instruction,FD,F_UN_RM_FF_TYPE_D#9,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00155,instruction,FD,F_UN_RM_FF_TYPE_D#10,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00156,instruction,FD,F_UN_RM_FF_TYPE_D#11,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00157,instruction,FD,F_UN_RM_FF_TYPE_D#12,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00158,instruction,FD,F_UN_RM_FF_TYPE_D#13,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00159,instruction,FD,F_UN_RM_FF_TYPE_D#14,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00160,instruction,FD,F_UN_RM_FF_TYPE_D#15,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00161,instruction,FD,F_UN_RM_FF_TYPE_D#16,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00162,instruction,FD,F_UN_RM_FF_TYPE_D#17,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:377
+T00163,instruction,FD,F_UN_RM_XF_TYPE_D#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:378
+T00164,instruction,FD,F_UN_RM_XF_TYPE_D#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:378
+T00165,instruction,FD,F_UN_RM_XF_TYPE_D#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:378
+T00166,instruction,FD,F_UN_RM_XF_TYPE_D#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:378
+T00167,instruction,FD,F_UN_RM_XF_TYPE_D#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:378
+T00168,instruction,FD,F_UN_RM_XF_TYPE_D#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:378
+T00169,instruction,FD,F_UN_RM_FX_TYPE_D#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:379
+T00170,instruction,FD,F_UN_RM_FX_TYPE_D#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:379
+T00171,instruction,FD,F_UN_RM_FX_TYPE_D#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:379
+T00172,instruction,FD,F_UN_RM_FX_TYPE_D#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:379
+T00173,instruction,FD,F_UN_RM_FX_TYPE_D#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:379
+T00174,instruction,FD,F_UN_RM_FX_TYPE_D#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:379
+T00175,instruction,FD,F_BIN_F_TYPE_D#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:645
+T00176,instruction,FD,F_BIN_F_TYPE_D#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:645
+T00177,instruction,FD,F_BIN_F_TYPE_D#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:645
+T00178,instruction,FD,F_BIN_F_TYPE_D#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:645
+T00179,instruction,FD,F_BIN_F_TYPE_D#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:645
+T00180,instruction,FD,F_BIN_X_TYPE_D#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:646
+T00181,instruction,FD,F_BIN_X_TYPE_D#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:646
+T00182,instruction,FD,F_BIN_X_TYPE_D#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:646
+T00183,instruction,FD,F_UN_X_TYPE_D,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:825
+T00184,instruction,FD,F_UN_F_TYPE_D,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/dext_insts.sail:826
+T00185,instruction,FD,LOAD_FP,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:269
+T00186,instruction,FD,STORE_FP,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:305
+T00187,instruction,FD,F_MADD_TYPE_S#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00188,instruction,FD,F_MADD_TYPE_S#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00189,instruction,FD,F_MADD_TYPE_S#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00190,instruction,FD,F_MADD_TYPE_S#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00191,instruction,FD,F_MADD_TYPE_S#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00192,instruction,FD,F_MADD_TYPE_S#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00193,instruction,FD,F_MADD_TYPE_S#6,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00194,instruction,FD,F_MADD_TYPE_S#7,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00195,instruction,FD,F_MADD_TYPE_S#8,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00196,instruction,FD,F_MADD_TYPE_S#9,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00197,instruction,FD,F_MADD_TYPE_S#10,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00198,instruction,FD,F_MADD_TYPE_S#11,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00199,instruction,FD,F_MADD_TYPE_S#12,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00200,instruction,FD,F_MADD_TYPE_S#13,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00201,instruction,FD,F_MADD_TYPE_S#14,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00202,instruction,FD,F_MADD_TYPE_S#15,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00203,instruction,FD,F_MADD_TYPE_S#16,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00204,instruction,FD,F_MADD_TYPE_S#17,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00205,instruction,FD,F_MADD_TYPE_S#18,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00206,instruction,FD,F_MADD_TYPE_S#19,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00207,instruction,FD,F_MADD_TYPE_S#20,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00208,instruction,FD,F_MADD_TYPE_S#21,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00209,instruction,FD,F_MADD_TYPE_S#22,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00210,instruction,FD,F_MADD_TYPE_S#23,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:342
+T00211,instruction,FD,F_BIN_RM_TYPE_S#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00212,instruction,FD,F_BIN_RM_TYPE_S#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00213,instruction,FD,F_BIN_RM_TYPE_S#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00214,instruction,FD,F_BIN_RM_TYPE_S#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00215,instruction,FD,F_BIN_RM_TYPE_S#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00216,instruction,FD,F_BIN_RM_TYPE_S#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00217,instruction,FD,F_BIN_RM_TYPE_S#6,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00218,instruction,FD,F_BIN_RM_TYPE_S#7,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00219,instruction,FD,F_BIN_RM_TYPE_S#8,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00220,instruction,FD,F_BIN_RM_TYPE_S#9,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00221,instruction,FD,F_BIN_RM_TYPE_S#10,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00222,instruction,FD,F_BIN_RM_TYPE_S#11,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00223,instruction,FD,F_BIN_RM_TYPE_S#12,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00224,instruction,FD,F_BIN_RM_TYPE_S#13,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00225,instruction,FD,F_BIN_RM_TYPE_S#14,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00226,instruction,FD,F_BIN_RM_TYPE_S#15,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00227,instruction,FD,F_BIN_RM_TYPE_S#16,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00228,instruction,FD,F_BIN_RM_TYPE_S#17,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00229,instruction,FD,F_BIN_RM_TYPE_S#18,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00230,instruction,FD,F_BIN_RM_TYPE_S#19,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00231,instruction,FD,F_BIN_RM_TYPE_S#20,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00232,instruction,FD,F_BIN_RM_TYPE_S#21,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00233,instruction,FD,F_BIN_RM_TYPE_S#22,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00234,instruction,FD,F_BIN_RM_TYPE_S#23,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:409
+T00235,instruction,FD,F_UN_RM_FF_TYPE_S#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:473
+T00236,instruction,FD,F_UN_RM_FF_TYPE_S#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:473
+T00237,instruction,FD,F_UN_RM_FF_TYPE_S#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:473
+T00238,instruction,FD,F_UN_RM_FF_TYPE_S#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:473
+T00239,instruction,FD,F_UN_RM_FF_TYPE_S#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:473
+T00240,instruction,FD,F_UN_RM_FF_TYPE_S#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:473
+T00241,instruction,FD,F_UN_RM_FX_TYPE_S#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:474
+T00242,instruction,FD,F_UN_RM_FX_TYPE_S#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:474
+T00243,instruction,FD,F_UN_RM_FX_TYPE_S#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:474
+T00244,instruction,FD,F_UN_RM_FX_TYPE_S#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:474
+T00245,instruction,FD,F_UN_RM_FX_TYPE_S#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:474
+T00246,instruction,FD,F_UN_RM_FX_TYPE_S#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:474
+T00247,instruction,FD,F_UN_RM_XF_TYPE_S#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:475
+T00248,instruction,FD,F_UN_RM_XF_TYPE_S#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:475
+T00249,instruction,FD,F_UN_RM_XF_TYPE_S#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:475
+T00250,instruction,FD,F_UN_RM_XF_TYPE_S#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:475
+T00251,instruction,FD,F_UN_RM_XF_TYPE_S#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:475
+T00252,instruction,FD,F_UN_RM_XF_TYPE_S#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:475
+T00253,instruction,FD,F_BIN_TYPE_F_S#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:698
+T00254,instruction,FD,F_BIN_TYPE_F_S#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:698
+T00255,instruction,FD,F_BIN_TYPE_F_S#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:698
+T00256,instruction,FD,F_BIN_TYPE_F_S#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:698
+T00257,instruction,FD,F_BIN_TYPE_F_S#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:698
+T00258,instruction,FD,F_BIN_TYPE_X_S#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:699
+T00259,instruction,FD,F_BIN_TYPE_X_S#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:699
+T00260,instruction,FD,F_BIN_TYPE_X_S#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:699
+T00261,instruction,FD,F_UN_TYPE_F_S,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:877
+T00262,instruction,FD,F_UN_TYPE_X_S#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:878
+T00263,instruction,FD,F_UN_TYPE_X_S#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/fext_insts.sail:878
+T00264,instruction,FD,C_FLDSP,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zcd_insts.sail:11
+T00265,instruction,FD,C_FSDSP,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zcd_insts.sail:26
+T00266,instruction,FD,C_FLD,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zcd_insts.sail:41
+T00267,instruction,FD,C_FSD,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zcd_insts.sail:58
+T00268,instruction,FD,C_FLWSP,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zcf_insts.sail:11
+T00269,instruction,FD,C_FSWSP,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zcf_insts.sail:27
+T00270,instruction,FD,C_FLW,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zcf_insts.sail:43
+T00271,instruction,FD,C_FSW,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zcf_insts.sail:61
+T00272,instruction,FD,FLI_H,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:13
+T00273,instruction,FD,FLI_S,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:63
+T00274,instruction,FD,FLI_D,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:113
+T00275,instruction,FD,FMINM_H,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:163
+T00276,instruction,FD,FMAXM_H,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:194
+T00277,instruction,FD,FMINM_S,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:225
+T00278,instruction,FD,FMAXM_S,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:256
+T00279,instruction,FD,FMINM_D,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:287
+T00280,instruction,FD,FMAXM_D,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:318
+T00281,instruction,FD,FROUND_H#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:349
+T00282,instruction,FD,FROUND_H#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:349
+T00283,instruction,FD,FROUND_H#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:349
+T00284,instruction,FD,FROUND_H#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:349
+T00285,instruction,FD,FROUND_H#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:349
+T00286,instruction,FD,FROUND_H#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:349
+T00287,instruction,FD,FROUNDNX_H#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:378
+T00288,instruction,FD,FROUNDNX_H#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:378
+T00289,instruction,FD,FROUNDNX_H#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:378
+T00290,instruction,FD,FROUNDNX_H#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:378
+T00291,instruction,FD,FROUNDNX_H#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:378
+T00292,instruction,FD,FROUNDNX_H#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:378
+T00293,instruction,FD,FROUND_S#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:407
+T00294,instruction,FD,FROUND_S#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:407
+T00295,instruction,FD,FROUND_S#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:407
+T00296,instruction,FD,FROUND_S#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:407
+T00297,instruction,FD,FROUND_S#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:407
+T00298,instruction,FD,FROUND_S#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:407
+T00299,instruction,FD,FROUNDNX_S#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:436
+T00300,instruction,FD,FROUNDNX_S#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:436
+T00301,instruction,FD,FROUNDNX_S#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:436
+T00302,instruction,FD,FROUNDNX_S#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:436
+T00303,instruction,FD,FROUNDNX_S#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:436
+T00304,instruction,FD,FROUNDNX_S#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:436
+T00305,instruction,FD,FROUND_D#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:465
+T00306,instruction,FD,FROUND_D#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:465
+T00307,instruction,FD,FROUND_D#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:465
+T00308,instruction,FD,FROUND_D#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:465
+T00309,instruction,FD,FROUND_D#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:465
+T00310,instruction,FD,FROUND_D#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:465
+T00311,instruction,FD,FROUNDNX_D#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:494
+T00312,instruction,FD,FROUNDNX_D#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:494
+T00313,instruction,FD,FROUNDNX_D#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:494
+T00314,instruction,FD,FROUNDNX_D#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:494
+T00315,instruction,FD,FROUNDNX_D#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:494
+T00316,instruction,FD,FROUNDNX_D#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:494
+T00317,instruction,FD,FMVH_X_D,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:523
+T00318,instruction,FD,FMVP_D_X,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:542
+T00319,instruction,FD,FLEQ_H,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:570
+T00320,instruction,FD,FLTQ_H,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:595
+T00321,instruction,FD,FLEQ_S,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:620
+T00322,instruction,FD,FLTQ_S,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:645
+T00323,instruction,FD,FLEQ_D,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:671
+T00324,instruction,FD,FLTQ_D,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:696
+T00325,instruction,FD,FCVTMOD_W_D,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfa_insts.sail:778
+T00326,instruction,FD,F_BIN_RM_TYPE_H#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00327,instruction,FD,F_BIN_RM_TYPE_H#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00328,instruction,FD,F_BIN_RM_TYPE_H#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00329,instruction,FD,F_BIN_RM_TYPE_H#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00330,instruction,FD,F_BIN_RM_TYPE_H#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00331,instruction,FD,F_BIN_RM_TYPE_H#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00332,instruction,FD,F_BIN_RM_TYPE_H#6,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00333,instruction,FD,F_BIN_RM_TYPE_H#7,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00334,instruction,FD,F_BIN_RM_TYPE_H#8,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00335,instruction,FD,F_BIN_RM_TYPE_H#9,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00336,instruction,FD,F_BIN_RM_TYPE_H#10,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00337,instruction,FD,F_BIN_RM_TYPE_H#11,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00338,instruction,FD,F_BIN_RM_TYPE_H#12,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00339,instruction,FD,F_BIN_RM_TYPE_H#13,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00340,instruction,FD,F_BIN_RM_TYPE_H#14,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00341,instruction,FD,F_BIN_RM_TYPE_H#15,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00342,instruction,FD,F_BIN_RM_TYPE_H#16,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00343,instruction,FD,F_BIN_RM_TYPE_H#17,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00344,instruction,FD,F_BIN_RM_TYPE_H#18,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00345,instruction,FD,F_BIN_RM_TYPE_H#19,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00346,instruction,FD,F_BIN_RM_TYPE_H#20,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00347,instruction,FD,F_BIN_RM_TYPE_H#21,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00348,instruction,FD,F_BIN_RM_TYPE_H#22,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00349,instruction,FD,F_BIN_RM_TYPE_H#23,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:172
+T00350,instruction,FD,F_MADD_TYPE_H#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00351,instruction,FD,F_MADD_TYPE_H#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00352,instruction,FD,F_MADD_TYPE_H#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00353,instruction,FD,F_MADD_TYPE_H#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00354,instruction,FD,F_MADD_TYPE_H#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00355,instruction,FD,F_MADD_TYPE_H#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00356,instruction,FD,F_MADD_TYPE_H#6,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00357,instruction,FD,F_MADD_TYPE_H#7,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00358,instruction,FD,F_MADD_TYPE_H#8,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00359,instruction,FD,F_MADD_TYPE_H#9,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00360,instruction,FD,F_MADD_TYPE_H#10,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00361,instruction,FD,F_MADD_TYPE_H#11,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00362,instruction,FD,F_MADD_TYPE_H#12,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00363,instruction,FD,F_MADD_TYPE_H#13,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00364,instruction,FD,F_MADD_TYPE_H#14,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00365,instruction,FD,F_MADD_TYPE_H#15,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00366,instruction,FD,F_MADD_TYPE_H#16,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00367,instruction,FD,F_MADD_TYPE_H#17,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00368,instruction,FD,F_MADD_TYPE_H#18,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00369,instruction,FD,F_MADD_TYPE_H#19,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00370,instruction,FD,F_MADD_TYPE_H#20,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00371,instruction,FD,F_MADD_TYPE_H#21,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00372,instruction,FD,F_MADD_TYPE_H#22,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00373,instruction,FD,F_MADD_TYPE_H#23,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:236
+T00374,instruction,FD,F_BIN_F_TYPE_H#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:303
+T00375,instruction,FD,F_BIN_F_TYPE_H#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:303
+T00376,instruction,FD,F_BIN_F_TYPE_H#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:303
+T00377,instruction,FD,F_BIN_F_TYPE_H#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:303
+T00378,instruction,FD,F_BIN_F_TYPE_H#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:303
+T00379,instruction,FD,F_BIN_X_TYPE_H#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:304
+T00380,instruction,FD,F_BIN_X_TYPE_H#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:304
+T00381,instruction,FD,F_BIN_X_TYPE_H#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:304
+T00382,instruction,FD,F_UN_RM_FF_TYPE_H#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00383,instruction,FD,F_UN_RM_FF_TYPE_H#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00384,instruction,FD,F_UN_RM_FF_TYPE_H#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00385,instruction,FD,F_UN_RM_FF_TYPE_H#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00386,instruction,FD,F_UN_RM_FF_TYPE_H#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00387,instruction,FD,F_UN_RM_FF_TYPE_H#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00388,instruction,FD,F_UN_RM_FF_TYPE_H#6,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00389,instruction,FD,F_UN_RM_FF_TYPE_H#7,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00390,instruction,FD,F_UN_RM_FF_TYPE_H#8,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00391,instruction,FD,F_UN_RM_FF_TYPE_H#9,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00392,instruction,FD,F_UN_RM_FF_TYPE_H#10,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00393,instruction,FD,F_UN_RM_FF_TYPE_H#11,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00394,instruction,FD,F_UN_RM_FF_TYPE_H#12,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00395,instruction,FD,F_UN_RM_FF_TYPE_H#13,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00396,instruction,FD,F_UN_RM_FF_TYPE_H#14,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00397,instruction,FD,F_UN_RM_FF_TYPE_H#15,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00398,instruction,FD,F_UN_RM_FF_TYPE_H#16,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00399,instruction,FD,F_UN_RM_FF_TYPE_H#17,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00400,instruction,FD,F_UN_RM_FF_TYPE_H#18,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00401,instruction,FD,F_UN_RM_FF_TYPE_H#19,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00402,instruction,FD,F_UN_RM_FF_TYPE_H#20,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00403,instruction,FD,F_UN_RM_FF_TYPE_H#21,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00404,instruction,FD,F_UN_RM_FF_TYPE_H#22,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00405,instruction,FD,F_UN_RM_FF_TYPE_H#23,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00406,instruction,FD,F_UN_RM_FF_TYPE_H#24,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00407,instruction,FD,F_UN_RM_FF_TYPE_H#25,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00408,instruction,FD,F_UN_RM_FF_TYPE_H#26,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00409,instruction,FD,F_UN_RM_FF_TYPE_H#27,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00410,instruction,FD,F_UN_RM_FF_TYPE_H#28,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00411,instruction,FD,F_UN_RM_FF_TYPE_H#29,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:484
+T00412,instruction,FD,F_UN_RM_FX_TYPE_H#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:485
+T00413,instruction,FD,F_UN_RM_FX_TYPE_H#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:485
+T00414,instruction,FD,F_UN_RM_FX_TYPE_H#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:485
+T00415,instruction,FD,F_UN_RM_FX_TYPE_H#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:485
+T00416,instruction,FD,F_UN_RM_FX_TYPE_H#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:485
+T00417,instruction,FD,F_UN_RM_FX_TYPE_H#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:485
+T00418,instruction,FD,F_UN_RM_XF_TYPE_H#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:486
+T00419,instruction,FD,F_UN_RM_XF_TYPE_H#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:486
+T00420,instruction,FD,F_UN_RM_XF_TYPE_H#2,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:486
+T00421,instruction,FD,F_UN_RM_XF_TYPE_H#3,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:486
+T00422,instruction,FD,F_UN_RM_XF_TYPE_H#4,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:486
+T00423,instruction,FD,F_UN_RM_XF_TYPE_H#5,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:486
+T00424,instruction,FD,F_UN_F_TYPE_H,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:793
+T00425,instruction,FD,F_UN_X_TYPE_H#0,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:794
+T00426,instruction,FD,F_UN_X_TYPE_H#1,Not directly derivable from Sail,FD,architectural state after retire or trap,extensions/FD/zfh_insts.sail:794
+T00427,instruction,I,UTYPE#0,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:16
+T00428,instruction,I,UTYPE#1,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:16
+T00429,instruction,I,JAL,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:70
+T00430,instruction,I,JALR,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:89
+T00431,instruction,I,BTYPE#0,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:101
+T00432,instruction,I,BTYPE#1,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:101
+T00433,instruction,I,BTYPE#2,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:101
+T00434,instruction,I,BTYPE#3,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:101
+T00435,instruction,I,BTYPE#4,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:101
+T00436,instruction,I,BTYPE#5,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:101
+T00437,instruction,I,ITYPE#0,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:143
+T00438,instruction,I,ITYPE#1,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:143
+T00439,instruction,I,ITYPE#2,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:143
+T00440,instruction,I,ITYPE#3,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:143
+T00441,instruction,I,ITYPE#4,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:143
+T00442,instruction,I,ITYPE#5,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:143
+T00443,instruction,I,SHIFTIOP#0,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:184
+T00444,instruction,I,SHIFTIOP#1,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:184
+T00445,instruction,I,SHIFTIOP#2,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:184
+T00446,instruction,I,RTYPE,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:223
+T00447,instruction,I,LOAD,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:270
+T00448,instruction,I,STORE,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:309
+T00449,instruction,I,ADDIW,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:337
+T00450,instruction,I,RTYPEW#0,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:355
+T00451,instruction,I,RTYPEW#1,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:355
+T00452,instruction,I,RTYPEW#2,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:355
+T00453,instruction,I,RTYPEW#3,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:355
+T00454,instruction,I,RTYPEW#4,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:355
+T00455,instruction,I,SHIFTIWOP#0,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:401
+T00456,instruction,I,SHIFTIWOP#1,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:401
+T00457,instruction,I,SHIFTIWOP#2,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:401
+T00458,instruction,I,FENCE_TSO,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:436
+T00459,instruction,I,FENCE,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:450
+T00460,instruction,I,ECALL,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:536
+T00461,instruction,I,MRET,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:560
+T00462,instruction,I,SRET,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:597
+T00463,instruction,I,EBREAK,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:642
+T00464,instruction,I,WFI,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:653
+T00465,instruction,I,SFENCE_VMA,Not directly derivable from Sail,I,architectural state after retire or trap,extensions/I/base_insts.sail:672
+T00466,instruction,K,ZBKB_RTYPE#0,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zbkb_insts.sail:10
+T00467,instruction,K,ZBKB_RTYPE#1,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zbkb_insts.sail:10
+T00468,instruction,K,ZBKB_PACKW,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zbkb_insts.sail:43
+T00469,instruction,K,ZIP,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zbkb_insts.sail:63
+T00470,instruction,K,UNZIP,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zbkb_insts.sail:86
+T00471,instruction,K,BREV8,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zbkb_insts.sail:109
+T00472,instruction,K,XPERM8,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zbkx_insts.sail:12
+T00473,instruction,K,XPERM4,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zbkx_insts.sail:37
+T00474,instruction,K,SHA256SIG0,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:15
+T00475,instruction,K,SHA256SIG1,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:16
+T00476,instruction,K,SHA256SUM0,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:17
+T00477,instruction,K,SHA256SUM1,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:18
+T00478,instruction,K,AES32ESMI,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:85
+T00479,instruction,K,AES32ESI,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:105
+T00480,instruction,K,AES32DSMI,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:129
+T00481,instruction,K,AES32DSI,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:149
+T00482,instruction,K,SHA512SIG0L,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:171
+T00483,instruction,K,SHA512SIG0H,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:172
+T00484,instruction,K,SHA512SIG1L,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:173
+T00485,instruction,K,SHA512SIG1H,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:174
+T00486,instruction,K,SHA512SUM0R,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:175
+T00487,instruction,K,SHA512SUM1R,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:176
+T00488,instruction,K,AES64KS1I,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:265
+T00489,instruction,K,AES64KS2,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:266
+T00490,instruction,K,AES64IM,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:267
+T00491,instruction,K,AES64ESM,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:268
+T00492,instruction,K,AES64ES,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:269
+T00493,instruction,K,AES64DSM,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:270
+T00494,instruction,K,AES64DS,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:271
+T00495,instruction,K,SHA512SIG0,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:395
+T00496,instruction,K,SHA512SIG1,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:396
+T00497,instruction,K,SHA512SUM0,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:397
+T00498,instruction,K,SHA512SUM1,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zkn_insts.sail:398
+T00499,instruction,K,SM3P0,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zks_insts.sail:14
+T00500,instruction,K,SM3P1,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zks_insts.sail:15
+T00501,instruction,K,SM4ED,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zks_insts.sail:52
+T00502,instruction,K,SM4KS,Not directly derivable from Sail,K,architectural state after retire or trap,extensions/K/zks_insts.sail:53
+T00503,instruction,M,MUL,Not directly derivable from Sail,M,architectural state after retire or trap,extensions/M/mext_insts.sail:16
+T00504,instruction,M,DIV,Not directly derivable from Sail,M,architectural state after retire or trap,extensions/M/mext_insts.sail:47
+T00505,instruction,M,REM,Not directly derivable from Sail,M,architectural state after retire or trap,extensions/M/mext_insts.sail:70
+T00506,instruction,M,MULW,Not directly derivable from Sail,M,architectural state after retire or trap,extensions/M/mext_insts.sail:92
+T00507,instruction,M,DIVW,Not directly derivable from Sail,M,architectural state after retire or trap,extensions/M/mext_insts.sail:114
+T00508,instruction,M,REMW,Not directly derivable from Sail,M,architectural state after retire or trap,extensions/M/mext_insts.sail:138
+T00509,instruction,Svinval,SINVAL_VMA,Not directly derivable from Sail,Svinval,architectural state after retire or trap,extensions/Svinval/svinval_insts.sail:11
+T00510,instruction,Svinval,SFENCE_W_INVAL,Not directly derivable from Sail,Svinval,architectural state after retire or trap,extensions/Svinval/svinval_insts.sail:26
+T00511,instruction,Svinval,SFENCE_INVAL_IR,Not directly derivable from Sail,Svinval,architectural state after retire or trap,extensions/Svinval/svinval_insts.sail:44
+T00512,instruction,V,VVTYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:17
+T00513,instruction,V,NVSTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:208
+T00514,instruction,V,NVSTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:208
+T00515,instruction,V,NVTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:283
+T00516,instruction,V,NVTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:283
+T00517,instruction,V,MASKTYPEV,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:358
+T00518,instruction,V,MOVETYPEV,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:415
+T00519,instruction,V,VXTYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:455
+T00520,instruction,V,NXSTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:598
+T00521,instruction,V,NXSTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:598
+T00522,instruction,V,NXTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:671
+T00523,instruction,V,NXTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:671
+T00524,instruction,V,VXSG#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:745
+T00525,instruction,V,VXSG#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:745
+T00526,instruction,V,VXSG#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:745
+T00527,instruction,V,MASKTYPEX,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:829
+T00528,instruction,V,MOVETYPEX,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:884
+T00529,instruction,V,VITYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:921
+T00530,instruction,V,NISTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1029
+T00531,instruction,V,NISTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1029
+T00532,instruction,V,NITYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1102
+T00533,instruction,V,NITYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1102
+T00534,instruction,V,VISG#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1176
+T00535,instruction,V,VISG#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1176
+T00536,instruction,V,VISG#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1176
+T00537,instruction,V,MASKTYPEI,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1259
+T00538,instruction,V,MOVETYPEI,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1314
+T00539,instruction,V,VMVRTYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1351
+T00540,instruction,V,MVVTYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1418
+T00541,instruction,V,MVVMATYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1551
+T00542,instruction,V,MVVMATYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1551
+T00543,instruction,V,MVVMATYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1551
+T00544,instruction,V,MVVMATYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1551
+T00545,instruction,V,WVVTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1617
+T00546,instruction,V,WVVTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1617
+T00547,instruction,V,WVVTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1617
+T00548,instruction,V,WVVTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1617
+T00549,instruction,V,WVVTYPE#4,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1617
+T00550,instruction,V,WVVTYPE#5,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1617
+T00551,instruction,V,WVVTYPE#6,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1617
+T00552,instruction,V,WVTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1697
+T00553,instruction,V,WVTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1697
+T00554,instruction,V,WVTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1697
+T00555,instruction,V,WVTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1697
+T00556,instruction,V,WMVVTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1770
+T00557,instruction,V,WMVVTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1770
+T00558,instruction,V,WMVVTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1770
+T00559,instruction,V,VEXTTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1840
+T00560,instruction,V,VEXTTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1840
+T00561,instruction,V,VEXTTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1840
+T00562,instruction,V,VEXTTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1840
+T00563,instruction,V,VEXTTYPE#4,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1840
+T00564,instruction,V,VEXTTYPE#5,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1840
+T00565,instruction,V,VMVXS,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1922
+T00566,instruction,V,MVVCOMPRESS,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:1959
+T00567,instruction,V,MVXTYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2021
+T00568,instruction,V,MVXMATYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2168
+T00569,instruction,V,MVXMATYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2168
+T00570,instruction,V,MVXMATYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2168
+T00571,instruction,V,MVXMATYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2168
+T00572,instruction,V,WVXTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2232
+T00573,instruction,V,WVXTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2232
+T00574,instruction,V,WVXTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2232
+T00575,instruction,V,WVXTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2232
+T00576,instruction,V,WVXTYPE#4,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2232
+T00577,instruction,V,WVXTYPE#5,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2232
+T00578,instruction,V,WVXTYPE#6,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2232
+T00579,instruction,V,WXTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2311
+T00580,instruction,V,WXTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2311
+T00581,instruction,V,WXTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2311
+T00582,instruction,V,WXTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2311
+T00583,instruction,V,WMVXTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2383
+T00584,instruction,V,WMVXTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2383
+T00585,instruction,V,WMVXTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2383
+T00586,instruction,V,WMVXTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2383
+T00587,instruction,V,VMVSX,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_arith_insts.sail:2453
+T00588,instruction,V,FVVTYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:16
+T00589,instruction,V,FVVMATYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:102
+T00590,instruction,V,FVVMATYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:102
+T00591,instruction,V,FVVMATYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:102
+T00592,instruction,V,FVVMATYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:102
+T00593,instruction,V,FVVMATYPE#4,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:102
+T00594,instruction,V,FVVMATYPE#5,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:102
+T00595,instruction,V,FVVMATYPE#6,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:102
+T00596,instruction,V,FVVMATYPE#7,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:102
+T00597,instruction,V,FWVVTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:184
+T00598,instruction,V,FWVVTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:184
+T00599,instruction,V,FWVVTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:184
+T00600,instruction,V,FWVVMATYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:255
+T00601,instruction,V,FWVVMATYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:255
+T00602,instruction,V,FWVVMATYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:255
+T00603,instruction,V,FWVVMATYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:255
+T00604,instruction,V,FWVTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:328
+T00605,instruction,V,FWVTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:328
+T00606,instruction,V,VFUNARY0#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:395
+T00607,instruction,V,VFUNARY0#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:395
+T00608,instruction,V,VFUNARY0#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:395
+T00609,instruction,V,VFUNARY0#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:395
+T00610,instruction,V,VFUNARY0#4,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:395
+T00611,instruction,V,VFUNARY0#5,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:395
+T00612,instruction,V,VFWUNARY0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:516
+T00613,instruction,V,VFNUNARY0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:650
+T00614,instruction,V,VFUNARY1#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:794
+T00615,instruction,V,VFUNARY1#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:794
+T00616,instruction,V,VFUNARY1#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:794
+T00617,instruction,V,VFUNARY1#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:794
+T00618,instruction,V,VFMVFS,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:885
+T00619,instruction,V,FVFTYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:924
+T00620,instruction,V,FVFMATYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1032
+T00621,instruction,V,FVFMATYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1032
+T00622,instruction,V,FVFMATYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1032
+T00623,instruction,V,FVFMATYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1032
+T00624,instruction,V,FVFMATYPE#4,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1032
+T00625,instruction,V,FVFMATYPE#5,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1032
+T00626,instruction,V,FVFMATYPE#6,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1032
+T00627,instruction,V,FVFMATYPE#7,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1032
+T00628,instruction,V,FWVFTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1112
+T00629,instruction,V,FWVFTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1112
+T00630,instruction,V,FWVFTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1112
+T00631,instruction,V,FWVFMATYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1181
+T00632,instruction,V,FWVFMATYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1181
+T00633,instruction,V,FWVFMATYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1181
+T00634,instruction,V,FWVFMATYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1181
+T00635,instruction,V,FWFTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1252
+T00636,instruction,V,FWFTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1252
+T00637,instruction,V,VFMERGE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1319
+T00638,instruction,V,VFMV,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1379
+T00639,instruction,V,VFMVSF,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_insts.sail:1422
+T00640,instruction,V,RFVVTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_red_insts.sail:15
+T00641,instruction,V,RFVVTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_red_insts.sail:15
+T00642,instruction,V,RFVVTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_red_insts.sail:15
+T00643,instruction,V,RFVVTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_red_insts.sail:15
+T00644,instruction,V,RFWVVTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_red_insts.sail:90
+T00645,instruction,V,RFWVVTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_red_insts.sail:90
+T00646,instruction,V,FVVMTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_vm_insts.sail:16
+T00647,instruction,V,FVVMTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_vm_insts.sail:16
+T00648,instruction,V,FVVMTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_vm_insts.sail:16
+T00649,instruction,V,FVVMTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_vm_insts.sail:16
+T00650,instruction,V,FVFMTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_vm_insts.sail:87
+T00651,instruction,V,FVFMTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_vm_insts.sail:87
+T00652,instruction,V,FVFMTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_vm_insts.sail:87
+T00653,instruction,V,FVFMTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_vm_insts.sail:87
+T00654,instruction,V,FVFMTYPE#4,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_vm_insts.sail:87
+T00655,instruction,V,FVFMTYPE#5,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_fp_vm_insts.sail:87
+T00656,instruction,V,MMTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:15
+T00657,instruction,V,MMTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:15
+T00658,instruction,V,MMTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:15
+T00659,instruction,V,MMTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:15
+T00660,instruction,V,MMTYPE#4,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:15
+T00661,instruction,V,MMTYPE#5,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:15
+T00662,instruction,V,MMTYPE#6,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:15
+T00663,instruction,V,MMTYPE#7,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:15
+T00664,instruction,V,VCPOP_M,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:84
+T00665,instruction,V,VFIRST_M,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:112
+T00666,instruction,V,VMSBF_M,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:142
+T00667,instruction,V,VMSIF_M,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:183
+T00668,instruction,V,VMSOF_M,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:224
+T00669,instruction,V,VIOTA_M,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:269
+T00670,instruction,V,VID_V,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mask_insts.sail:314
+T00671,instruction,V,VLSEGTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:46
+T00672,instruction,V,VLSEGTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:46
+T00673,instruction,V,VLSEGTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:46
+T00674,instruction,V,VLSEGTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:46
+T00675,instruction,V,VLSEGFFTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:103
+T00676,instruction,V,VLSEGFFTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:103
+T00677,instruction,V,VLSEGFFTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:103
+T00678,instruction,V,VLSEGFFTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:103
+T00679,instruction,V,VSSEGTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:177
+T00680,instruction,V,VSSEGTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:177
+T00681,instruction,V,VSSEGTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:177
+T00682,instruction,V,VSSEGTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:177
+T00683,instruction,V,VLSSEGTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:234
+T00684,instruction,V,VLSSEGTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:234
+T00685,instruction,V,VLSSEGTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:234
+T00686,instruction,V,VLSSEGTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:234
+T00687,instruction,V,VSSSEGTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:292
+T00688,instruction,V,VSSSEGTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:292
+T00689,instruction,V,VSSSEGTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:292
+T00690,instruction,V,VSSSEGTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:292
+T00691,instruction,V,VLXSEGTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:351
+T00692,instruction,V,VLXSEGTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:351
+T00693,instruction,V,VLXSEGTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:351
+T00694,instruction,V,VLXSEGTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:351
+T00695,instruction,V,VLXSEGTYPE#4,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:351
+T00696,instruction,V,VLXSEGTYPE#5,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:351
+T00697,instruction,V,VLXSEGTYPE#6,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:351
+T00698,instruction,V,VLXSEGTYPE#7,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:351
+T00699,instruction,V,VSXSEGTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:419
+T00700,instruction,V,VSXSEGTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:419
+T00701,instruction,V,VSXSEGTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:419
+T00702,instruction,V,VSXSEGTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:419
+T00703,instruction,V,VSXSEGTYPE#4,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:419
+T00704,instruction,V,VSXSEGTYPE#5,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:419
+T00705,instruction,V,VSXSEGTYPE#6,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:419
+T00706,instruction,V,VSXSEGTYPE#7,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:419
+T00707,instruction,V,VLRETYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:480
+T00708,instruction,V,VLRETYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:480
+T00709,instruction,V,VLRETYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:480
+T00710,instruction,V,VLRETYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:480
+T00711,instruction,V,VSRETYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:538
+T00712,instruction,V,VMTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:599
+T00713,instruction,V,VMTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_mem_insts.sail:599
+T00714,instruction,V,RIVVTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_red_insts.sail:15
+T00715,instruction,V,RIVVTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_red_insts.sail:15
+T00716,instruction,V,RMVVTYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_red_insts.sail:84
+T00717,instruction,V,VVMTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:18
+T00718,instruction,V,VVMTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:18
+T00719,instruction,V,VVMCTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:81
+T00720,instruction,V,VVMCTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:81
+T00721,instruction,V,VVMSTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:141
+T00722,instruction,V,VVMSTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:141
+T00723,instruction,V,VVCMPTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:205
+T00724,instruction,V,VVCMPTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:205
+T00725,instruction,V,VVCMPTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:205
+T00726,instruction,V,VVCMPTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:205
+T00727,instruction,V,VVCMPTYPE#4,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:205
+T00728,instruction,V,VVCMPTYPE#5,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:205
+T00729,instruction,V,VXMTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:280
+T00730,instruction,V,VXMTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:280
+T00731,instruction,V,VXMCTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:341
+T00732,instruction,V,VXMCTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:341
+T00733,instruction,V,VXMSTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:398
+T00734,instruction,V,VXMSTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:398
+T00735,instruction,V,VXCMPTYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:460
+T00736,instruction,V,VIMTYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:539
+T00737,instruction,V,VIMCTYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:597
+T00738,instruction,V,VIMSTYPE,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:651
+T00739,instruction,V,VICMPTYPE#0,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:710
+T00740,instruction,V,VICMPTYPE#1,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:710
+T00741,instruction,V,VICMPTYPE#2,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:710
+T00742,instruction,V,VICMPTYPE#3,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:710
+T00743,instruction,V,VICMPTYPE#4,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:710
+T00744,instruction,V,VICMPTYPE#5,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vm_insts.sail:710
+T00745,instruction,V,VSETVLI,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vset_insts.sail:148
+T00746,instruction,V,VSETVL,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vset_insts.sail:173
+T00747,instruction,V,VSETIVLI,Not directly derivable from Sail,V,architectural state after retire or trap,extensions/V/vext_vset_insts.sail:199
+T00748,instruction,Zawrs,WRS#0,Not directly derivable from Sail,Zawrs,architectural state after retire or trap,extensions/Zawrs/zawrs_insts.sail:15
+T00749,instruction,Zawrs,WRS#1,Not directly derivable from Sail,Zawrs,architectural state after retire or trap,extensions/Zawrs/zawrs_insts.sail:15
+T00750,instruction,Zibi,BITYPE#0,Not directly derivable from Sail,Zibi,architectural state after retire or trap,extensions/Zibi/zibi_insts.sail:14
+T00751,instruction,Zibi,BITYPE#1,Not directly derivable from Sail,Zibi,architectural state after retire or trap,extensions/Zibi/zibi_insts.sail:14
+T00752,instruction,Zicbom,ZICBOM#0,Not directly derivable from Sail,Zicbom,architectural state after retire or trap,extensions/Zicbom/zicbom_insts.sail:14
+T00753,instruction,Zicbom,ZICBOM#1,Not directly derivable from Sail,Zicbom,architectural state after retire or trap,extensions/Zicbom/zicbom_insts.sail:14
+T00754,instruction,Zicbom,ZICBOM#2,Not directly derivable from Sail,Zicbom,architectural state after retire or trap,extensions/Zicbom/zicbom_insts.sail:14
+T00755,instruction,Zicbop,ZICBOP#0,Not directly derivable from Sail,Zicbop,architectural state after retire or trap,extensions/Zicbop/zicbop_insts.sail:14
+T00756,instruction,Zicbop,ZICBOP#1,Not directly derivable from Sail,Zicbop,architectural state after retire or trap,extensions/Zicbop/zicbop_insts.sail:14
+T00757,instruction,Zicbop,ZICBOP#2,Not directly derivable from Sail,Zicbop,architectural state after retire or trap,extensions/Zicbop/zicbop_insts.sail:14
+T00758,instruction,Zicboz,ZICBOZ,Not directly derivable from Sail,Zicboz,architectural state after retire or trap,extensions/Zicboz/zicboz_insts.sail:14
+T00759,instruction,Zicond,ZICOND_RTYPE#0,Not directly derivable from Sail,Zicond,architectural state after retire or trap,extensions/Zicond/zicond_insts.sail:11
+T00760,instruction,Zicond,ZICOND_RTYPE#1,Not directly derivable from Sail,Zicond,architectural state after retire or trap,extensions/Zicond/zicond_insts.sail:11
+T00761,instruction,Zicsr,CSRReg#0,Not directly derivable from Sail,Zicsr,architectural state after retire or trap,extensions/Zicsr/zicsr_insts.sail:14
+T00762,instruction,Zicsr,CSRReg#1,Not directly derivable from Sail,Zicsr,architectural state after retire or trap,extensions/Zicsr/zicsr_insts.sail:14
+T00763,instruction,Zicsr,CSRReg#2,Not directly derivable from Sail,Zicsr,architectural state after retire or trap,extensions/Zicsr/zicsr_insts.sail:14
+T00764,instruction,Zicsr,CSRImm#0,Not directly derivable from Sail,Zicsr,architectural state after retire or trap,extensions/Zicsr/zicsr_insts.sail:15
+T00765,instruction,Zicsr,CSRImm#1,Not directly derivable from Sail,Zicsr,architectural state after retire or trap,extensions/Zicsr/zicsr_insts.sail:15
+T00766,instruction,Zicsr,CSRImm#2,Not directly derivable from Sail,Zicsr,architectural state after retire or trap,extensions/Zicsr/zicsr_insts.sail:15
+T00767,instruction,Zifencei,FENCEI,Not directly derivable from Sail,Zifencei,architectural state after retire or trap,extensions/Zifencei/zifencei_insts.sail:16
+T00768,instruction,Zihintntl,NTL#0,Not directly derivable from Sail,Zihintntl,architectural state after retire or trap,extensions/Zihintntl/zihintntl_insts.sail:13
+T00769,instruction,Zihintntl,NTL#1,Not directly derivable from Sail,Zihintntl,architectural state after retire or trap,extensions/Zihintntl/zihintntl_insts.sail:13
+T00770,instruction,Zihintntl,NTL#2,Not directly derivable from Sail,Zihintntl,architectural state after retire or trap,extensions/Zihintntl/zihintntl_insts.sail:13
+T00771,instruction,Zihintntl,NTL#3,Not directly derivable from Sail,Zihintntl,architectural state after retire or trap,extensions/Zihintntl/zihintntl_insts.sail:13
+T00772,instruction,Zihintntl,C_NTL#0,Not directly derivable from Sail,Zihintntl,architectural state after retire or trap,extensions/Zihintntl/zihintntl_insts.sail:27
+T00773,instruction,Zihintntl,C_NTL#1,Not directly derivable from Sail,Zihintntl,architectural state after retire or trap,extensions/Zihintntl/zihintntl_insts.sail:27
+T00774,instruction,Zihintntl,C_NTL#2,Not directly derivable from Sail,Zihintntl,architectural state after retire or trap,extensions/Zihintntl/zihintntl_insts.sail:27
+T00775,instruction,Zihintntl,C_NTL#3,Not directly derivable from Sail,Zihintntl,architectural state after retire or trap,extensions/Zihintntl/zihintntl_insts.sail:27
+T00776,instruction,Zihintpause,PAUSE,Not directly derivable from Sail,Zihintpause,architectural state after retire or trap,extensions/Zihintpause/zihintpause_insts.sail:11
+T00777,instruction,Zvabd,VABS_V,Not directly derivable from Sail,Zvabd,architectural state after retire or trap,extensions/Zvabd/zvabd_insts.sail:17
+T00778,instruction,Zvabd,ZVABDTYPE#0,Not directly derivable from Sail,Zvabd,architectural state after retire or trap,extensions/Zvabd/zvabd_insts.sail:58
+T00779,instruction,Zvabd,ZVABDTYPE#1,Not directly derivable from Sail,Zvabd,architectural state after retire or trap,extensions/Zvabd/zvabd_insts.sail:58
+T00780,instruction,Zvabd,ZVWABDATYPE#0,Not directly derivable from Sail,Zvabd,architectural state after retire or trap,extensions/Zvabd/zvabd_insts.sail:114
+T00781,instruction,Zvabd,ZVWABDATYPE#1,Not directly derivable from Sail,Zvabd,architectural state after retire or trap,extensions/Zvabd/zvabd_insts.sail:114
+T00782,instruction,bfloat16,FCVT_BF16_S#0,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zfbfmin_insts.sail:13
+T00783,instruction,bfloat16,FCVT_BF16_S#1,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zfbfmin_insts.sail:13
+T00784,instruction,bfloat16,FCVT_BF16_S#2,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zfbfmin_insts.sail:13
+T00785,instruction,bfloat16,FCVT_BF16_S#3,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zfbfmin_insts.sail:13
+T00786,instruction,bfloat16,FCVT_BF16_S#4,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zfbfmin_insts.sail:13
+T00787,instruction,bfloat16,FCVT_BF16_S#5,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zfbfmin_insts.sail:13
+T00788,instruction,bfloat16,FCVT_S_BF16#0,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zfbfmin_insts.sail:38
+T00789,instruction,bfloat16,FCVT_S_BF16#1,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zfbfmin_insts.sail:38
+T00790,instruction,bfloat16,FCVT_S_BF16#2,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zfbfmin_insts.sail:38
+T00791,instruction,bfloat16,FCVT_S_BF16#3,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zfbfmin_insts.sail:38
+T00792,instruction,bfloat16,FCVT_S_BF16#4,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zfbfmin_insts.sail:38
+T00793,instruction,bfloat16,FCVT_S_BF16#5,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zfbfmin_insts.sail:38
+T00794,instruction,bfloat16,VFNCVTBF16_F_F_W,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zvfbfmin_insts.sail:11
+T00795,instruction,bfloat16,VFWCVTBF16_F_F_V,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zvfbfmin_insts.sail:63
+T00796,instruction,bfloat16,VFWMACCBF16_VV,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zvfbfwma_insts.sail:11
+T00797,instruction,bfloat16,VFWMACCBF16_VF,Not directly derivable from Sail,bfloat16,architectural state after retire or trap,extensions/bfloat16/zvfbfwma_insts.sail:64
+T00798,instruction,cfi,LPAD,Not directly derivable from Sail,cfi,architectural state after retire or trap,extensions/cfi/zicfilp_insts.sail:12
+T00799,instruction,cfi,SSPUSH,Not directly derivable from Sail,cfi,architectural state after retire or trap,extensions/cfi/zicfiss_insts.sail:14
+T00800,instruction,cfi,C_SSPUSH,Not directly derivable from Sail,cfi,architectural state after retire or trap,extensions/cfi/zicfiss_insts.sail:55
+T00801,instruction,cfi,SSPOPCHK,Not directly derivable from Sail,cfi,architectural state after retire or trap,extensions/cfi/zicfiss_insts.sail:70
+T00802,instruction,cfi,C_SSPOPCHK,Not directly derivable from Sail,cfi,architectural state after retire or trap,extensions/cfi/zicfiss_insts.sail:109
+T00803,instruction,cfi,SSRDP,Not directly derivable from Sail,cfi,architectural state after retire or trap,extensions/cfi/zicfiss_insts.sail:123
+T00804,instruction,cfi,SSAMOSWAP,Not directly derivable from Sail,cfi,architectural state after retire or trap,extensions/cfi/zicfiss_insts.sail:143
+T00805,instruction,rmem,STOP_FETCHING,Not directly derivable from Sail,rmem,architectural state after retire or trap,extensions/rmem/insts_rmem.sail:14
+T00806,instruction,rmem,THREAD_START,Not directly derivable from Sail,rmem,architectural state after retire or trap,extensions/rmem/insts_rmem.sail:24
+T00807,instruction,vector_crypto,VANDN_VV,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:12
+T00808,instruction,vector_crypto,VANDN_VX,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:56
+T00809,instruction,vector_crypto,VBREV_V,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:98
+T00810,instruction,vector_crypto,VBREV8_V,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:143
+T00811,instruction,vector_crypto,VREV8_V,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:185
+T00812,instruction,vector_crypto,VCLZ_V,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:227
+T00813,instruction,vector_crypto,VCTZ_V,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:270
+T00814,instruction,vector_crypto,VCPOP_V,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:313
+T00815,instruction,vector_crypto,VROL_VV,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:359
+T00816,instruction,vector_crypto,VROL_VX,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:404
+T00817,instruction,vector_crypto,VROR_VV,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:447
+T00818,instruction,vector_crypto,VROR_VX,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:492
+T00819,instruction,vector_crypto,VROR_VI,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:535
+T00820,instruction,vector_crypto,VWSLL_VV,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:578
+T00821,instruction,vector_crypto,VWSLL_VX,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:631
+T00822,instruction,vector_crypto,VWSLL_VI,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbb_insts.sail:681
+T00823,instruction,vector_crypto,VCLMUL_VV,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbc_insts.sail:11
+T00824,instruction,vector_crypto,VCLMUL_VX,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbc_insts.sail:57
+T00825,instruction,vector_crypto,VCLMULH_VV,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbc_insts.sail:101
+T00826,instruction,vector_crypto,VCLMULH_VX,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvbc_insts.sail:147
+T00827,instruction,vector_crypto,VGHSH_VV,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkg_insts.sail:11
+T00828,instruction,vector_crypto,VGMUL_VV,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkg_insts.sail:65
+T00829,instruction,vector_crypto,VAESDF#0,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkned_insts.sail:11
+T00830,instruction,vector_crypto,VAESDF#1,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkned_insts.sail:11
+T00831,instruction,vector_crypto,VAESDM#0,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkned_insts.sail:68
+T00832,instruction,vector_crypto,VAESDM#1,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkned_insts.sail:68
+T00833,instruction,vector_crypto,VAESEF#0,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkned_insts.sail:126
+T00834,instruction,vector_crypto,VAESEF#1,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkned_insts.sail:126
+T00835,instruction,vector_crypto,VAESEM#0,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkned_insts.sail:183
+T00836,instruction,vector_crypto,VAESEM#1,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkned_insts.sail:183
+T00837,instruction,vector_crypto,VAESKF1_VI,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkned_insts.sail:241
+T00838,instruction,vector_crypto,VAESKF2_VI,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkned_insts.sail:295
+T00839,instruction,vector_crypto,VAESZ_VS,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvkned_insts.sail:350
+T00840,instruction,vector_crypto,VSHA2MS_VV,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvknhab_insts.sail:12
+T00841,instruction,vector_crypto,ZVKSHA2TYPE#0,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvknhab_insts.sail:75
+T00842,instruction,vector_crypto,ZVKSHA2TYPE#1,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvknhab_insts.sail:75
+T00843,instruction,vector_crypto,VSM4K_VI,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvksed_insts.sail:11
+T00844,instruction,vector_crypto,ZVKSM4RTYPE#0,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvksed_insts.sail:69
+T00845,instruction,vector_crypto,ZVKSM4RTYPE#1,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvksed_insts.sail:69
+T00846,instruction,vector_crypto,VSM3ME_VV,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvksh_insts.sail:11
+T00847,instruction,vector_crypto,VSM3C_VI,Not directly derivable from Sail,vector_crypto,architectural state after retire or trap,extensions/vector_crypto/zvksh_insts.sail:60
+T00848,instruction,mops,ZCMOP,Not directly derivable from Sail,mops,architectural state after retire or trap,mops/Zcmop/zcmop_insts.sail:11
+T00849,instruction,mops,ZIMOP_MOP_R,Not directly derivable from Sail,mops,architectural state after retire or trap,mops/Zimop/zimop_insts.sail:11
+T00850,instruction,mops,ZIMOP_MOP_RR,Not directly derivable from Sail,mops,architectural state after retire or trap,mops/Zimop/zimop_insts.sail:12
+T00851,instruction,sys,ILLEGAL,Not directly derivable from Sail,sys,architectural state after retire or trap,sys/insts_begin.sail:78
+T00852,instruction,sys,C_ILLEGAL,Not directly derivable from Sail,sys,architectural state after retire or trap,sys/insts_begin.sail:79
+T00853,csr,FD,fflags (0x001),User,FD,CSR read/write result or illegal-instruction trap,extensions/FD/fdext_control.sail:23
+T00854,csr,FD,frm (0x002),User,FD,CSR read/write result or illegal-instruction trap,extensions/FD/fdext_control.sail:24
+T00855,csr,FD,fcsr (0x003),User,FD,CSR read/write result or illegal-instruction trap,extensions/FD/fdext_control.sail:25
+T00856,csr,V,vstart (0x008),User,V,CSR read/write result or illegal-instruction trap,extensions/V/vext_regs.sail:302
+T00857,csr,V,vxsat (0x009),User,V,CSR read/write result or illegal-instruction trap,extensions/V/vext_regs.sail:303
+T00858,csr,V,vxrm (0x00A),User,V,CSR read/write result or illegal-instruction trap,extensions/V/vext_regs.sail:304
+T00859,csr,V,vcsr (0x00F),User,V,CSR read/write result or illegal-instruction trap,extensions/V/vext_regs.sail:305
+T00860,csr,cfi,ssp (0x011),User,cfi,CSR read/write result or illegal-instruction trap,extensions/cfi/zicfiss_regs.sail:47
+T00861,csr,K,seed (0x015),User,K,CSR read/write result or illegal-instruction trap,extensions/K/zkr_control.sail:43
+T00862,csr,core,sstatus (0x100),Supervisor,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:757
+T00863,csr,core,sie (0x104),Supervisor,core,CSR read/write result or illegal-instruction trap,core/interrupt_regs.sail:230
+T00864,csr,exceptions,stvec (0x105),Supervisor,exceptions,CSR read/write result or illegal-instruction trap,exceptions/sys_exceptions.sail:108
+T00865,csr,core,scounteren (0x106),Supervisor,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:611
+T00866,csr,core,senvcfg (0x10A),Supervisor,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:459
+T00867,csr,Stateen,sstateen0 (0x10C),Supervisor,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:89
+T00868,csr,Stateen,sstateen1 (0x10D),Supervisor,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:90
+T00869,csr,Stateen,sstateen2 (0x10E),Supervisor,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:91
+T00870,csr,Stateen,sstateen3 (0x10F),Supervisor,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:92
+T00871,csr,core,sscratch (0x140),Supervisor,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:769
+T00872,csr,exceptions,sepc (0x141),Supervisor,exceptions,CSR read/write result or illegal-instruction trap,exceptions/sys_exceptions.sail:109
+T00873,csr,core,scause (0x142),Supervisor,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:770
+T00874,csr,core,stval (0x143),Supervisor,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:771
+T00875,csr,core,sip (0x144),Supervisor,core,CSR read/write result or illegal-instruction trap,core/interrupt_regs.sail:210
+T00876,csr,Sstc,stimecmp (0x14D),Supervisor,Sstc,CSR read/write result or illegal-instruction trap,extensions/Sstc/sstc.sail:9
+T00877,csr,Sstc,stimecmph (0x15D),Supervisor,Sstc,CSR read/write result or illegal-instruction trap,extensions/Sstc/sstc.sail:10
+T00878,csr,sys,satp (0x180),Supervisor,sys,CSR read/write result or illegal-instruction trap,sys/vmem.sail:228
+T00879,csr,Ssqosid,srmcfg (0x181),Supervisor,Ssqosid,CSR read/write result or illegal-instruction trap,extensions/Ssqosid/ssqosid.sail:32
+T00880,csr,core,mstatus (0x300),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:270
+T00881,csr,core,misa (0x301),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:126
+T00882,csr,core,medeleg (0x302),Machine,core,CSR read/write result or illegal-instruction trap,core/interrupt_regs.sail:119
+T00883,csr,core,mideleg (0x303),Machine,core,CSR read/write result or illegal-instruction trap,core/interrupt_regs.sail:121
+T00884,csr,core,mie (0x304),Machine,core,CSR read/write result or illegal-instruction trap,core/interrupt_regs.sail:117
+T00885,csr,exceptions,mtvec (0x305),Machine,exceptions,CSR read/write result or illegal-instruction trap,exceptions/sys_exceptions.sail:110
+T00886,csr,core,mcounteren (0x306),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:625
+T00887,csr,core,menvcfg (0x30A),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:457
+T00888,csr,Stateen,mstateen0 (0x30C),Machine,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:9
+T00889,csr,Stateen,mstateen1 (0x30D),Machine,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:10
+T00890,csr,Stateen,mstateen2 (0x30E),Machine,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:11
+T00891,csr,Stateen,mstateen3 (0x30F),Machine,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:12
+T00892,csr,core,mstatush (0x310),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:271
+T00893,csr,core,medelegh (0x312),Machine,core,CSR read/write result or illegal-instruction trap,core/interrupt_regs.sail:120
+T00894,csr,core,menvcfgh (0x31A),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:458
+T00895,csr,Stateen,mstateen0h (0x31C),Machine,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:13
+T00896,csr,Stateen,mstateen1h (0x31D),Machine,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:14
+T00897,csr,Stateen,mstateen2h (0x31E),Machine,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:15
+T00898,csr,Stateen,mstateen3h (0x31F),Machine,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:16
+T00899,csr,core,mcountinhibit (0x320),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:645
+T00900,csr,Smcntrpmf,mcyclecfg (0x321),Machine,Smcntrpmf,CSR read/write result or illegal-instruction trap,extensions/Smcntrpmf/smcntrpmf.sail:26
+T00901,csr,Smcntrpmf,minstretcfg (0x322),Machine,Smcntrpmf,CSR read/write result or illegal-instruction trap,extensions/Smcntrpmf/smcntrpmf.sail:28
+T00902,csr,Zihpm,mhpmevent3 (0x323),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:74
+T00903,csr,Zihpm,mhpmevent4 (0x324),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:75
+T00904,csr,Zihpm,mhpmevent5 (0x325),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:76
+T00905,csr,Zihpm,mhpmevent6 (0x326),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:77
+T00906,csr,Zihpm,mhpmevent7 (0x327),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:78
+T00907,csr,Zihpm,mhpmevent8 (0x328),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:79
+T00908,csr,Zihpm,mhpmevent9 (0x329),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:80
+T00909,csr,Zihpm,mhpmevent10 (0x32A),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:81
+T00910,csr,Zihpm,mhpmevent11 (0x32B),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:82
+T00911,csr,Zihpm,mhpmevent12 (0x32C),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:83
+T00912,csr,Zihpm,mhpmevent13 (0x32D),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:84
+T00913,csr,Zihpm,mhpmevent14 (0x32E),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:85
+T00914,csr,Zihpm,mhpmevent15 (0x32F),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:86
+T00915,csr,Zihpm,mhpmevent16 (0x330),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:87
+T00916,csr,Zihpm,mhpmevent17 (0x331),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:88
+T00917,csr,Zihpm,mhpmevent18 (0x332),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:89
+T00918,csr,Zihpm,mhpmevent19 (0x333),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:90
+T00919,csr,Zihpm,mhpmevent20 (0x334),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:91
+T00920,csr,Zihpm,mhpmevent21 (0x335),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:92
+T00921,csr,Zihpm,mhpmevent22 (0x336),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:93
+T00922,csr,Zihpm,mhpmevent23 (0x337),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:94
+T00923,csr,Zihpm,mhpmevent24 (0x338),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:95
+T00924,csr,Zihpm,mhpmevent25 (0x339),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:96
+T00925,csr,Zihpm,mhpmevent26 (0x33A),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:97
+T00926,csr,Zihpm,mhpmevent27 (0x33B),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:98
+T00927,csr,Zihpm,mhpmevent28 (0x33C),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:99
+T00928,csr,Zihpm,mhpmevent29 (0x33D),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:100
+T00929,csr,Zihpm,mhpmevent30 (0x33E),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:101
+T00930,csr,Zihpm,mhpmevent31 (0x33F),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:102
+T00931,csr,core,mscratch (0x340),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:581
+T00932,csr,exceptions,mepc (0x341),Machine,exceptions,CSR read/write result or illegal-instruction trap,exceptions/sys_exceptions.sail:111
+T00933,csr,core,mcause (0x342),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:535
+T00934,csr,core,mtval (0x343),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:580
+T00935,csr,core,mip (0x344),Machine,core,CSR read/write result or illegal-instruction trap,core/interrupt_regs.sail:118
+T00936,csr,pmp,pmpcfg0 (0x3A0),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:170
+T00937,csr,pmp,pmpcfg1 (0x3A1),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:171
+T00938,csr,pmp,pmpcfg2 (0x3A2),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:172
+T00939,csr,pmp,pmpcfg3 (0x3A3),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:173
+T00940,csr,pmp,pmpcfg4 (0x3A4),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:174
+T00941,csr,pmp,pmpcfg5 (0x3A5),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:175
+T00942,csr,pmp,pmpcfg6 (0x3A6),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:176
+T00943,csr,pmp,pmpcfg7 (0x3A7),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:177
+T00944,csr,pmp,pmpcfg8 (0x3A8),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:178
+T00945,csr,pmp,pmpcfg9 (0x3A9),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:179
+T00946,csr,pmp,pmpcfg10 (0x3AA),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:180
+T00947,csr,pmp,pmpcfg11 (0x3AB),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:181
+T00948,csr,pmp,pmpcfg12 (0x3AC),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:182
+T00949,csr,pmp,pmpcfg13 (0x3AD),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:183
+T00950,csr,pmp,pmpcfg14 (0x3AE),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:184
+T00951,csr,pmp,pmpcfg15 (0x3AF),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:185
+T00952,csr,pmp,pmpaddr0 (0x3B0),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:187
+T00953,csr,pmp,pmpaddr1 (0x3B1),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:188
+T00954,csr,pmp,pmpaddr2 (0x3B2),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:189
+T00955,csr,pmp,pmpaddr3 (0x3B3),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:190
+T00956,csr,pmp,pmpaddr4 (0x3B4),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:191
+T00957,csr,pmp,pmpaddr5 (0x3B5),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:192
+T00958,csr,pmp,pmpaddr6 (0x3B6),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:193
+T00959,csr,pmp,pmpaddr7 (0x3B7),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:194
+T00960,csr,pmp,pmpaddr8 (0x3B8),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:195
+T00961,csr,pmp,pmpaddr9 (0x3B9),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:196
+T00962,csr,pmp,pmpaddr10 (0x3BA),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:197
+T00963,csr,pmp,pmpaddr11 (0x3BB),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:198
+T00964,csr,pmp,pmpaddr12 (0x3BC),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:199
+T00965,csr,pmp,pmpaddr13 (0x3BD),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:200
+T00966,csr,pmp,pmpaddr14 (0x3BE),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:201
+T00967,csr,pmp,pmpaddr15 (0x3BF),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:202
+T00968,csr,pmp,pmpaddr16 (0x3C0),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:203
+T00969,csr,pmp,pmpaddr17 (0x3C1),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:204
+T00970,csr,pmp,pmpaddr18 (0x3C2),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:205
+T00971,csr,pmp,pmpaddr19 (0x3C3),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:206
+T00972,csr,pmp,pmpaddr20 (0x3C4),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:207
+T00973,csr,pmp,pmpaddr21 (0x3C5),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:208
+T00974,csr,pmp,pmpaddr22 (0x3C6),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:209
+T00975,csr,pmp,pmpaddr23 (0x3C7),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:210
+T00976,csr,pmp,pmpaddr24 (0x3C8),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:211
+T00977,csr,pmp,pmpaddr25 (0x3C9),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:212
+T00978,csr,pmp,pmpaddr26 (0x3CA),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:213
+T00979,csr,pmp,pmpaddr27 (0x3CB),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:214
+T00980,csr,pmp,pmpaddr28 (0x3CC),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:215
+T00981,csr,pmp,pmpaddr29 (0x3CD),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:216
+T00982,csr,pmp,pmpaddr30 (0x3CE),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:217
+T00983,csr,pmp,pmpaddr31 (0x3CF),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:218
+T00984,csr,pmp,pmpaddr32 (0x3D0),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:219
+T00985,csr,pmp,pmpaddr33 (0x3D1),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:220
+T00986,csr,pmp,pmpaddr34 (0x3D2),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:221
+T00987,csr,pmp,pmpaddr35 (0x3D3),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:222
+T00988,csr,pmp,pmpaddr36 (0x3D4),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:223
+T00989,csr,pmp,pmpaddr37 (0x3D5),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:224
+T00990,csr,pmp,pmpaddr38 (0x3D6),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:225
+T00991,csr,pmp,pmpaddr39 (0x3D7),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:226
+T00992,csr,pmp,pmpaddr40 (0x3D8),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:227
+T00993,csr,pmp,pmpaddr41 (0x3D9),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:228
+T00994,csr,pmp,pmpaddr42 (0x3DA),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:229
+T00995,csr,pmp,pmpaddr43 (0x3DB),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:230
+T00996,csr,pmp,pmpaddr44 (0x3DC),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:231
+T00997,csr,pmp,pmpaddr45 (0x3DD),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:232
+T00998,csr,pmp,pmpaddr46 (0x3DE),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:233
+T00999,csr,pmp,pmpaddr47 (0x3DF),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:234
+T01000,csr,pmp,pmpaddr48 (0x3E0),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:235
+T01001,csr,pmp,pmpaddr49 (0x3E1),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:236
+T01002,csr,pmp,pmpaddr50 (0x3E2),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:237
+T01003,csr,pmp,pmpaddr51 (0x3E3),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:238
+T01004,csr,pmp,pmpaddr52 (0x3E4),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:239
+T01005,csr,pmp,pmpaddr53 (0x3E5),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:240
+T01006,csr,pmp,pmpaddr54 (0x3E6),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:241
+T01007,csr,pmp,pmpaddr55 (0x3E7),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:242
+T01008,csr,pmp,pmpaddr56 (0x3E8),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:243
+T01009,csr,pmp,pmpaddr57 (0x3E9),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:244
+T01010,csr,pmp,pmpaddr58 (0x3EA),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:245
+T01011,csr,pmp,pmpaddr59 (0x3EB),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:246
+T01012,csr,pmp,pmpaddr60 (0x3EC),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:247
+T01013,csr,pmp,pmpaddr61 (0x3ED),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:248
+T01014,csr,pmp,pmpaddr62 (0x3EE),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:249
+T01015,csr,pmp,pmpaddr63 (0x3EF),Machine,pmp,CSR read/write result or illegal-instruction trap,pmp/pmp_regs.sail:250
+T01016,csr,Stateen,hstateen0 (0x60C),Hypervisor/VS,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:49
+T01017,csr,Stateen,hstateen1 (0x60D),Hypervisor/VS,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:50
+T01018,csr,Stateen,hstateen2 (0x60E),Hypervisor/VS,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:51
+T01019,csr,Stateen,hstateen3 (0x60F),Hypervisor/VS,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:52
+T01020,csr,Stateen,hstateen0h (0x61C),Hypervisor/VS,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:53
+T01021,csr,Stateen,hstateen1h (0x61D),Hypervisor/VS,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:54
+T01022,csr,Stateen,hstateen2h (0x61E),Hypervisor/VS,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:55
+T01023,csr,Stateen,hstateen3h (0x61F),Hypervisor/VS,Stateen,CSR read/write result or illegal-instruction trap,extensions/Stateen/stateen_csrs.sail:56
+T01024,csr,Smcntrpmf,mcyclecfgh (0x721),Machine,Smcntrpmf,CSR read/write result or illegal-instruction trap,extensions/Smcntrpmf/smcntrpmf.sail:27
+T01025,csr,Smcntrpmf,minstretcfgh (0x722),Machine,Smcntrpmf,CSR read/write result or illegal-instruction trap,extensions/Smcntrpmf/smcntrpmf.sail:29
+T01026,csr,Sscofpmf,mhpmevent3h (0x723),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:12
+T01027,csr,Sscofpmf,mhpmevent4h (0x724),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:13
+T01028,csr,Sscofpmf,mhpmevent5h (0x725),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:14
+T01029,csr,Sscofpmf,mhpmevent6h (0x726),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:15
+T01030,csr,Sscofpmf,mhpmevent7h (0x727),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:16
+T01031,csr,Sscofpmf,mhpmevent8h (0x728),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:17
+T01032,csr,Sscofpmf,mhpmevent9h (0x729),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:18
+T01033,csr,Sscofpmf,mhpmevent10h (0x72A),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:19
+T01034,csr,Sscofpmf,mhpmevent11h (0x72B),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:20
+T01035,csr,Sscofpmf,mhpmevent12h (0x72C),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:21
+T01036,csr,Sscofpmf,mhpmevent13h (0x72D),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:22
+T01037,csr,Sscofpmf,mhpmevent14h (0x72E),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:23
+T01038,csr,Sscofpmf,mhpmevent15h (0x72F),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:24
+T01039,csr,Sscofpmf,mhpmevent16h (0x730),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:25
+T01040,csr,Sscofpmf,mhpmevent17h (0x731),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:26
+T01041,csr,Sscofpmf,mhpmevent18h (0x732),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:27
+T01042,csr,Sscofpmf,mhpmevent19h (0x733),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:28
+T01043,csr,Sscofpmf,mhpmevent20h (0x734),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:29
+T01044,csr,Sscofpmf,mhpmevent21h (0x735),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:30
+T01045,csr,Sscofpmf,mhpmevent22h (0x736),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:31
+T01046,csr,Sscofpmf,mhpmevent23h (0x737),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:32
+T01047,csr,Sscofpmf,mhpmevent24h (0x738),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:33
+T01048,csr,Sscofpmf,mhpmevent25h (0x739),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:34
+T01049,csr,Sscofpmf,mhpmevent26h (0x73A),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:35
+T01050,csr,Sscofpmf,mhpmevent27h (0x73B),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:36
+T01051,csr,Sscofpmf,mhpmevent28h (0x73C),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:37
+T01052,csr,Sscofpmf,mhpmevent29h (0x73D),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:38
+T01053,csr,Sscofpmf,mhpmevent30h (0x73E),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:39
+T01054,csr,Sscofpmf,mhpmevent31h (0x73F),Machine,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:40
+T01055,csr,core,mseccfg (0x747),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:334
+T01056,csr,core,mseccfgh (0x757),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:335
+T01057,csr,core,tselect (0x7a0),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:838
+T01058,csr,core,tdata1 (0x7a1),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:839
+T01059,csr,core,tdata2 (0x7a2),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:840
+T01060,csr,core,tdata3 (0x7a3),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:841
+T01061,csr,Zicntr,mcycle (0xB00),Machine,Zicntr,CSR read/write result or illegal-instruction trap,extensions/Zicntr/zicntr_control.sail:34
+T01062,csr,Zicntr,minstret (0xB02),Machine,Zicntr,CSR read/write result or illegal-instruction trap,extensions/Zicntr/zicntr_control.sail:35
+T01063,csr,Zihpm,mhpmcounter3 (0xB03),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:105
+T01064,csr,Zihpm,mhpmcounter4 (0xB04),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:106
+T01065,csr,Zihpm,mhpmcounter5 (0xB05),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:107
+T01066,csr,Zihpm,mhpmcounter6 (0xB06),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:108
+T01067,csr,Zihpm,mhpmcounter7 (0xB07),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:109
+T01068,csr,Zihpm,mhpmcounter8 (0xB08),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:110
+T01069,csr,Zihpm,mhpmcounter9 (0xB09),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:111
+T01070,csr,Zihpm,mhpmcounter10 (0xB0A),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:112
+T01071,csr,Zihpm,mhpmcounter11 (0xB0B),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:113
+T01072,csr,Zihpm,mhpmcounter12 (0xB0C),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:114
+T01073,csr,Zihpm,mhpmcounter13 (0xB0D),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:115
+T01074,csr,Zihpm,mhpmcounter14 (0xB0E),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:116
+T01075,csr,Zihpm,mhpmcounter15 (0xB0F),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:117
+T01076,csr,Zihpm,mhpmcounter16 (0xB10),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:118
+T01077,csr,Zihpm,mhpmcounter17 (0xB11),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:119
+T01078,csr,Zihpm,mhpmcounter18 (0xB12),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:120
+T01079,csr,Zihpm,mhpmcounter19 (0xB13),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:121
+T01080,csr,Zihpm,mhpmcounter20 (0xB14),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:122
+T01081,csr,Zihpm,mhpmcounter21 (0xB15),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:123
+T01082,csr,Zihpm,mhpmcounter22 (0xB16),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:124
+T01083,csr,Zihpm,mhpmcounter23 (0xB17),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:125
+T01084,csr,Zihpm,mhpmcounter24 (0xB18),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:126
+T01085,csr,Zihpm,mhpmcounter25 (0xB19),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:127
+T01086,csr,Zihpm,mhpmcounter26 (0xB1A),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:128
+T01087,csr,Zihpm,mhpmcounter27 (0xB1B),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:129
+T01088,csr,Zihpm,mhpmcounter28 (0xB1C),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:130
+T01089,csr,Zihpm,mhpmcounter29 (0xB1D),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:131
+T01090,csr,Zihpm,mhpmcounter30 (0xB1E),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:132
+T01091,csr,Zihpm,mhpmcounter31 (0xB1F),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:133
+T01092,csr,Zicntr,mcycleh (0xB80),Machine,Zicntr,CSR read/write result or illegal-instruction trap,extensions/Zicntr/zicntr_control.sail:36
+T01093,csr,Zicntr,minstreth (0xB82),Machine,Zicntr,CSR read/write result or illegal-instruction trap,extensions/Zicntr/zicntr_control.sail:37
+T01094,csr,Zihpm,mhpmcounter3h (0xB83),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:135
+T01095,csr,Zihpm,mhpmcounter4h (0xB84),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:136
+T01096,csr,Zihpm,mhpmcounter5h (0xB85),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:137
+T01097,csr,Zihpm,mhpmcounter6h (0xB86),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:138
+T01098,csr,Zihpm,mhpmcounter7h (0xB87),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:139
+T01099,csr,Zihpm,mhpmcounter8h (0xB88),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:140
+T01100,csr,Zihpm,mhpmcounter9h (0xB89),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:141
+T01101,csr,Zihpm,mhpmcounter10h (0xB8A),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:142
+T01102,csr,Zihpm,mhpmcounter11h (0xB8B),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:143
+T01103,csr,Zihpm,mhpmcounter12h (0xB8C),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:144
+T01104,csr,Zihpm,mhpmcounter13h (0xB8D),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:145
+T01105,csr,Zihpm,mhpmcounter14h (0xB8E),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:146
+T01106,csr,Zihpm,mhpmcounter15h (0xB8F),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:147
+T01107,csr,Zihpm,mhpmcounter16h (0xB90),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:148
+T01108,csr,Zihpm,mhpmcounter17h (0xB91),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:149
+T01109,csr,Zihpm,mhpmcounter18h (0xB92),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:150
+T01110,csr,Zihpm,mhpmcounter19h (0xB93),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:151
+T01111,csr,Zihpm,mhpmcounter20h (0xB94),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:152
+T01112,csr,Zihpm,mhpmcounter21h (0xB95),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:153
+T01113,csr,Zihpm,mhpmcounter22h (0xB96),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:154
+T01114,csr,Zihpm,mhpmcounter23h (0xB97),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:155
+T01115,csr,Zihpm,mhpmcounter24h (0xB98),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:156
+T01116,csr,Zihpm,mhpmcounter25h (0xB99),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:157
+T01117,csr,Zihpm,mhpmcounter26h (0xB9A),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:158
+T01118,csr,Zihpm,mhpmcounter27h (0xB9B),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:159
+T01119,csr,Zihpm,mhpmcounter28h (0xB9C),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:160
+T01120,csr,Zihpm,mhpmcounter29h (0xB9D),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:161
+T01121,csr,Zihpm,mhpmcounter30h (0xB9E),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:162
+T01122,csr,Zihpm,mhpmcounter31h (0xB9F),Machine,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:163
+T01123,csr,Zicntr,cycle (0xC00),User,Zicntr,CSR read/write result or illegal-instruction trap,extensions/Zicntr/zicntr_control.sail:11
+T01124,csr,Zicntr,time (0xC01),User,Zicntr,CSR read/write result or illegal-instruction trap,extensions/Zicntr/zicntr_control.sail:12
+T01125,csr,Zicntr,instret (0xC02),User,Zicntr,CSR read/write result or illegal-instruction trap,extensions/Zicntr/zicntr_control.sail:13
+T01126,csr,Zihpm,hpmcounter3 (0xC03),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:13
+T01127,csr,Zihpm,hpmcounter4 (0xC04),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:14
+T01128,csr,Zihpm,hpmcounter5 (0xC05),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:15
+T01129,csr,Zihpm,hpmcounter6 (0xC06),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:16
+T01130,csr,Zihpm,hpmcounter7 (0xC07),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:17
+T01131,csr,Zihpm,hpmcounter8 (0xC08),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:18
+T01132,csr,Zihpm,hpmcounter9 (0xC09),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:19
+T01133,csr,Zihpm,hpmcounter10 (0xC0A),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:20
+T01134,csr,Zihpm,hpmcounter11 (0xC0B),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:21
+T01135,csr,Zihpm,hpmcounter12 (0xC0C),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:22
+T01136,csr,Zihpm,hpmcounter13 (0xC0D),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:23
+T01137,csr,Zihpm,hpmcounter14 (0xC0E),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:24
+T01138,csr,Zihpm,hpmcounter15 (0xC0F),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:25
+T01139,csr,Zihpm,hpmcounter16 (0xC10),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:26
+T01140,csr,Zihpm,hpmcounter17 (0xC11),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:27
+T01141,csr,Zihpm,hpmcounter18 (0xC12),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:28
+T01142,csr,Zihpm,hpmcounter19 (0xC13),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:29
+T01143,csr,Zihpm,hpmcounter20 (0xC14),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:30
+T01144,csr,Zihpm,hpmcounter21 (0xC15),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:31
+T01145,csr,Zihpm,hpmcounter22 (0xC16),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:32
+T01146,csr,Zihpm,hpmcounter23 (0xC17),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:33
+T01147,csr,Zihpm,hpmcounter24 (0xC18),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:34
+T01148,csr,Zihpm,hpmcounter25 (0xC19),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:35
+T01149,csr,Zihpm,hpmcounter26 (0xC1A),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:36
+T01150,csr,Zihpm,hpmcounter27 (0xC1B),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:37
+T01151,csr,Zihpm,hpmcounter28 (0xC1C),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:38
+T01152,csr,Zihpm,hpmcounter29 (0xC1D),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:39
+T01153,csr,Zihpm,hpmcounter30 (0xC1E),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:40
+T01154,csr,Zihpm,hpmcounter31 (0xC1F),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:41
+T01155,csr,V,vl (0xC20),User,V,CSR read/write result or illegal-instruction trap,extensions/V/vext_regs.sail:306
+T01156,csr,V,vtype (0xC21),User,V,CSR read/write result or illegal-instruction trap,extensions/V/vext_regs.sail:307
+T01157,csr,V,vlenb (0xC22),User,V,CSR read/write result or illegal-instruction trap,extensions/V/vext_regs.sail:308
+T01158,csr,Zicntr,cycleh (0xC80),User,Zicntr,CSR read/write result or illegal-instruction trap,extensions/Zicntr/zicntr_control.sail:14
+T01159,csr,Zicntr,timeh (0xC81),User,Zicntr,CSR read/write result or illegal-instruction trap,extensions/Zicntr/zicntr_control.sail:15
+T01160,csr,Zicntr,instreth (0xC82),User,Zicntr,CSR read/write result or illegal-instruction trap,extensions/Zicntr/zicntr_control.sail:16
+T01161,csr,Zihpm,hpmcounter3h (0xC83),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:43
+T01162,csr,Zihpm,hpmcounter4h (0xC84),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:44
+T01163,csr,Zihpm,hpmcounter5h (0xC85),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:45
+T01164,csr,Zihpm,hpmcounter6h (0xC86),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:46
+T01165,csr,Zihpm,hpmcounter7h (0xC87),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:47
+T01166,csr,Zihpm,hpmcounter8h (0xC88),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:48
+T01167,csr,Zihpm,hpmcounter9h (0xC89),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:49
+T01168,csr,Zihpm,hpmcounter10h (0xC8A),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:50
+T01169,csr,Zihpm,hpmcounter11h (0xC8B),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:51
+T01170,csr,Zihpm,hpmcounter12h (0xC8C),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:52
+T01171,csr,Zihpm,hpmcounter13h (0xC8D),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:53
+T01172,csr,Zihpm,hpmcounter14h (0xC8E),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:54
+T01173,csr,Zihpm,hpmcounter15h (0xC8F),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:55
+T01174,csr,Zihpm,hpmcounter16h (0xC90),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:56
+T01175,csr,Zihpm,hpmcounter17h (0xC91),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:57
+T01176,csr,Zihpm,hpmcounter18h (0xC92),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:58
+T01177,csr,Zihpm,hpmcounter19h (0xC93),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:59
+T01178,csr,Zihpm,hpmcounter20h (0xC94),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:60
+T01179,csr,Zihpm,hpmcounter21h (0xC95),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:61
+T01180,csr,Zihpm,hpmcounter22h (0xC96),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:62
+T01181,csr,Zihpm,hpmcounter23h (0xC97),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:63
+T01182,csr,Zihpm,hpmcounter24h (0xC98),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:64
+T01183,csr,Zihpm,hpmcounter25h (0xC99),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:65
+T01184,csr,Zihpm,hpmcounter26h (0xC9A),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:66
+T01185,csr,Zihpm,hpmcounter27h (0xC9B),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:67
+T01186,csr,Zihpm,hpmcounter28h (0xC9C),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:68
+T01187,csr,Zihpm,hpmcounter29h (0xC9D),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:69
+T01188,csr,Zihpm,hpmcounter30h (0xC9E),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:70
+T01189,csr,Zihpm,hpmcounter31h (0xC9F),User,Zihpm,CSR read/write result or illegal-instruction trap,extensions/Zihpm/zihpm.sail:71
+T01190,csr,Sscofpmf,scountovf (0xDA0),Supervisor,Sscofpmf,CSR read/write result or illegal-instruction trap,extensions/Sscofpmf/sscofpmf.sail:42
+T01191,csr,core,mvendorid (0xF11),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:676
+T01192,csr,core,marchid (0xF12),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:677
+T01193,csr,core,mimpid (0xF13),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:678
+T01194,csr,core,mhartid (0xF14),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:679
+T01195,csr,core,mconfigptr (0xF15),Machine,core,CSR read/write result or illegal-instruction trap,core/sys_regs.sail:680
+T01196,exception,trap handling,E_Fetch_Addr_Align,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:209
+T01197,exception,trap handling,E_Fetch_Access_Fault,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:210
+T01198,exception,trap handling,E_Illegal_Instr,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:211
+T01199,exception,trap handling,E_Load_Addr_Align,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:213
+T01200,exception,trap handling,E_Load_Access_Fault,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:214
+T01201,exception,trap handling,E_SAMO_Addr_Align,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:215
+T01202,exception,trap handling,E_SAMO_Access_Fault,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:216
+T01203,exception,trap handling,E_U_EnvCall,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:217
+T01204,exception,trap handling,E_S_EnvCall,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:218
+T01205,exception,trap handling,E_VS_EnvCall,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:219
+T01206,exception,trap handling,E_M_EnvCall,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:220
+T01207,exception,trap handling,E_Fetch_Page_Fault,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:221
+T01208,exception,trap handling,E_Load_Page_Fault,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:222
+T01209,exception,trap handling,E_SAMO_Page_Fault,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:224
+T01210,exception,trap handling,E_Software_Check,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:227
+T01211,exception,trap handling,E_Fetch_GPage_Fault,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:229
+T01212,exception,trap handling,E_Load_GPage_Fault,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:230
+T01213,exception,trap handling,E_Virtual_Instr,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:231
+T01214,exception,trap handling,E_SAMO_GPage_Fault,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:232
+T01215,exception,trap handling,E_Breakpoint,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:212
+T01216,exception,trap handling,E_Extension,Not directly derivable from Sail,base,xcause/xepc/xtval after trap,core/types.sail:235
+T01217,interrupt,interrupt handling,I_S_Software,Not directly derivable from Sail,base,xcause with interrupt bit set; mode of delivery,core/types.sail:150
+T01218,interrupt,interrupt handling,I_VS_Software,Not directly derivable from Sail,base,xcause with interrupt bit set; mode of delivery,core/types.sail:150
+T01219,interrupt,interrupt handling,I_M_Software,Not directly derivable from Sail,base,xcause with interrupt bit set; mode of delivery,core/types.sail:150
+T01220,interrupt,interrupt handling,I_S_Timer,Not directly derivable from Sail,base,xcause with interrupt bit set; mode of delivery,core/types.sail:150
+T01221,interrupt,interrupt handling,I_VS_Timer,Not directly derivable from Sail,base,xcause with interrupt bit set; mode of delivery,core/types.sail:150
+T01222,interrupt,interrupt handling,I_M_Timer,Not directly derivable from Sail,base,xcause with interrupt bit set; mode of delivery,core/types.sail:150
+T01223,interrupt,interrupt handling,I_S_External,Not directly derivable from Sail,base,xcause with interrupt bit set; mode of delivery,core/types.sail:150
+T01224,interrupt,interrupt handling,I_VS_External,Not directly derivable from Sail,base,xcause with interrupt bit set; mode of delivery,core/types.sail:150
+T01225,interrupt,interrupt handling,I_M_External,Not directly derivable from Sail,base,xcause with interrupt bit set; mode of delivery,core/types.sail:150
+T01226,interrupt,interrupt handling,I_SG_External,Not directly derivable from Sail,base,xcause with interrupt bit set; mode of delivery,core/types.sail:150
+T01227,interrupt,interrupt handling,I_COF,Not directly derivable from Sail,base,xcause with interrupt bit set; mode of delivery,core/types.sail:150
+T01228,privilege_mode,privilege,User,User,base,current privilege after entry/return,core/types.sail:71
+T01229,privilege_mode,privilege,VirtualUser,VirtualUser,base,current privilege after entry/return,core/types.sail:71
+T01230,privilege_mode,privilege,Supervisor,Supervisor,base,current privilege after entry/return,core/types.sail:71
+T01231,privilege_mode,privilege,VirtualSupervisor,VirtualSupervisor,base,current privilege after entry/return,core/types.sail:71
+T01232,privilege_mode,privilege,Machine,Machine,base,current privilege after entry/return,core/types.sail:71
+T01233,translation_mode,virtual memory,Bare,Supervisor,satp mode Bare,translated access or page fault,core/types.sail:388
+T01234,translation_mode,virtual memory,Sv32,Supervisor,satp mode Sv32,translated access or page fault,core/types.sail:388
+T01235,translation_mode,virtual memory,Sv39,Supervisor,satp mode Sv39,translated access or page fault,core/types.sail:388
+T01236,translation_mode,virtual memory,Sv48,Supervisor,satp mode Sv48,translated access or page fault,core/types.sail:388
+T01237,translation_mode,virtual memory,Sv57,Supervisor,satp mode Sv57,translated access or page fault,core/types.sail:388
+T01238,pmp,physical memory protection,sys_pmp_count,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:12
+T01239,pmp,physical memory protection,sys_pmp_usable_count,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:17
+T01240,pmp,physical memory protection,sys_pmp_grain,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:21
+T01241,pmp,physical memory protection,Pmpcfg_ent,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:34
+T01242,pmp,physical memory protection,pmpcfg_n,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:44
+T01243,pmp,physical memory protection,pmpaddr_n,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:45
+T01244,pmp,physical memory protection,Pmpcfg_ent.L,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:36
+T01245,pmp,physical memory protection,Pmpcfg_ent.A,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:37
+T01246,pmp,physical memory protection,Pmpcfg_ent.X,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:40
+T01247,pmp,physical memory protection,Pmpcfg_ent.W,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:41
+T01248,pmp,physical memory protection,Pmpcfg_ent.R,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:42
+T01249,pmp,physical memory protection,PmpAddrMatchType.OFF,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:25
+T01250,pmp,physical memory protection,PmpAddrMatchType.TOR,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:25
+T01251,pmp,physical memory protection,PmpAddrMatchType.NA4,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:25
+T01252,pmp,physical memory protection,PmpAddrMatchType.NAPOT,Machine,base,access permitted or access fault,pmp/pmp_regs.sail:25
+T01253,pmp,physical memory protection,pmpAddrMatch.PMP_NoMatch,Machine,base,access permitted or access fault,pmp/pmp_control.sail:54
+T01254,pmp,physical memory protection,pmpAddrMatch.PMP_PartialMatch,Machine,base,access permitted or access fault,pmp/pmp_control.sail:54
+T01255,pmp,physical memory protection,pmpAddrMatch.PMP_Match,Machine,base,access permitted or access fault,pmp/pmp_control.sail:54

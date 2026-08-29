@@ -1,0 +1,356 @@
+name,extension_group,signature,operand_types,enum_operands,forms,encdec_clauses,compressed,config_prerequisites,source
+AMO,A,"(amoop, bool, bool, regidx, regidx, word_width_wide, regidx)",amoop;bool;bool;regidx;regidx;word_width_wide;regidx,amoop(10),10,1,False,"amo_encoding_valid(size, op, rs2, rd)",extensions/A/zaamo_insts.sail:47
+LOADRES,A,"(bool, bool, regidx, word_width, regidx)",bool;bool;regidx;word_width;regidx,,1,1,False,currentlyEnabled(Ext_Zalrsc) & lrsc_width_valid(width),extensions/A/zalrsc_insts.sail:26
+STORECON,A,"(bool, bool, regidx, regidx, word_width, regidx)",bool;bool;regidx;regidx;word_width;regidx,,1,1,False,currentlyEnabled(Ext_Zalrsc) & lrsc_width_valid(width),extensions/A/zalrsc_insts.sail:59
+SLLIUW,B,"(bits(6), regidx, regidx)",bits(6);regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zba) & xlen == 64,extensions/B/zba_insts.sail:13
+ZBA_RTYPEUW,B,"(regidx, regidx, regidx, shamt_zba)",regidx;regidx;regidx;shamt_zba,,1,2,False,currentlyEnabled(Ext_Zba) & xlen == 64;currentlyEnabled(Ext_Zba) & xlen == 64 & shamt != 0b00,extensions/B/zba_insts.sail:29
+ZBA_RTYPE,B,"(regidx, regidx, regidx, shamt_zba)",regidx;regidx;regidx;shamt_zba,,1,1,False,shamt != 0b00 & currentlyEnabled(Ext_Zba),extensions/B/zba_insts.sail:59
+RORIW,B,"(bits(5), regidx, regidx)",bits(5);regidx;regidx,,1,1,False,(currentlyEnabled(Ext_Zbb) | currentlyEnabled(Ext_Zbkb)) & xlen == 64,extensions/B/zbb_insts.sail:13
+RORI,B,"(bits(6), regidx, regidx)",bits(6);regidx;regidx,,1,1,False,(currentlyEnabled(Ext_Zbb) | currentlyEnabled(Ext_Zbkb)) & (xlen == 64 | shamt[5] == 0b0),extensions/B/zbb_insts.sail:29
+ZBB_RTYPEW,B,"(regidx, regidx, regidx, bropw_zbb)",regidx;regidx;regidx;bropw_zbb,bropw_zbb(2),2,2,False,(currentlyEnabled(Ext_Zbb) | currentlyEnabled(Ext_Zbkb)) & xlen == 64,extensions/B/zbb_insts.sail:46
+ZBB_RTYPE,B,"(regidx, regidx, regidx, brop_zbb)",regidx;regidx;regidx;brop_zbb,brop_zbb(9),9,9,False,currentlyEnabled(Ext_Zbb);currentlyEnabled(Ext_Zbb) | currentlyEnabled(Ext_Zbkb),extensions/B/zbb_insts.sail:79
+ZBB_EXTOP,B,"(regidx, regidx, extop_zbb)",regidx;regidx;extop_zbb,extop_zbb(3),3,4,False,currentlyEnabled(Ext_Zbb);currentlyEnabled(Ext_Zbb) & xlen == 32;currentlyEnabled(Ext_Zbb) & xlen == 64,extensions/B/zbb_insts.sail:161
+REV8,B,"(regidx, regidx)",regidx;regidx,,1,2,False,(currentlyEnabled(Ext_Zbb) | currentlyEnabled(Ext_Zbkb)) & xlen == 32;(currentlyEnabled(Ext_Zbb) | currentlyEnabled(Ext_Zbkb)) & xlen == 64,extensions/B/zbb_insts.sail:205
+ORCB,B,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbb),extensions/B/zbb_insts.sail:225
+CPOP,B,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbb),extensions/B/zbb_insts.sail:247
+CPOPW,B,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbb) & xlen == 64,extensions/B/zbb_insts.sail:263
+CLZ,B,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbb),extensions/B/zbb_insts.sail:279
+CLZW,B,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbb) & xlen == 64,extensions/B/zbb_insts.sail:295
+CTZ,B,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbb),extensions/B/zbb_insts.sail:311
+CTZW,B,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbb) & xlen == 64,extensions/B/zbb_insts.sail:327
+CLMUL,B,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbc) | currentlyEnabled(Ext_Zbkc),extensions/B/zbc_insts.sail:13
+CLMULH,B,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbc) | currentlyEnabled(Ext_Zbkc),extensions/B/zbc_insts.sail:30
+CLMULR,B,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbc),extensions/B/zbc_insts.sail:47
+ZBS_IOP,B,"(bits(6), regidx, regidx, biop_zbs)",bits(6);regidx;regidx;biop_zbs,biop_zbs(4),4,4,False,currentlyEnabled(Ext_Zbs) & (xlen == 64 | shamt[5] == 0b0),extensions/B/zbs_insts.sail:12
+ZBS_RTYPE,B,"(regidx, regidx, regidx, brop_zbs)",regidx;regidx;regidx;brop_zbs,brop_zbs(4),4,4,False,currentlyEnabled(Ext_Zbs),extensions/B/zbs_insts.sail:61
+C_NOP,C,(bits(6)),bits(6),,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:16
+C_ADDI4SPN,C,"(cregidx, bits(8))",cregidx;bits(8),,1,1,True,(nzimm != 0b00000000) & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:33
+C_LW,C,"(bits(5), cregidx, cregidx)",bits(5);cregidx;cregidx,,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:51
+C_LD,C,"(bits(5), cregidx, cregidx)",bits(5);cregidx;cregidx,,1,1,True,xlen == 64 & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:68
+C_SW,C,"(bits(5), cregidx, cregidx)",bits(5);cregidx;cregidx,,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:86
+C_SD,C,"(bits(5), cregidx, cregidx)",bits(5);cregidx;cregidx,,1,1,True,xlen == 64 & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:103
+C_ADDI,C,"(bits(6), regidx)",bits(6);regidx,,1,1,True,rsd != zreg & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:121
+C_JAL,C,(bits(11)),bits(11),,1,1,True,xlen == 32 & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:139
+C_ADDIW,C,"(bits(6), regidx)",bits(6);regidx,,1,1,True,rsd != zreg & xlen == 64 & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:153
+C_LI,C,"(bits(6), regidx)",bits(6);regidx,,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:167
+C_ADDI16SP,C,(bits(6)),bits(6),,1,1,True,nzimm != 0b000000 & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:183
+C_LUI,C,"(bits(6), regidx)",bits(6);regidx,,1,1,True,rd != sp & imm != 0b000000 & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:199
+C_SRLI,C,"(bits(6), cregidx)",bits(6);cregidx,,1,1,True,(xlen == 64 | shamt[5] == 0b0) & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:218
+C_SRAI,C,"(bits(6), cregidx)",bits(6);cregidx,,1,1,True,(xlen == 64 | shamt[5] == 0b0) & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:234
+C_ANDI,C,"(bits(6), cregidx)",bits(6);cregidx,,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:250
+C_SUB,C,"(cregidx, cregidx)",cregidx;cregidx,,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:266
+C_XOR,C,"(cregidx, cregidx)",cregidx;cregidx,,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:282
+C_OR,C,"(cregidx, cregidx)",cregidx;cregidx,,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:298
+C_AND,C,"(cregidx, cregidx)",cregidx;cregidx,,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:314
+C_SUBW,C,"(cregidx, cregidx)",cregidx;cregidx,,1,1,True,xlen == 64 & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:330
+C_ADDW,C,"(cregidx, cregidx)",cregidx;cregidx,,1,1,True,xlen == 64 & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:347
+C_J,C,(bits(11)),bits(11),,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:364
+C_BEQZ,C,"(bits(8), cregidx)",bits(8);cregidx,,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:377
+C_BNEZ,C,"(bits(8), cregidx)",bits(8);cregidx,,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:390
+C_SLLI,C,"(bits(6), regidx)",bits(6);regidx,,1,1,True,(xlen == 64 | shamt[5] == 0b0) & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:403
+C_LWSP,C,"(bits(6), regidx)",bits(6);regidx,,1,1,True,rd != zreg & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:418
+C_LDSP,C,"(bits(6), regidx)",bits(6);regidx,,1,1,True,rd != zreg & xlen == 64 & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:434
+C_SWSP,C,"(bits(6), regidx)",bits(6);regidx,,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:450
+C_SDSP,C,"(bits(6), regidx)",bits(6);regidx,,1,1,True,xlen == 64 & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:465
+C_JR,C,(regidx),regidx,,1,1,True,rs1 != zreg & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:481
+C_JALR,C,(regidx),regidx,,1,1,True,rs1 != zreg & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:495
+C_MV,C,"(regidx, regidx)",regidx;regidx,,1,1,True,rs2 != zreg & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:509
+C_EBREAK,C,unit,unit,,1,1,True,currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:525
+C_ADD,C,"(regidx, regidx)",regidx;regidx,,1,1,True,rs2 != zreg & currentlyEnabled(Ext_Zca),extensions/C/zca_insts.sail:538
+C_LBU,C,"(bits(2), cregidx, cregidx)",bits(2);cregidx;cregidx,,1,1,True,currentlyEnabled(Ext_Zcb),extensions/C/zcb_insts.sail:11
+C_LHU,C,"(bits(2), cregidx, cregidx)",bits(2);cregidx;cregidx,,1,1,True,currentlyEnabled(Ext_Zcb),extensions/C/zcb_insts.sail:30
+C_LH,C,"(bits(2), cregidx, cregidx)",bits(2);cregidx;cregidx,,1,1,True,currentlyEnabled(Ext_Zcb),extensions/C/zcb_insts.sail:49
+C_SB,C,"(bits(2), cregidx, cregidx)",bits(2);cregidx;cregidx,,1,1,True,currentlyEnabled(Ext_Zcb),extensions/C/zcb_insts.sail:68
+C_SH,C,"(bits(2), cregidx, cregidx)",bits(2);cregidx;cregidx,,1,1,True,currentlyEnabled(Ext_Zcb),extensions/C/zcb_insts.sail:87
+C_ZEXT_B,C,(cregidx),cregidx,,1,1,True,currentlyEnabled(Ext_Zcb),extensions/C/zcb_insts.sail:106
+C_SEXT_B,C,(cregidx),cregidx,,1,1,True,currentlyEnabled(Ext_Zcb) & currentlyEnabled(Ext_Zbb),extensions/C/zcb_insts.sail:124
+C_ZEXT_H,C,(cregidx),cregidx,,1,1,True,currentlyEnabled(Ext_Zcb) & currentlyEnabled(Ext_Zbb),extensions/C/zcb_insts.sail:141
+C_SEXT_H,C,(cregidx),cregidx,,1,1,True,currentlyEnabled(Ext_Zcb) & currentlyEnabled(Ext_Zbb),extensions/C/zcb_insts.sail:158
+C_ZEXT_W,C,(cregidx),cregidx,,1,1,True,currentlyEnabled(Ext_Zcb) & currentlyEnabled(Ext_Zba) & xlen == 64,extensions/C/zcb_insts.sail:175
+C_NOT,C,(cregidx),cregidx,,1,1,True,currentlyEnabled(Ext_Zcb),extensions/C/zcb_insts.sail:192
+C_MUL,C,"(cregidx, cregidx)",cregidx;cregidx,,1,1,True,currentlyEnabled(Ext_Zcb) & (currentlyEnabled(Ext_M) | currentlyEnabled(Ext_Zmmul)),extensions/C/zcb_insts.sail:210
+F_MADD_TYPE_D,FD,"(fregidx, fregidx, fregidx, rounding_mode, fregidx, f_madd_op_D)",fregidx;fregidx;fregidx;rounding_mode;fregidx;f_madd_op_D,rounding_mode(6);f_madd_op_D(4),24,4,False,"haveDoubleFPU() & validDoubleRegs([rs3, rs2, rs1, rd])",extensions/FD/dext_insts.sail:245
+F_BIN_RM_TYPE_D,FD,"(fregidx, fregidx, rounding_mode, fregidx, f_bin_rm_op_D)",fregidx;fregidx;rounding_mode;fregidx;f_bin_rm_op_D,rounding_mode(6);f_bin_rm_op_D(4),24,4,False,"haveDoubleFPU() & validDoubleRegs([rs2, rs1, rd])",extensions/FD/dext_insts.sail:313
+F_UN_RM_FF_TYPE_D,FD,"(fregidx, rounding_mode, fregidx, f_un_rm_ff_op_D)",fregidx;rounding_mode;fregidx;f_un_rm_ff_op_D,rounding_mode(6);f_un_rm_ff_op_D(3),18,3,False,"haveDoubleFPU() & validDoubleRegs([rd]);haveDoubleFPU() & validDoubleRegs([rs1, rd]);haveDoubleFPU() & validDoubleRegs([rs1])",extensions/FD/dext_insts.sail:377
+F_UN_RM_XF_TYPE_D,FD,"(regidx, rounding_mode, fregidx, f_un_rm_xf_op_D)",regidx;rounding_mode;fregidx;f_un_rm_xf_op_D,rounding_mode(6),6,4,False,haveDoubleFPU() & validDoubleRegs([rd]);haveDoubleFPU() & xlen >= 64,extensions/FD/dext_insts.sail:378
+F_UN_RM_FX_TYPE_D,FD,"(fregidx, rounding_mode, regidx, f_un_rm_fx_op_D)",fregidx;rounding_mode;regidx;f_un_rm_fx_op_D,rounding_mode(6),6,4,False,haveDoubleFPU() & validDoubleRegs([rs1]);haveDoubleFPU() & xlen >= 64,extensions/FD/dext_insts.sail:379
+F_BIN_F_TYPE_D,FD,"(fregidx, fregidx, fregidx, f_bin_f_op_D)",fregidx;fregidx;fregidx;f_bin_f_op_D,f_bin_f_op_D(5),5,5,False,"haveDoubleFPU() & validDoubleRegs([rs2, rs1, rd])",extensions/FD/dext_insts.sail:645
+F_BIN_X_TYPE_D,FD,"(fregidx, fregidx, regidx, f_bin_x_op_D)",fregidx;fregidx;regidx;f_bin_x_op_D,f_bin_x_op_D(3),3,3,False,"haveDoubleFPU() & validDoubleRegs([rs2, rs1])",extensions/FD/dext_insts.sail:646
+F_UN_X_TYPE_D,FD,"(fregidx, regidx, f_un_x_op_D)",fregidx;regidx;f_un_x_op_D,,1,2,False,currentlyEnabled(Ext_D) & xlen >= 64;haveDoubleFPU() & validDoubleRegs([rs1]),extensions/FD/dext_insts.sail:825
+F_UN_F_TYPE_D,FD,"(regidx, fregidx, f_un_f_op_D)",regidx;fregidx;f_un_f_op_D,f_un_f_op_D(1),1,1,False,currentlyEnabled(Ext_D) & xlen >= 64,extensions/FD/dext_insts.sail:826
+LOAD_FP,FD,"(bits(12), regidx, fregidx, word_width)",bits(12);regidx;fregidx;word_width,,1,1,False,float_load_store_width_supported(width),extensions/FD/fext_insts.sail:269
+STORE_FP,FD,"(bits(12), fregidx, regidx, word_width)",bits(12);fregidx;regidx;word_width,,1,1,False,float_load_store_width_supported(width),extensions/FD/fext_insts.sail:305
+F_MADD_TYPE_S,FD,"(fregidx, fregidx, fregidx, rounding_mode, fregidx, f_madd_op_S)",fregidx;fregidx;fregidx;rounding_mode;fregidx;f_madd_op_S,rounding_mode(6);f_madd_op_S(4),24,4,False,haveSingleFPU(),extensions/FD/fext_insts.sail:342
+F_BIN_RM_TYPE_S,FD,"(fregidx, fregidx, rounding_mode, fregidx, f_bin_rm_op_S)",fregidx;fregidx;rounding_mode;fregidx;f_bin_rm_op_S,rounding_mode(6);f_bin_rm_op_S(4),24,4,False,haveSingleFPU(),extensions/FD/fext_insts.sail:409
+F_UN_RM_FF_TYPE_S,FD,"(fregidx, rounding_mode, fregidx, f_un_rm_ff_op_S)",fregidx;rounding_mode;fregidx;f_un_rm_ff_op_S,rounding_mode(6);f_un_rm_ff_op_S(1),6,1,False,haveSingleFPU(),extensions/FD/fext_insts.sail:473
+F_UN_RM_FX_TYPE_S,FD,"(fregidx, rounding_mode, regidx, f_un_rm_fx_op_S)",fregidx;rounding_mode;regidx;f_un_rm_fx_op_S,rounding_mode(6),6,4,False,haveSingleFPU();haveSingleFPU() & xlen >= 64,extensions/FD/fext_insts.sail:474
+F_UN_RM_XF_TYPE_S,FD,"(regidx, rounding_mode, fregidx, f_un_rm_xf_op_S)",regidx;rounding_mode;fregidx;f_un_rm_xf_op_S,rounding_mode(6),6,4,False,haveSingleFPU();haveSingleFPU() & xlen >= 64,extensions/FD/fext_insts.sail:475
+F_BIN_TYPE_F_S,FD,"(fregidx, fregidx, fregidx, f_bin_op_f_S)",fregidx;fregidx;fregidx;f_bin_op_f_S,f_bin_op_f_S(5),5,5,False,haveSingleFPU(),extensions/FD/fext_insts.sail:698
+F_BIN_TYPE_X_S,FD,"(fregidx, fregidx, regidx, f_bin_op_x_S)",fregidx;fregidx;regidx;f_bin_op_x_S,f_bin_op_x_S(3),3,3,False,haveSingleFPU(),extensions/FD/fext_insts.sail:699
+F_UN_TYPE_F_S,FD,"(regidx, fregidx, f_un_op_f_S)",regidx;fregidx;f_un_op_f_S,f_un_op_f_S(1),1,1,False,currentlyEnabled(Ext_F),extensions/FD/fext_insts.sail:877
+F_UN_TYPE_X_S,FD,"(fregidx, regidx, f_un_op_x_S)",fregidx;regidx;f_un_op_x_S,f_un_op_x_S(2),2,2,False,currentlyEnabled(Ext_F);haveSingleFPU(),extensions/FD/fext_insts.sail:878
+C_FLDSP,FD,"(bits(6), fregidx)",bits(6);fregidx,,1,1,True,currentlyEnabled(Ext_Zcd),extensions/FD/zcd_insts.sail:11
+C_FSDSP,FD,"(bits(6), fregidx)",bits(6);fregidx,,1,1,True,currentlyEnabled(Ext_Zcd),extensions/FD/zcd_insts.sail:26
+C_FLD,FD,"(bits(5), cregidx, cfregidx)",bits(5);cregidx;cfregidx,,1,1,True,currentlyEnabled(Ext_Zcd),extensions/FD/zcd_insts.sail:41
+C_FSD,FD,"(bits(5), cregidx, cfregidx)",bits(5);cregidx;cfregidx,,1,1,True,currentlyEnabled(Ext_Zcd),extensions/FD/zcd_insts.sail:58
+C_FLWSP,FD,"(bits(6), fregidx)",bits(6);fregidx,,1,1,True,currentlyEnabled(Ext_Zcf),extensions/FD/zcf_insts.sail:11
+C_FSWSP,FD,"(bits(6), fregidx)",bits(6);fregidx,,1,1,True,currentlyEnabled(Ext_Zcf),extensions/FD/zcf_insts.sail:27
+C_FLW,FD,"(bits(5), cregidx, cfregidx)",bits(5);cregidx;cfregidx,,1,1,True,currentlyEnabled(Ext_Zcf),extensions/FD/zcf_insts.sail:43
+C_FSW,FD,"(bits(5), cregidx, cfregidx)",bits(5);cregidx;cfregidx,,1,1,True,currentlyEnabled(Ext_Zcf),extensions/FD/zcf_insts.sail:61
+FLI_H,FD,"(bits(5), fregidx)",bits(5);fregidx,,1,1,False,(currentlyEnabled(Ext_Zfh) | currentlyEnabled(Ext_Zvfh)) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:13
+FLI_S,FD,"(bits(5), fregidx)",bits(5);fregidx,,1,1,False,currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:63
+FLI_D,FD,"(bits(5), fregidx)",bits(5);fregidx,,1,1,False,currentlyEnabled(Ext_D) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:113
+FMINM_H,FD,"(fregidx, fregidx, fregidx)",fregidx;fregidx;fregidx,,1,1,False,currentlyEnabled(Ext_Zfh) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:163
+FMAXM_H,FD,"(fregidx, fregidx, fregidx)",fregidx;fregidx;fregidx,,1,1,False,currentlyEnabled(Ext_Zfh) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:194
+FMINM_S,FD,"(fregidx, fregidx, fregidx)",fregidx;fregidx;fregidx,,1,1,False,currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:225
+FMAXM_S,FD,"(fregidx, fregidx, fregidx)",fregidx;fregidx;fregidx,,1,1,False,currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:256
+FMINM_D,FD,"(fregidx, fregidx, fregidx)",fregidx;fregidx;fregidx,,1,1,False,currentlyEnabled(Ext_D) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:287
+FMAXM_D,FD,"(fregidx, fregidx, fregidx)",fregidx;fregidx;fregidx,,1,1,False,currentlyEnabled(Ext_D) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:318
+FROUND_H,FD,"(fregidx, rounding_mode, fregidx)",fregidx;rounding_mode;fregidx,rounding_mode(6),6,1,False,currentlyEnabled(Ext_Zfh) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:349
+FROUNDNX_H,FD,"(fregidx, rounding_mode, fregidx)",fregidx;rounding_mode;fregidx,rounding_mode(6),6,1,False,currentlyEnabled(Ext_Zfh) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:378
+FROUND_S,FD,"(fregidx, rounding_mode, fregidx)",fregidx;rounding_mode;fregidx,rounding_mode(6),6,1,False,currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:407
+FROUNDNX_S,FD,"(fregidx, rounding_mode, fregidx)",fregidx;rounding_mode;fregidx,rounding_mode(6),6,1,False,currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:436
+FROUND_D,FD,"(fregidx, rounding_mode, fregidx)",fregidx;rounding_mode;fregidx,rounding_mode(6),6,1,False,currentlyEnabled(Ext_D) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:465
+FROUNDNX_D,FD,"(fregidx, rounding_mode, fregidx)",fregidx;rounding_mode;fregidx,rounding_mode(6),6,1,False,currentlyEnabled(Ext_D) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:494
+FMVH_X_D,FD,"(fregidx, regidx)",fregidx;regidx,,1,1,False,currentlyEnabled(Ext_D) & currentlyEnabled(Ext_Zfa) & in32BitMode(),extensions/FD/zfa_insts.sail:523
+FMVP_D_X,FD,"(regidx, regidx, fregidx)",regidx;regidx;fregidx,,1,1,False,currentlyEnabled(Ext_D) & currentlyEnabled(Ext_Zfa) & in32BitMode(),extensions/FD/zfa_insts.sail:542
+FLEQ_H,FD,"(fregidx, fregidx, regidx)",fregidx;fregidx;regidx,,1,1,False,currentlyEnabled(Ext_Zfh) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:570
+FLTQ_H,FD,"(fregidx, fregidx, regidx)",fregidx;fregidx;regidx,,1,1,False,currentlyEnabled(Ext_Zfh) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:595
+FLEQ_S,FD,"(fregidx, fregidx, regidx)",fregidx;fregidx;regidx,,1,1,False,currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:620
+FLTQ_S,FD,"(fregidx, fregidx, regidx)",fregidx;fregidx;regidx,,1,1,False,currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:645
+FLEQ_D,FD,"(fregidx, fregidx, regidx)",fregidx;fregidx;regidx,,1,1,False,currentlyEnabled(Ext_D) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:671
+FLTQ_D,FD,"(fregidx, fregidx, regidx)",fregidx;fregidx;regidx,,1,1,False,currentlyEnabled(Ext_D) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:696
+FCVTMOD_W_D,FD,"(fregidx, regidx)",fregidx;regidx,,1,1,False,currentlyEnabled(Ext_D) & currentlyEnabled(Ext_Zfa),extensions/FD/zfa_insts.sail:778
+F_BIN_RM_TYPE_H,FD,"(fregidx, fregidx, rounding_mode, fregidx, f_bin_rm_op_H)",fregidx;fregidx;rounding_mode;fregidx;f_bin_rm_op_H,rounding_mode(6);f_bin_rm_op_H(4),24,4,False,haveHalfFPU(),extensions/FD/zfh_insts.sail:172
+F_MADD_TYPE_H,FD,"(fregidx, fregidx, fregidx, rounding_mode, fregidx, f_madd_op_H)",fregidx;fregidx;fregidx;rounding_mode;fregidx;f_madd_op_H,rounding_mode(6);f_madd_op_H(4),24,4,False,haveHalfFPU(),extensions/FD/zfh_insts.sail:236
+F_BIN_F_TYPE_H,FD,"(fregidx, fregidx, fregidx, f_bin_f_op_H)",fregidx;fregidx;fregidx;f_bin_f_op_H,f_bin_f_op_H(5),5,5,False,haveHalfFPU(),extensions/FD/zfh_insts.sail:303
+F_BIN_X_TYPE_H,FD,"(fregidx, fregidx, regidx, f_bin_x_op_H)",fregidx;fregidx;regidx;f_bin_x_op_H,f_bin_x_op_H(3),3,3,False,haveHalfFPU(),extensions/FD/zfh_insts.sail:304
+F_UN_RM_FF_TYPE_H,FD,"(fregidx, rounding_mode, fregidx, f_un_rm_ff_op_H)",fregidx;rounding_mode;fregidx;f_un_rm_ff_op_H,rounding_mode(6);f_un_rm_ff_op_H(5),30,5,False,haveHalfFPU();haveHalfMin();haveHalfMin() & (haveDoubleFPU() & validDoubleRegs([rd]));haveHalfMin() & (haveDoubleFPU() & validDoubleRegs([rs1])),extensions/FD/zfh_insts.sail:484
+F_UN_RM_FX_TYPE_H,FD,"(fregidx, rounding_mode, regidx, f_un_rm_fx_op_H)",fregidx;rounding_mode;regidx;f_un_rm_fx_op_H,rounding_mode(6),6,4,False,haveHalfFPU();haveHalfFPU() & xlen >= 64,extensions/FD/zfh_insts.sail:485
+F_UN_RM_XF_TYPE_H,FD,"(regidx, rounding_mode, fregidx, f_un_rm_xf_op_H)",regidx;rounding_mode;fregidx;f_un_rm_xf_op_H,rounding_mode(6),6,4,False,haveHalfFPU();haveHalfFPU() & xlen >= 64,extensions/FD/zfh_insts.sail:486
+F_UN_F_TYPE_H,FD,"(regidx, fregidx, f_un_f_op_H)",regidx;fregidx;f_un_f_op_H,f_un_f_op_H(1),1,1,False,currentlyEnabled(Ext_Zfhmin) | currentlyEnabled(Ext_Zfbfmin),extensions/FD/zfh_insts.sail:793
+F_UN_X_TYPE_H,FD,"(fregidx, regidx, f_un_x_op_H)",fregidx;regidx;f_un_x_op_H,f_un_x_op_H(2),2,2,False,currentlyEnabled(Ext_Zfhmin) | currentlyEnabled(Ext_Zfbfmin);haveHalfFPU(),extensions/FD/zfh_insts.sail:794
+UTYPE,I,"(bits(20), regidx, uop)",bits(20);regidx;uop,uop(2),2,1,False,none stated,extensions/I/base_insts.sail:16
+JAL,I,"(bits(21), regidx)",bits(21);regidx,,1,1,False,none stated,extensions/I/base_insts.sail:70
+JALR,I,"(bits(12), regidx, regidx)",bits(12);regidx;regidx,,1,1,False,none stated,extensions/I/base_insts.sail:89
+BTYPE,I,"(bits(13), regidx, regidx, bop)",bits(13);regidx;regidx;bop,bop(6),6,1,False,none stated,extensions/I/base_insts.sail:101
+ITYPE,I,"(bits(12), regidx, regidx, iop)",bits(12);regidx;regidx;iop,iop(6),6,1,False,none stated,extensions/I/base_insts.sail:143
+SHIFTIOP,I,"(bits(6), regidx, regidx, sop)",bits(6);regidx;regidx;sop,sop(3),3,3,False,xlen == 64 | shamt[5] == 0b0,extensions/I/base_insts.sail:184
+RTYPE,I,"(regidx, regidx, regidx, rop)",regidx;regidx;regidx;rop,,1,10,False,none stated,extensions/I/base_insts.sail:223
+LOAD,I,"(bits(12), regidx, regidx, bool, word_width)",bits(12);regidx;regidx;bool;word_width,,1,1,False,"valid_load_encdec(width, is_unsigned)",extensions/I/base_insts.sail:270
+STORE,I,"(bits(12), regidx, regidx, word_width)",bits(12);regidx;regidx;word_width,,1,1,False,width <= xlen_bytes,extensions/I/base_insts.sail:309
+ADDIW,I,"(bits(12), regidx, regidx)",bits(12);regidx;regidx,,1,1,False,xlen == 64,extensions/I/base_insts.sail:337
+RTYPEW,I,"(regidx, regidx, regidx, ropw)",regidx;regidx;regidx;ropw,ropw(5),5,5,False,xlen == 64,extensions/I/base_insts.sail:355
+SHIFTIWOP,I,"(bits(5), regidx, regidx, sopw)",bits(5);regidx;regidx;sopw,sopw(3),3,3,False,xlen == 64,extensions/I/base_insts.sail:401
+FENCE_TSO,I,unit,unit,,1,1,False,none stated,extensions/I/base_insts.sail:436
+FENCE,I,"(bits(4), bits(4), bits(4), regidx, regidx)",bits(4);bits(4);bits(4);regidx;regidx,,1,1,False,none stated,extensions/I/base_insts.sail:450
+ECALL,I,unit,unit,,1,1,False,none stated,extensions/I/base_insts.sail:536
+MRET,I,unit,unit,,1,1,False,none stated,extensions/I/base_insts.sail:560
+SRET,I,unit,unit,,1,1,False,none stated,extensions/I/base_insts.sail:597
+EBREAK,I,unit,unit,,1,1,False,none stated,extensions/I/base_insts.sail:642
+WFI,I,unit,unit,,1,1,False,none stated,extensions/I/base_insts.sail:653
+SFENCE_VMA,I,"(regidx, regidx)",regidx;regidx,,1,1,False,virtual_memory_supported() | not(config extensions.Svbare.sfence_vma_illegal_if_svbare_only : bool),extensions/I/base_insts.sail:672
+ZBKB_RTYPE,K,"(regidx, regidx, regidx, brop_zbkb)",regidx;regidx;regidx;brop_zbkb,brop_zbkb(2),2,2,False,currentlyEnabled(Ext_Zbkb),extensions/K/zbkb_insts.sail:10
+ZBKB_PACKW,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbkb) & xlen == 64,extensions/K/zbkb_insts.sail:43
+ZIP,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbkb) & xlen == 32,extensions/K/zbkb_insts.sail:63
+UNZIP,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbkb) & xlen == 32,extensions/K/zbkb_insts.sail:86
+BREV8,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbkb),extensions/K/zbkb_insts.sail:109
+XPERM8,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbkx),extensions/K/zbkx_insts.sail:12
+XPERM4,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zbkx),extensions/K/zbkx_insts.sail:37
+SHA256SIG0,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh),extensions/K/zkn_insts.sail:15
+SHA256SIG1,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh),extensions/K/zkn_insts.sail:16
+SHA256SUM0,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh),extensions/K/zkn_insts.sail:17
+SHA256SUM1,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh),extensions/K/zkn_insts.sail:18
+AES32ESMI,K,"(bits(2), regidx, regidx, regidx)",bits(2);regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zkne) & xlen == 32,extensions/K/zkn_insts.sail:85
+AES32ESI,K,"(bits(2), regidx, regidx, regidx)",bits(2);regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zkne) & xlen == 32,extensions/K/zkn_insts.sail:105
+AES32DSMI,K,"(bits(2), regidx, regidx, regidx)",bits(2);regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknd) & xlen == 32,extensions/K/zkn_insts.sail:129
+AES32DSI,K,"(bits(2), regidx, regidx, regidx)",bits(2);regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknd) & xlen == 32,extensions/K/zkn_insts.sail:149
+SHA512SIG0L,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh) & xlen == 32,extensions/K/zkn_insts.sail:171
+SHA512SIG0H,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh) & xlen == 32,extensions/K/zkn_insts.sail:172
+SHA512SIG1L,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh) & xlen == 32,extensions/K/zkn_insts.sail:173
+SHA512SIG1H,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh) & xlen == 32,extensions/K/zkn_insts.sail:174
+SHA512SUM0R,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh) & xlen == 32,extensions/K/zkn_insts.sail:175
+SHA512SUM1R,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh) & xlen == 32,extensions/K/zkn_insts.sail:176
+AES64KS1I,K,"(bits(4), regidx, regidx)",bits(4);regidx;regidx,,1,1,False,(currentlyEnabled(Ext_Zkne) | currentlyEnabled(Ext_Zknd)) & (xlen == 64) & (rnum <_u 0xB),extensions/K/zkn_insts.sail:265
+AES64KS2,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,(currentlyEnabled(Ext_Zkne) | currentlyEnabled(Ext_Zknd)) & xlen == 64,extensions/K/zkn_insts.sail:266
+AES64IM,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknd) & xlen == 64,extensions/K/zkn_insts.sail:267
+AES64ESM,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zkne) & xlen == 64,extensions/K/zkn_insts.sail:268
+AES64ES,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zkne) & xlen == 64,extensions/K/zkn_insts.sail:269
+AES64DSM,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknd) & xlen == 64,extensions/K/zkn_insts.sail:270
+AES64DS,K,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknd) & xlen == 64,extensions/K/zkn_insts.sail:271
+SHA512SIG0,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh) & xlen == 64,extensions/K/zkn_insts.sail:395
+SHA512SIG1,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh) & xlen == 64,extensions/K/zkn_insts.sail:396
+SHA512SUM0,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh) & xlen == 64,extensions/K/zkn_insts.sail:397
+SHA512SUM1,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zknh) & xlen == 64,extensions/K/zkn_insts.sail:398
+SM3P0,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zksh),extensions/K/zks_insts.sail:14
+SM3P1,K,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zksh),extensions/K/zks_insts.sail:15
+SM4ED,K,"(bits(2), regidx, regidx, regidx)",bits(2);regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zksed),extensions/K/zks_insts.sail:52
+SM4KS,K,"(bits(2), regidx, regidx, regidx)",bits(2);regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zksed),extensions/K/zks_insts.sail:53
+MUL,M,"(regidx, regidx, regidx, mul_op)",regidx;regidx;regidx;mul_op,,1,1,False,currentlyEnabled(Ext_M) | currentlyEnabled(Ext_Zmmul),extensions/M/mext_insts.sail:16
+DIV,M,"(regidx, regidx, regidx, bool)",regidx;regidx;regidx;bool,,1,1,False,currentlyEnabled(Ext_M),extensions/M/mext_insts.sail:47
+REM,M,"(regidx, regidx, regidx, bool)",regidx;regidx;regidx;bool,,1,1,False,currentlyEnabled(Ext_M),extensions/M/mext_insts.sail:70
+MULW,M,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,xlen == 64 & (currentlyEnabled(Ext_M) | currentlyEnabled(Ext_Zmmul)),extensions/M/mext_insts.sail:92
+DIVW,M,"(regidx, regidx, regidx, bool)",regidx;regidx;regidx;bool,,1,1,False,xlen == 64 & currentlyEnabled(Ext_M),extensions/M/mext_insts.sail:114
+REMW,M,"(regidx, regidx, regidx, bool)",regidx;regidx;regidx;bool,,1,1,False,xlen == 64 & currentlyEnabled(Ext_M),extensions/M/mext_insts.sail:138
+SINVAL_VMA,Svinval,"(regidx, regidx)",regidx;regidx,,1,1,False,currentlyEnabled(Ext_Svinval),extensions/Svinval/svinval_insts.sail:11
+SFENCE_W_INVAL,Svinval,unit,unit,,1,1,False,currentlyEnabled(Ext_Svinval),extensions/Svinval/svinval_insts.sail:26
+SFENCE_INVAL_IR,Svinval,unit,unit,,1,1,False,currentlyEnabled(Ext_Svinval),extensions/Svinval/svinval_insts.sail:44
+VVTYPE,V,"(vvfunct6, bits(1), vregidx, vregidx, vregidx)",vvfunct6;bits(1);vregidx;vregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:17
+NVSTYPE,V,"(nvsfunct6, bits(1), vregidx, vregidx, vregidx)",nvsfunct6;bits(1);vregidx;vregidx;vregidx,nvsfunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_arith_insts.sail:208
+NVTYPE,V,"(nvfunct6, bits(1), vregidx, vregidx, vregidx)",nvfunct6;bits(1);vregidx;vregidx;vregidx,nvfunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_arith_insts.sail:283
+MASKTYPEV,V,"(vregidx, vregidx, vregidx)",vregidx;vregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:358
+MOVETYPEV,V,"(vregidx, vregidx)",vregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:415
+VXTYPE,V,"(vxfunct6, bits(1), vregidx, regidx, vregidx)",vxfunct6;bits(1);vregidx;regidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:455
+NXSTYPE,V,"(nxsfunct6, bits(1), vregidx, regidx, vregidx)",nxsfunct6;bits(1);vregidx;regidx;vregidx,nxsfunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_arith_insts.sail:598
+NXTYPE,V,"(nxfunct6, bits(1), vregidx, regidx, vregidx)",nxfunct6;bits(1);vregidx;regidx;vregidx,nxfunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_arith_insts.sail:671
+VXSG,V,"(vxsgfunct6, bits(1), vregidx, regidx, vregidx)",vxsgfunct6;bits(1);vregidx;regidx;vregidx,vxsgfunct6(3),3,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:745
+MASKTYPEX,V,"(vregidx, regidx, vregidx)",vregidx;regidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:829
+MOVETYPEX,V,"(regidx, vregidx)",regidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:884
+VITYPE,V,"(vifunct6, bits(1), vregidx, bits(5), vregidx)",vifunct6;bits(1);vregidx;bits(5);vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:921
+NISTYPE,V,"(nisfunct6, bits(1), vregidx, bits(5), vregidx)",nisfunct6;bits(1);vregidx;bits(5);vregidx,nisfunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_arith_insts.sail:1029
+NITYPE,V,"(nifunct6, bits(1), vregidx, bits(5), vregidx)",nifunct6;bits(1);vregidx;bits(5);vregidx,nifunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_arith_insts.sail:1102
+VISG,V,"(visgfunct6, bits(1), vregidx, bits(5), vregidx)",visgfunct6;bits(1);vregidx;bits(5);vregidx,visgfunct6(3),3,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:1176
+MASKTYPEI,V,"(vregidx, bits(5), vregidx)",vregidx;bits(5);vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:1259
+MOVETYPEI,V,"(vregidx, bits(5))",vregidx;bits(5),,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:1314
+VMVRTYPE,V,"(vregidx, {1, 2, 4, 8}, vregidx)",vregidx;{1;2;4;8};vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:1351
+MVVTYPE,V,"(mvvfunct6, bits(1), vregidx, vregidx, vregidx)",mvvfunct6;bits(1);vregidx;vregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:1418
+MVVMATYPE,V,"(mvvmafunct6, bits(1), vregidx, vregidx, vregidx)",mvvmafunct6;bits(1);vregidx;vregidx;vregidx,mvvmafunct6(4),4,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:1551
+WVVTYPE,V,"(wvvfunct6, bits(1), vregidx, vregidx, vregidx)",wvvfunct6;bits(1);vregidx;vregidx;vregidx,wvvfunct6(7),7,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_arith_insts.sail:1617
+WVTYPE,V,"(wvfunct6, bits(1), vregidx, vregidx, vregidx)",wvfunct6;bits(1);vregidx;vregidx;vregidx,wvfunct6(4),4,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_arith_insts.sail:1697
+WMVVTYPE,V,"(wmvvfunct6, bits(1), vregidx, vregidx, vregidx)",wmvvfunct6;bits(1);vregidx;vregidx;vregidx,wmvvfunct6(3),3,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_arith_insts.sail:1770
+VEXTTYPE,V,"(vextfunct6, bits(1), vregidx, vregidx)",vextfunct6;bits(1);vregidx;vregidx,vextfunct6(6),6,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:1840
+VMVXS,V,"(vregidx, regidx)",vregidx;regidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:1922
+MVVCOMPRESS,V,"(vregidx, vregidx, vregidx)",vregidx;vregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:1959
+MVXTYPE,V,"(mvxfunct6, bits(1), vregidx, regidx, vregidx)",mvxfunct6;bits(1);vregidx;regidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:2021
+MVXMATYPE,V,"(mvxmafunct6, bits(1), vregidx, regidx, vregidx)",mvxmafunct6;bits(1);vregidx;regidx;vregidx,mvxmafunct6(4),4,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:2168
+WVXTYPE,V,"(wvxfunct6, bits(1), vregidx, regidx, vregidx)",wvxfunct6;bits(1);vregidx;regidx;vregidx,wvxfunct6(7),7,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_arith_insts.sail:2232
+WXTYPE,V,"(wxfunct6, bits(1), vregidx, regidx, vregidx)",wxfunct6;bits(1);vregidx;regidx;vregidx,wxfunct6(4),4,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_arith_insts.sail:2311
+WMVXTYPE,V,"(wmvxfunct6, bits(1), vregidx, regidx, vregidx)",wmvxfunct6;bits(1);vregidx;regidx;vregidx,wmvxfunct6(4),4,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_arith_insts.sail:2383
+VMVSX,V,"(regidx, vregidx)",regidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_arith_insts.sail:2453
+FVVTYPE,V,"(fvvfunct6, bits(1), vregidx, vregidx, vregidx)",fvvfunct6;bits(1);vregidx;vregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:16
+FVVMATYPE,V,"(fvvmafunct6, bits(1), vregidx, vregidx, vregidx)",fvvmafunct6;bits(1);vregidx;vregidx;vregidx,fvvmafunct6(8),8,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:102
+FWVVTYPE,V,"(fwvvfunct6, bits(1), vregidx, vregidx, vregidx)",fwvvfunct6;bits(1);vregidx;vregidx;vregidx,fwvvfunct6(3),3,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:184
+FWVVMATYPE,V,"(fwvvmafunct6, bits(1), vregidx, vregidx, vregidx)",fwvvmafunct6;bits(1);vregidx;vregidx;vregidx,fwvvmafunct6(4),4,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:255
+FWVTYPE,V,"(fwvfunct6, bits(1), vregidx, vregidx, vregidx)",fwvfunct6;bits(1);vregidx;vregidx;vregidx,fwvfunct6(2),2,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:328
+VFUNARY0,V,"(bits(1), vregidx, vfunary0, vregidx)",bits(1);vregidx;vfunary0;vregidx,vfunary0(6),6,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:395
+VFWUNARY0,V,"(bits(1), vregidx, vfwunary0, vregidx)",bits(1);vregidx;vfwunary0;vregidx,,1,1,False,valid_widening_fp_conversion(vfwunary0),extensions/V/vext_fp_insts.sail:516
+VFNUNARY0,V,"(bits(1), vregidx, vfnunary0, vregidx)",bits(1);vregidx;vfnunary0;vregidx,,1,1,False,valid_narrowing_fp_conversion(vfnunary0),extensions/V/vext_fp_insts.sail:650
+VFUNARY1,V,"(bits(1), vregidx, vfunary1, vregidx)",bits(1);vregidx;vfunary1;vregidx,vfunary1(4),4,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:794
+VFMVFS,V,"(vregidx, fregidx)",vregidx;fregidx,,1,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:885
+FVFTYPE,V,"(fvffunct6, bits(1), vregidx, fregidx, vregidx)",fvffunct6;bits(1);vregidx;fregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:924
+FVFMATYPE,V,"(fvfmafunct6, bits(1), vregidx, fregidx, vregidx)",fvfmafunct6;bits(1);vregidx;fregidx;vregidx,fvfmafunct6(8),8,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:1032
+FWVFTYPE,V,"(fwvffunct6, bits(1), vregidx, fregidx, vregidx)",fwvffunct6;bits(1);vregidx;fregidx;vregidx,fwvffunct6(3),3,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:1112
+FWVFMATYPE,V,"(fwvfmafunct6, bits(1), fregidx, vregidx, vregidx)",fwvfmafunct6;bits(1);fregidx;vregidx;vregidx,fwvfmafunct6(4),4,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:1181
+FWFTYPE,V,"(fwffunct6, bits(1), vregidx, fregidx, vregidx)",fwffunct6;bits(1);vregidx;fregidx;vregidx,fwffunct6(2),2,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:1252
+VFMERGE,V,"(vregidx, fregidx, vregidx)",vregidx;fregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:1319
+VFMV,V,"(fregidx, vregidx)",fregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:1379
+VFMVSF,V,"(fregidx, vregidx)",fregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_insts.sail:1422
+RFVVTYPE,V,"(rfvvfunct6, bits(1), vregidx, vregidx, vregidx)",rfvvfunct6;bits(1);vregidx;vregidx;vregidx,rfvvfunct6(4),4,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_red_insts.sail:15
+RFWVVTYPE,V,"(rfwvvfunct6, bits(1), vregidx, vregidx, vregidx)",rfwvvfunct6;bits(1);vregidx;vregidx;vregidx,rfwvvfunct6(2),2,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_red_insts.sail:90
+FVVMTYPE,V,"(fvvmfunct6, bits(1), vregidx, vregidx, vregidx)",fvvmfunct6;bits(1);vregidx;vregidx;vregidx,fvvmfunct6(4),4,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_vm_insts.sail:16
+FVFMTYPE,V,"(fvfmfunct6, bits(1), vregidx, fregidx, vregidx)",fvfmfunct6;bits(1);vregidx;fregidx;vregidx,fvfmfunct6(6),6,1,False,(currentlyEnabled(Ext_Zvfh)   & get_sew() == 16),extensions/V/vext_fp_vm_insts.sail:87
+MMTYPE,V,"(mmfunct6, vregidx, vregidx, vregidx)",mmfunct6;vregidx;vregidx;vregidx,mmfunct6(8),8,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_mask_insts.sail:15
+VCPOP_M,V,"(bits(1), vregidx, regidx)",bits(1);vregidx;regidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_mask_insts.sail:84
+VFIRST_M,V,"(bits(1), vregidx, regidx)",bits(1);vregidx;regidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_mask_insts.sail:112
+VMSBF_M,V,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_mask_insts.sail:142
+VMSIF_M,V,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_mask_insts.sail:183
+VMSOF_M,V,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_mask_insts.sail:224
+VIOTA_M,V,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_mask_insts.sail:269
+VID_V,V,"(bits(1), vregidx)",bits(1);vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_mask_insts.sail:314
+VLSEGTYPE,V,"(nfields, bits(1), regidx, vlewidth, vregidx)",nfields;bits(1);regidx;vlewidth;vregidx,vlewidth(4),4,1,False,(currentlyEnabled(Ext_Zve32x) & vlewidth_pow(width) <= 5),extensions/V/vext_mem_insts.sail:46
+VLSEGFFTYPE,V,"(nfields, bits(1), regidx, vlewidth, vregidx)",nfields;bits(1);regidx;vlewidth;vregidx,vlewidth(4),4,1,False,(currentlyEnabled(Ext_Zve32x) & vlewidth_pow(width) <= 5),extensions/V/vext_mem_insts.sail:103
+VSSEGTYPE,V,"(nfields, bits(1), regidx, vlewidth, vregidx)",nfields;bits(1);regidx;vlewidth;vregidx,vlewidth(4),4,1,False,(currentlyEnabled(Ext_Zve32x) & vlewidth_pow(width) <= 5),extensions/V/vext_mem_insts.sail:177
+VLSSEGTYPE,V,"(nfields, bits(1), regidx, regidx, vlewidth, vregidx)",nfields;bits(1);regidx;regidx;vlewidth;vregidx,vlewidth(4),4,1,False,(currentlyEnabled(Ext_Zve32x) & vlewidth_pow(width) <= 5),extensions/V/vext_mem_insts.sail:234
+VSSSEGTYPE,V,"(nfields, bits(1), regidx, regidx, vlewidth, vregidx)",nfields;bits(1);regidx;regidx;vlewidth;vregidx,vlewidth(4),4,1,False,(currentlyEnabled(Ext_Zve32x) & vlewidth_pow(width) <= 5),extensions/V/vext_mem_insts.sail:292
+VLXSEGTYPE,V,"(nfields, bits(1), vregidx, regidx, vlewidth, vregidx, indexed_mop)",nfields;bits(1);vregidx;regidx;vlewidth;vregidx;indexed_mop,vlewidth(4);indexed_mop(2),8,1,False,currentlyEnabled(Ext_Zve32x) & vlewidth_pow(width) <= max_index_eew_exp,extensions/V/vext_mem_insts.sail:351
+VSXSEGTYPE,V,"(nfields, bits(1), vregidx, regidx, vlewidth, vregidx, indexed_mop)",nfields;bits(1);vregidx;regidx;vlewidth;vregidx;indexed_mop,vlewidth(4);indexed_mop(2),8,1,False,(currentlyEnabled(Ext_Zve32x) & vlewidth_pow(width) <= max_index_eew_exp),extensions/V/vext_mem_insts.sail:419
+VLRETYPE,V,"(nfields_pow2, regidx, vlewidth, vregidx)",nfields_pow2;regidx;vlewidth;vregidx,vlewidth(4),4,1,False,(currentlyEnabled(Ext_Zve32x) & vlewidth_pow(width) <= 5),extensions/V/vext_mem_insts.sail:480
+VSRETYPE,V,"(nfields_pow2, regidx, vregidx)",nfields_pow2;regidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zve32x),extensions/V/vext_mem_insts.sail:538
+VMTYPE,V,"(regidx, vregidx, vmlsop)",regidx;vregidx;vmlsop,vmlsop(2),2,1,False,currentlyEnabled(Ext_Zve32x),extensions/V/vext_mem_insts.sail:599
+RIVVTYPE,V,"(rivvfunct6, bits(1), vregidx, vregidx, vregidx)",rivvfunct6;bits(1);vregidx;vregidx;vregidx,rivvfunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 16),extensions/V/vext_red_insts.sail:15
+RMVVTYPE,V,"(rmvvfunct6, bits(1), vregidx, vregidx, vregidx)",rmvvfunct6;bits(1);vregidx;vregidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_red_insts.sail:84
+VVMTYPE,V,"(vvmfunct6, vregidx, vregidx, vregidx)",vvmfunct6;vregidx;vregidx;vregidx,vvmfunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_vm_insts.sail:18
+VVMCTYPE,V,"(vvmcfunct6, vregidx, vregidx, vregidx)",vvmcfunct6;vregidx;vregidx;vregidx,vvmcfunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_vm_insts.sail:81
+VVMSTYPE,V,"(vvmsfunct6, vregidx, vregidx, vregidx)",vvmsfunct6;vregidx;vregidx;vregidx,vvmsfunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_vm_insts.sail:141
+VVCMPTYPE,V,"(vvcmpfunct6, bits(1), vregidx, vregidx, vregidx)",vvcmpfunct6;bits(1);vregidx;vregidx;vregidx,vvcmpfunct6(6),6,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_vm_insts.sail:205
+VXMTYPE,V,"(vxmfunct6, vregidx, regidx, vregidx)",vxmfunct6;vregidx;regidx;vregidx,vxmfunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_vm_insts.sail:280
+VXMCTYPE,V,"(vxmcfunct6, vregidx, regidx, vregidx)",vxmcfunct6;vregidx;regidx;vregidx,vxmcfunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_vm_insts.sail:341
+VXMSTYPE,V,"(vxmsfunct6, vregidx, regidx, vregidx)",vxmsfunct6;vregidx;regidx;vregidx,vxmsfunct6(2),2,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_vm_insts.sail:398
+VXCMPTYPE,V,"(vxcmpfunct6, bits(1), vregidx, regidx, vregidx)",vxcmpfunct6;bits(1);vregidx;regidx;vregidx,,1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_vm_insts.sail:460
+VIMTYPE,V,"(vimfunct6, vregidx, bits(5), vregidx)",vimfunct6;vregidx;bits(5);vregidx,vimfunct6(1),1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_vm_insts.sail:539
+VIMCTYPE,V,"(vimcfunct6, vregidx, bits(5), vregidx)",vimcfunct6;vregidx;bits(5);vregidx,vimcfunct6(1),1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_vm_insts.sail:597
+VIMSTYPE,V,"(vimsfunct6, vregidx, bits(5), vregidx)",vimsfunct6;vregidx;bits(5);vregidx,vimsfunct6(1),1,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_vm_insts.sail:651
+VICMPTYPE,V,"(vicmpfunct6, bits(1), vregidx, bits(5), vregidx)",vicmpfunct6;bits(1);vregidx;bits(5);vregidx,vicmpfunct6(6),6,1,False,(currentlyEnabled(Ext_Zve32x) & get_sew() <= 32),extensions/V/vext_vm_insts.sail:710
+VSETVLI,V,"(bits(3), bits(1), bits(1), bits(3), bits(3), regidx, regidx)",bits(3);bits(1);bits(1);bits(3);bits(3);regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zve32x),extensions/V/vext_vset_insts.sail:148
+VSETVL,V,"(regidx, regidx, regidx)",regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zve32x),extensions/V/vext_vset_insts.sail:173
+VSETIVLI,V,"(bits(3), bits(1), bits(1), bits(3), bits(3), bits(5), regidx)",bits(3);bits(1);bits(1);bits(3);bits(3);bits(5);regidx,,1,1,False,currentlyEnabled(Ext_Zve32x),extensions/V/vext_vset_insts.sail:199
+WRS,Zawrs,(wrsop),wrsop,wrsop(2),2,1,False,currentlyEnabled(Ext_Zawrs),extensions/Zawrs/zawrs_insts.sail:15
+BITYPE,Zibi,"(bits(13), bits(5), regidx, biop)",bits(13);bits(5);regidx;biop,biop(2),2,1,False,currentlyEnabled(Ext_Zibi),extensions/Zibi/zibi_insts.sail:14
+ZICBOM,Zicbom,"(cbop_zicbom, regidx)",cbop_zicbom;regidx,cbop_zicbom(3),3,1,False,currentlyEnabled(Ext_Zicbom),extensions/Zicbom/zicbom_insts.sail:14
+ZICBOP,Zicbop,"(cbop_zicbop, regidx, bits(12))",cbop_zicbop;regidx;bits(12),cbop_zicbop(3),3,1,False,currentlyEnabled(Ext_Zicbop),extensions/Zicbop/zicbop_insts.sail:14
+ZICBOZ,Zicboz,(regidx),regidx,,1,1,False,currentlyEnabled(Ext_Zicboz),extensions/Zicboz/zicboz_insts.sail:14
+ZICOND_RTYPE,Zicond,"(regidx, regidx, regidx, zicondop)",regidx;regidx;regidx;zicondop,zicondop(2),2,1,False,currentlyEnabled(Ext_Zicond),extensions/Zicond/zicond_insts.sail:11
+CSRReg,Zicsr,"(csreg, regidx, regidx, csrop)",csreg;regidx;regidx;csrop,csrop(3),3,1,False,currentlyEnabled(Ext_Zicsr),extensions/Zicsr/zicsr_insts.sail:14
+CSRImm,Zicsr,"(csreg, bits(5), regidx, csrop)",csreg;bits(5);regidx;csrop,csrop(3),3,1,False,currentlyEnabled(Ext_Zicsr),extensions/Zicsr/zicsr_insts.sail:15
+FENCEI,Zifencei,"(bits(12), regidx, regidx)",bits(12);regidx;regidx,,1,1,False,none stated,extensions/Zifencei/zifencei_insts.sail:16
+NTL,Zihintntl,ntl_type,ntl_type,ntl_type(4),4,1,False,currentlyEnabled(Ext_Zihintntl),extensions/Zihintntl/zihintntl_insts.sail:13
+C_NTL,Zihintntl,ntl_type,ntl_type,ntl_type(4),4,1,True,currentlyEnabled(Ext_Zihintntl) & currentlyEnabled(Ext_Zca),extensions/Zihintntl/zihintntl_insts.sail:27
+PAUSE,Zihintpause,unit,unit,,1,1,False,currentlyEnabled(Ext_Zihintpause),extensions/Zihintpause/zihintpause_insts.sail:11
+VABS_V,Zvabd,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvabd),extensions/Zvabd/zvabd_insts.sail:17
+ZVABDTYPE,Zvabd,"(zvabd_vabd_func6, bits(1), vregidx, vregidx, vregidx)",zvabd_vabd_func6;bits(1);vregidx;vregidx;vregidx,zvabd_vabd_func6(2),2,1,False,currentlyEnabled(Ext_Zvabd) & valid_zvabd_sew(get_sew()),extensions/Zvabd/zvabd_insts.sail:58
+ZVWABDATYPE,Zvabd,"(zvabd_vwabda_func6, bits(1), vregidx, vregidx, vregidx)",zvabd_vwabda_func6;bits(1);vregidx;vregidx;vregidx,zvabd_vwabda_func6(2),2,1,False,currentlyEnabled(Ext_Zvabd) & valid_zvabd_sew(get_sew()),extensions/Zvabd/zvabd_insts.sail:114
+FCVT_BF16_S,bfloat16,"(fregidx, rounding_mode, fregidx)",fregidx;rounding_mode;fregidx,rounding_mode(6),6,1,False,currentlyEnabled(Ext_Zfbfmin),extensions/bfloat16/zfbfmin_insts.sail:13
+FCVT_S_BF16,bfloat16,"(fregidx, rounding_mode, fregidx)",fregidx;rounding_mode;fregidx,rounding_mode(6),6,1,False,currentlyEnabled(Ext_Zfbfmin),extensions/bfloat16/zfbfmin_insts.sail:38
+VFNCVTBF16_F_F_W,bfloat16,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvfbfmin) & get_sew() == 16,extensions/bfloat16/zvfbfmin_insts.sail:11
+VFWCVTBF16_F_F_V,bfloat16,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvfbfmin) & get_sew() == 16,extensions/bfloat16/zvfbfmin_insts.sail:63
+VFWMACCBF16_VV,bfloat16,"(bits(1), vregidx, vregidx, vregidx)",bits(1);vregidx;vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvfbfwma) & get_sew() == 16,extensions/bfloat16/zvfbfwma_insts.sail:11
+VFWMACCBF16_VF,bfloat16,"(bits(1), vregidx, fregidx, vregidx)",bits(1);vregidx;fregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvfbfwma) & get_sew() == 16,extensions/bfloat16/zvfbfwma_insts.sail:64
+LPAD,cfi,(landing_pad_label),landing_pad_label,,1,1,False,currentlyEnabled(Ext_Zicfilp),extensions/cfi/zicfilp_insts.sail:12
+SSPUSH,cfi,regidx,regidx,,1,1,False,(rs2 == ra | rs2 == t0) & currentlyEnabled(Ext_Zicfiss) & zicfiss_xSSE(cur_privilege),extensions/cfi/zicfiss_insts.sail:14
+C_SSPUSH,cfi,unit,unit,,1,1,True,currentlyEnabled(Ext_Zicfiss) & currentlyEnabled(Ext_Zcmop) & zicfiss_xSSE(cur_privilege),extensions/cfi/zicfiss_insts.sail:55
+SSPOPCHK,cfi,regidx,regidx,,1,1,False,(rs1 == ra | rs1 == t0) & currentlyEnabled(Ext_Zicfiss) & zicfiss_xSSE(cur_privilege),extensions/cfi/zicfiss_insts.sail:70
+C_SSPOPCHK,cfi,unit,unit,,1,1,True,currentlyEnabled(Ext_Zicfiss) & currentlyEnabled(Ext_Zcmop) & zicfiss_xSSE(cur_privilege),extensions/cfi/zicfiss_insts.sail:109
+SSRDP,cfi,regidx,regidx,,1,1,False,currentlyEnabled(Ext_Zicfiss) & zicfiss_xSSE(cur_privilege),extensions/cfi/zicfiss_insts.sail:123
+SSAMOSWAP,cfi,"(bool, bool, regidx, regidx, word_width, regidx)",bool;bool;regidx;regidx;word_width;regidx,,1,1,False,(width == 4 | (xlen == 64 & width == 8)) & currentlyEnabled(Ext_Zicfiss),extensions/cfi/zicfiss_insts.sail:143
+STOP_FETCHING,rmem,unit,unit,,1,1,False,none stated,extensions/rmem/insts_rmem.sail:14
+THREAD_START,rmem,unit,unit,,1,1,False,none stated,extensions/rmem/insts_rmem.sail:24
+VANDN_VV,vector_crypto,"(bits(1), vregidx, vregidx, vregidx)",bits(1);vregidx;vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvkb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:12
+VANDN_VX,vector_crypto,"(bits(1), vregidx, regidx, vregidx)",bits(1);vregidx;regidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvkb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:56
+VBREV_V,vector_crypto,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvbb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:98
+VBREV8_V,vector_crypto,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvkb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:143
+VREV8_V,vector_crypto,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvkb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:185
+VCLZ_V,vector_crypto,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvbb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:227
+VCTZ_V,vector_crypto,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvbb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:270
+VCPOP_V,vector_crypto,"(bits(1), vregidx, vregidx)",bits(1);vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvbb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:313
+VROL_VV,vector_crypto,"(bits(1), vregidx, vregidx, vregidx)",bits(1);vregidx;vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvkb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:359
+VROL_VX,vector_crypto,"(bits(1), vregidx, regidx, vregidx)",bits(1);vregidx;regidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvkb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:404
+VROR_VV,vector_crypto,"(bits(1), vregidx, vregidx, vregidx)",bits(1);vregidx;vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvkb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:447
+VROR_VX,vector_crypto,"(bits(1), vregidx, regidx, vregidx)",bits(1);vregidx;regidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvkb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:492
+VROR_VI,vector_crypto,"(bits(1), vregidx, bits(6), vregidx)",bits(1);vregidx;bits(6);vregidx,,1,1,False,currentlyEnabled(Ext_Zvkb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:535
+VWSLL_VV,vector_crypto,"(bits(1), vregidx, vregidx, vregidx)",bits(1);vregidx;vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvbb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:578
+VWSLL_VX,vector_crypto,"(bits(1), vregidx, regidx, vregidx)",bits(1);vregidx;regidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvbb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:631
+VWSLL_VI,vector_crypto,"(bits(1), vregidx, bits(5), vregidx)",bits(1);vregidx;bits(5);vregidx,,1,1,False,currentlyEnabled(Ext_Zvbb) & (get_sew() <= 32 | (get_sew() == 64 & currentlyEnabled(Ext_Zve64x))),extensions/vector_crypto/zvbb_insts.sail:681
+VCLMUL_VV,vector_crypto,"(bits(1), vregidx, vregidx, vregidx)",bits(1);vregidx;vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvbc) & get_sew() == 64,extensions/vector_crypto/zvbc_insts.sail:11
+VCLMUL_VX,vector_crypto,"(bits(1), vregidx, regidx, vregidx)",bits(1);vregidx;regidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvbc) & get_sew() == 64,extensions/vector_crypto/zvbc_insts.sail:57
+VCLMULH_VV,vector_crypto,"(bits(1), vregidx, vregidx, vregidx)",bits(1);vregidx;vregidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvbc) & get_sew() == 64,extensions/vector_crypto/zvbc_insts.sail:101
+VCLMULH_VX,vector_crypto,"(bits(1), vregidx, regidx, vregidx)",bits(1);vregidx;regidx;vregidx,,1,1,False,currentlyEnabled(Ext_Zvbc) & get_sew() == 64,extensions/vector_crypto/zvbc_insts.sail:147
+VGHSH_VV,vector_crypto,"(vregidx, vregidx, vregidx)",vregidx;vregidx;vregidx,,1,1,False,"currentlyEnabled(Ext_Zvkg) & get_sew() == 32 & zvk_check_encdec(128, 4)",extensions/vector_crypto/zvkg_insts.sail:11
+VGMUL_VV,vector_crypto,"(vregidx, vregidx)",vregidx;vregidx,,1,1,False,"currentlyEnabled(Ext_Zvkg) & get_sew() == 32 & zvk_check_encdec(128, 4)",extensions/vector_crypto/zvkg_insts.sail:65
+VAESDF,vector_crypto,"(zvk_vaesdf_funct6, vregidx, vregidx)",zvk_vaesdf_funct6;vregidx;vregidx,zvk_vaesdf_funct6(2),2,1,False,"currentlyEnabled(Ext_Zvkned) & get_sew() == 32 & zvk_check_encdec(128, 4) & (funct6 == ZVK_VAESDF_VV |",extensions/vector_crypto/zvkned_insts.sail:11
+VAESDM,vector_crypto,"(zvk_vaesdm_funct6, vregidx, vregidx)",zvk_vaesdm_funct6;vregidx;vregidx,zvk_vaesdm_funct6(2),2,1,False,"currentlyEnabled(Ext_Zvkned) & get_sew() == 32 & zvk_check_encdec(128, 4) & (funct6 == ZVK_VAESDM_VV |",extensions/vector_crypto/zvkned_insts.sail:68
+VAESEF,vector_crypto,"(zvk_vaesef_funct6, vregidx, vregidx)",zvk_vaesef_funct6;vregidx;vregidx,zvk_vaesef_funct6(2),2,1,False,"currentlyEnabled(Ext_Zvkned) & get_sew() == 32 & zvk_check_encdec(128, 4) & (funct6 == ZVK_VAESEF_VV |",extensions/vector_crypto/zvkned_insts.sail:126
+VAESEM,vector_crypto,"(zvk_vaesem_funct6, vregidx, vregidx)",zvk_vaesem_funct6;vregidx;vregidx,zvk_vaesem_funct6(2),2,1,False,"currentlyEnabled(Ext_Zvkned) & get_sew() == 32 & zvk_check_encdec(128, 4) & (funct6 == ZVK_VAESEM_VV |",extensions/vector_crypto/zvkned_insts.sail:183
+VAESKF1_VI,vector_crypto,"(vregidx, bits(5), vregidx)",vregidx;bits(5);vregidx,,1,1,False,"currentlyEnabled(Ext_Zvkned) & get_sew() == 32 & zvk_check_encdec(128, 4)",extensions/vector_crypto/zvkned_insts.sail:241
+VAESKF2_VI,vector_crypto,"(vregidx, bits(5), vregidx)",vregidx;bits(5);vregidx,,1,1,False,"currentlyEnabled(Ext_Zvkned) & get_sew() == 32 & zvk_check_encdec(128, 4)",extensions/vector_crypto/zvkned_insts.sail:295
+VAESZ_VS,vector_crypto,"(vregidx, vregidx)",vregidx;vregidx,,1,1,False,"currentlyEnabled(Ext_Zvkned) & get_sew() == 32 & zvk_check_encdec(128, 4) & zvk_valid_reg_overlap(vs2, vd, get_lmul_pow())",extensions/vector_crypto/zvkned_insts.sail:350
+VSHA2MS_VV,vector_crypto,"(vregidx, vregidx, vregidx)",vregidx;vregidx;vregidx,,1,1,False,"(currentlyEnabled(Ext_Zvknha) & get_sew() == 32) | (currentlyEnabled(Ext_Zvknhb) & (get_sew() == 32 | get_sew() == 64)) & zvknhab_check_encdec(vs2, vs1, vd)",extensions/vector_crypto/zvknhab_insts.sail:12
+ZVKSHA2TYPE,vector_crypto,"(zvk_vsha2_funct6, vregidx, vregidx, vregidx)",zvk_vsha2_funct6;vregidx;vregidx;vregidx,zvk_vsha2_funct6(2),2,1,False,"(currentlyEnabled(Ext_Zvknha) & get_sew() == 32) | (currentlyEnabled(Ext_Zvknhb) & (get_sew() == 32 | get_sew() == 64)) & zvknhab_check_encdec(vs2, vs1, vd)",extensions/vector_crypto/zvknhab_insts.sail:75
+VSM4K_VI,vector_crypto,"(vregidx, bits(5), vregidx)",vregidx;bits(5);vregidx,,1,1,False,"currentlyEnabled(Ext_Zvksed) & get_sew() == 32 & zvk_check_encdec(128, 4)",extensions/vector_crypto/zvksed_insts.sail:11
+ZVKSM4RTYPE,vector_crypto,"(zvk_vsm4r_funct6, vregidx, vregidx)",zvk_vsm4r_funct6;vregidx;vregidx,zvk_vsm4r_funct6(2),2,2,False,"currentlyEnabled(Ext_Zvksed) & get_sew() == 32 & zvk_check_encdec(128, 4);currentlyEnabled(Ext_Zvksed) & get_sew() == 32 & zvk_check_encdec(128, 4) & zvk_valid_reg_overlap(vs2, vd, get_lmul_pow())",extensions/vector_crypto/zvksed_insts.sail:69
+VSM3ME_VV,vector_crypto,"(vregidx, vregidx, vregidx)",vregidx;vregidx;vregidx,,1,1,False,"currentlyEnabled(Ext_Zvksh) & get_sew() == 32 & zvk_check_encdec(256, 8) & zvk_valid_reg_overlap(vs2, vd, get_lmul_pow())",extensions/vector_crypto/zvksh_insts.sail:11
+VSM3C_VI,vector_crypto,"(vregidx, bits(5), vregidx)",vregidx;bits(5);vregidx,,1,1,False,"currentlyEnabled(Ext_Zvksh) & get_sew() == 32 & zvk_check_encdec(256, 8) & zvk_valid_reg_overlap(vs2, vd, get_lmul_pow())",extensions/vector_crypto/zvksh_insts.sail:60
+ZCMOP,mops,(bits(3)),bits(3),,1,1,True,currentlyEnabled(Ext_Zcmop),mops/Zcmop/zcmop_insts.sail:11
+ZIMOP_MOP_R,mops,"(bits(5), regidx, regidx)",bits(5);regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zimop),mops/Zimop/zimop_insts.sail:11
+ZIMOP_MOP_RR,mops,"(bits(3), regidx, regidx, regidx)",bits(3);regidx;regidx;regidx,,1,1,False,currentlyEnabled(Ext_Zimop),mops/Zimop/zimop_insts.sail:12
+ILLEGAL,sys,word,word,,1,1,False,none stated,sys/insts_begin.sail:78
+C_ILLEGAL,sys,half,half,,1,1,True,none stated,sys/insts_begin.sail:79
