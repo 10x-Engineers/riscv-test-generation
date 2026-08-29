@@ -173,6 +173,18 @@ export SPIKE_BIN=/path/to/spike
 export Z3_LIB_DIR=/path/to/z3/lib
 ```
 
+**Or let it set them for you.** `--export` emits the resolved paths as shell exports:
+
+```bash
+eval "$(python3 python-isla/paths.py --export)"
+```
+
+Two of those do real work beyond documentation: `LD_LIBRARY_PATH` gains the Z3 directory,
+because `isla-testgen` loads Z3 at run time rather than linking it, and `PATH` gains the
+toolchain directory so the assembler and linker resolve. A path that does not exist is emitted
+as a comment rather than an export, so a wrong value is never pinned and the fallback order
+still applies next run; `--include-missing` overrides that.
+
 `SAIL_RISCV` prefers whichever checkout is actually **built**, so a fresh clone uses the
 submodule and an existing sibling checkout keeps working — neither needs configuration.
 
