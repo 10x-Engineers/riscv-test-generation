@@ -69,8 +69,7 @@ def parse_cases(path):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--cases", default=os.path.join(paths.REPO, "cases/pmp.toml")
-                    if hasattr(paths, "REPO") else "cases/pmp.toml")
+    ap.add_argument("--cases", default=os.path.join(paths.REPO_ROOT, "cases/pmp.toml"))
     ap.add_argument("--out", default=os.path.join(os.path.expanduser("~"),
                                                   ".cache/riscv-sweep/pmp-cases"))
     ap.add_argument("--config", default=os.path.join(

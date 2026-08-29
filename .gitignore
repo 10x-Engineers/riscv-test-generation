@@ -23,3 +23,7 @@ build-coverage/
 demo/**/*.elf
 demo/**/*.o
 demo/**/*.ld
+
+# LibreOffice lock files and conversion byproducts
+.~lock.*#
+PROPOSAL/*.pdf

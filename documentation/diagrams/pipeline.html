@@ -10,24 +10,6 @@
   --warn:#9a6114; --warn-bg:#f7efe0;
   --alert:#a5372b; --alert-bg:#fae9e6;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
-  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
-  --rule:#262d38; --rule-firm:#39424f;
-  --accent:#8fa7e8; --accent-bg:#1a2340;
-  --ok:#5cbdb0; --ok-bg:#0f2b28;
-  --warn:#d8a75a; --warn-bg:#2b2417;
-  --alert:#e5877a; --alert-bg:#2e1c19;
-}}
-:root[data-theme="dark"]{
-  --paper:#0e1116; --surface:#161b22; --sunk:#1c222b;
-  --ink:#eef2f6; --body:#c0c9d4; --muted:#8794a4;
-  --rule:#262d38; --rule-firm:#39424f;
-  --accent:#8fa7e8; --accent-bg:#1a2340;
-  --ok:#5cbdb0; --ok-bg:#0f2b28;
-  --warn:#d8a75a; --warn-bg:#2b2417;
-  --alert:#e5877a; --alert-bg:#2e1c19;
-}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--body);
   font-family:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
@@ -82,13 +64,104 @@ footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-si
 </header>
 
 <section>
+<div class="secnum">The shape of it</div>
+<h2>The pipeline at a glance</h2>
+<p>Before the file-by-file map, the same flow with the filenames taken out. The one thing worth
+carrying into the detail below is that <b>the model is read twice, by different means</b>: compiled
+into an intermediate representation the solver reasons over, and read as plain source text to derive
+the space of cases. Everything else follows from that split.</p>
+
 <figure>
-<svg viewBox="-14 0 978 1370" role="img" aria-label="The full generation pipeline. The Sail model is compiled to Isla IR, which forks into two routes: a symbolic route through testgen.rs, execution.rs, Z3, extract_state.rs and generate_object_riscv.rs, and an oracle route through sailtest's cli.py, model.py, oracle.py, program.py and toolchain.py. Both produce a .s and .ld pair, which is assembled and linked into a self-checking ELF, run on four simulators, and measured by coverage_report.py against the model's branch_info manifest. A control layer acts at four numbered points - configure, route, execute and judge, measure and re-plan - and feeds the uncovered remainder back to the routing decision.">
+<svg viewBox="0 0 900 566" role="img" aria-label="The pipeline at a higher level. The Sail model is read two ways: compiled to an intermediate representation the solver reasons over, and read as source text to derive the case space. Generation combines the two, producing one self-checking ELF, which runs on the Sail model and an independent simulator, and is then measured for coverage. What the corpus did not cover is generated next.">
+  <defs><marker id="ab" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><polygon points="0,1 8,4 0,7" fill="currentColor"/></marker></defs>
+  <rect x="325" y="14" width="250" height="54" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.9"/>
+  <text x="450" y="38" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">the Sail model</text>
+  <text x="450" y="58" text-anchor="middle" font-size="9" fill="var(--muted)">the only source of truth</text>
+  <rect x="90" y="112" width="250" height="66" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.8"/>
+  <text x="215" y="136" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">the IR</text>
+  <text x="215" y="156" text-anchor="middle" font-size="9" fill="var(--muted)">one build per configuration;</text>
+  <text x="215" y="170" text-anchor="middle" font-size="9" fill="var(--muted)">XLEN and VLEN frozen in it</text>
+  <rect x="560" y="112" width="250" height="66" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.8"/>
+  <text x="685" y="136" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">the case space</text>
+  <text x="685" y="156" text-anchor="middle" font-size="9" fill="var(--muted)">the deciding functions, read</text>
+  <text x="685" y="170" text-anchor="middle" font-size="9" fill="var(--muted)">as text: one entry per case</text>
+  <rect x="225" y="222" width="450" height="70" fill="var(--surface)" stroke="var(--rule-firm)" stroke-width="1.6"/>
+  <text x="450" y="246" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">generation</text>
+  <text x="450" y="266" text-anchor="middle" font-size="9" fill="var(--muted)">a symbolic route and a concrete route,</text>
+  <text x="450" y="280" text-anchor="middle" font-size="9" fill="var(--muted)">under one control layer that decides which</text>
+  <rect x="300" y="326" width="300" height="54" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.8"/>
+  <text x="450" y="350" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">one self-checking ELF</text>
+  <text x="450" y="370" text-anchor="middle" font-size="9" fill="var(--muted)">it decides its own pass or fail</text>
+  <rect x="250" y="404" width="400" height="54" fill="var(--surface)" stroke="var(--rule-firm)" stroke-width="1.6"/>
+  <text x="450" y="428" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">run on Sail and an independent simulator</text>
+  <text x="450" y="448" text-anchor="middle" font-size="9" fill="var(--muted)">only the non-Sail run is independent evidence</text>
+  <rect x="280" y="482" width="340" height="54" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.8"/>
+  <text x="450" y="506" text-anchor="middle" font-size="12" font-weight="600" fill="var(--ink)">coverage and reports</text>
+  <text x="450" y="526" text-anchor="middle" font-size="9" fill="var(--muted)">hit, missed, or excluded with a reason</text>
+  <g stroke="currentColor" fill="none" stroke-width="1.4" marker-end="url(#ab)">
+    <line x1="390" y1="72" x2="255" y2="108"/>
+    <line x1="510" y1="72" x2="645" y2="108"/>
+    <line x1="215" y1="182" x2="330" y2="218"/>
+    <line x1="685" y1="182" x2="570" y2="218"/>
+    <line x1="450" y1="296" x2="450" y2="322"/>
+    <line x1="450" y1="384" x2="450" y2="400"/>
+    <line x1="450" y1="462" x2="450" y2="478"/>
+  </g>
+  <text x="232" y="96" text-anchor="middle" font-size="9" fill="var(--body)">compiled</text>
+  <text x="668" y="96" text-anchor="middle" font-size="9" fill="var(--body)">read as text</text>
+  <text x="126" y="208" text-anchor="middle" font-size="9" fill="var(--body)">the solver derives</text>
+  <text x="126" y="220" text-anchor="middle" font-size="9" fill="var(--body)">the operands</text>
+  <text x="774" y="208" text-anchor="middle" font-size="9" fill="var(--body)">the case supplies</text>
+  <text x="774" y="220" text-anchor="middle" font-size="9" fill="var(--body)">the machine state</text>
+  <text x="462" y="314" font-size="9" fill="var(--body)">one artefact format, whichever route made it</text>
+  <text x="462" y="396" font-size="9" fill="var(--body)">runs unmodified, no harness</text>
+  <text x="462" y="474" font-size="9" fill="var(--body)">measured on the instrumented model</text>
+  <path d="M 620 509 L 858 509 L 858 257 L 679 257" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="6 3" marker-end="url(#ab)"/>
+  <text x="852" y="350" text-anchor="end" font-size="9" font-weight="600" fill="var(--accent)">what the corpus</text>
+  <text x="852" y="363" text-anchor="end" font-size="9" font-weight="600" fill="var(--accent)">did not cover is</text>
+  <text x="852" y="376" text-anchor="end" font-size="9" font-weight="600" fill="var(--accent)">generated next</text>
+</svg>
+<figcaption>The two readings of the model meet again at generation: the solver derives the
+operands, the case supplies the machine state around them. From the ELF downwards there is one
+artefact, one runner and one measurement, whichever route produced the test.</figcaption>
+</figure>
+</section>
+
+<section>
+<div class="secnum">The map</div>
+<h2>Every file, in order</h2>
+<figure>
+<svg viewBox="-250 0 1214 1370" role="img" aria-label="The full generation pipeline. On the left, case extractors read the deciding functions in the model and write a case file, which a runner turns into one generator invocation per case. In the centre, the Sail model is compiled to Isla IR, which forks into two routes: a symbolic route through testgen.rs, execution.rs, Z3, extract_state.rs and generate_object_riscv.rs, and an oracle route through sailtest's cli.py, model.py, oracle.py, program.py and toolchain.py. Both produce a .s and .ld pair, which is assembled and linked into a self-checking ELF, run on four simulators, and measured by coverage_report.py against the model's branch_info manifest. A control layer acts at four numbered points - configure, route, execute and judge, measure and re-plan - and feeds the uncovered remainder back to the routing decision.">
   <defs>
     <marker id="pm" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7.5" markerHeight="7.5" orient="auto">
       <polygon points="0,1 8,4 0,7" fill="currentColor"/>
     </marker>
   </defs>
+
+
+  <!-- ============ derived-case path ============ -->
+  <rect x="-236" y="24" width="196" height="46" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="-138" y="44" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">python-isla/*_cases.py</text>
+  <text x="-138" y="59" text-anchor="middle" font-size="9.5" fill="var(--muted)">reads the model, runs nothing</text>
+
+  <rect x="-236" y="114" width="196" height="46" fill="var(--surface)" stroke="var(--ok)" stroke-width="1.6"/>
+  <text x="-138" y="134" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">cases/*.toml</text>
+  <text x="-138" y="149" text-anchor="middle" font-size="9.5" fill="var(--muted)">one entry per derived case</text>
+
+  <rect x="-236" y="222" width="196" height="46" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
+  <text x="-138" y="242" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">run_*_cases.py</text>
+  <text x="-138" y="257" text-anchor="middle" font-size="9.5" fill="var(--muted)">one generator run per case</text>
+
+  <g stroke="currentColor" fill="none" stroke-width="1.5" marker-end="url(#pm)">
+    <line x1="246" y1="47" x2="-36" y2="47"/>
+    <line x1="-138" y1="70" x2="-138" y2="110"/>
+    <line x1="-138" y1="160" x2="-138" y2="218"/>
+    <line x1="-40" y1="245" x2="146" y2="245"/>
+  </g>
+  <text x="105" y="36" text-anchor="middle" font-size="9.5" fill="var(--body)">the enums, bitfields and match arms, read as text</text>
+  <text x="-30" y="264" font-size="9.5" fill="var(--body)">--pmp-case, --vm-case, --trap-case</text>
+  <text x="-236" y="292" font-size="9.5" fill="var(--body)">the case supplies the machine state;</text>
+  <text x="-236" y="305" font-size="9.5" fill="var(--body)">the solver still derives the operands</text>
 
   <!-- ============ boxes ============ -->
   <!-- R1 -->
@@ -153,7 +226,7 @@ footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-si
   <!-- R8 -->
   <rect x="250" y="684" width="300" height="46" fill="var(--surface)" stroke="var(--rule-firm)" stroke-width="1.6"/>
   <text x="400" y="704" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">&lt;test&gt;.s &nbsp;+&nbsp; &lt;test&gt;.ld</text>
-  <text x="400" y="719" text-anchor="middle" font-size="10" fill="var(--muted)">preamble, test bytes, expected-state tables, trap handler</text>
+  <text x="400" y="719" text-anchor="middle" font-size="10" fill="var(--muted)">preamble, test bytes, expected state, trap handler</text>
 
   <!-- R9 -->
   <rect x="250" y="774" width="300" height="46" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.8"/>
@@ -168,7 +241,7 @@ footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--rule);font-si
   <!-- R11 -->
   <rect x="250" y="954" width="300" height="46" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.6"/>
   <text x="400" y="974" text-anchor="middle" font-size="12.5" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">coverage_report.py</text>
-  <text x="400" y="989" text-anchor="middle" font-size="10" fill="var(--muted)">every span reconciled: hit, missed, or excluded-with-reason</text>
+  <text x="400" y="989" text-anchor="middle" font-size="10" fill="var(--muted)">every span: hit, missed, or excluded-with-reason</text>
 
   <!-- R12 -->
   <rect x="170" y="1044" width="460" height="46" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1.8"/>
@@ -380,7 +453,7 @@ estimate.</p>
 <tr><td class="m">isla-lib/src/primop/softfloat.rs</td><td>isla</td><td class="n">+431</td><td>A symbolic SoftFloat interface, so FP primops exist in the IR at all</td></tr>
 <tr><td class="m">riscv-ir/riscv{32,64}.{ir,toml}</td><td>isla-testgen</td><td class="n">4 files</td><td>The compiled IR and the tool-path config it needs</td></tr>
 <tr><td class="m">autotest/ &mdash; the whole oracle</td><td>autotest</td><td class="n">13 modules</td><td><code>cli</code>, <code>config</code>, <code>model</code>, <code>oracle</code>, <code>program</code>, <code>toolchain</code>, plus two backends. No upstream: its first commit is ours</td></tr>
-<tr><td class="m">python-isla/</td><td>riscv-test-generation</td><td class="n">17 scripts</td><td>Sweeps, scenarios, coverage, regression, status, testplan</td></tr>
+<tr><td class="m">python-isla/</td><td>riscv-test-generation</td><td class="n">23 scripts</td><td>Sweeps, scenarios, case extraction and case runners, coverage, regression, status, testplan</td></tr>
 <tr><td class="m">tools/, documentation/, PROPOSAL/</td><td>riscv-test-generation</td><td class="n">&mdash;</td><td>Clone verification, PDF conversion, these pages</td></tr>
 </tbody></table></div>
 
@@ -546,6 +619,9 @@ mostly not new features, mostly closing gaps between two existing tools.</div>
 <thead><tr><th>Box</th><th>Path</th><th>Repository</th></tr></thead><tbody>
 <tr><td class="a">Sail sources</td><td class="m">model/*.sail</td><td>sail-riscv</td></tr>
 <tr><td class="a">Drivers</td><td class="m">python-isla/scenario_tests.py, opcode_sweep.py, sweep_all.py</td><td>riscv-test-generation</td></tr>
+<tr><td class="a">Case extractors</td><td class="m">python-isla/{pmp,vmem,trap}_cases.py</td><td>riscv-test-generation</td></tr>
+<tr><td class="a">Case files</td><td class="m">cases/{pmp,vmem,trap}.toml</td><td>riscv-test-generation</td></tr>
+<tr><td class="a">Case runners</td><td class="m">python-isla/run_{pmp,vmem,trap}_cases.py</td><td>riscv-test-generation</td></tr>
 <tr><td class="a">IR + config</td><td class="m">isla-gen-extension/riscv-ir/riscv{32,64}.{ir,toml}</td><td>riscv-test-generation</td></tr>
 <tr><td class="a">testgen.rs</td><td class="m">isla-gen-extension/src/testgen.rs</td><td>isla-testgen</td></tr>
 <tr><td class="a">execution.rs</td><td class="m">isla-gen-extension/src/execution.rs</td><td>isla-testgen</td></tr>

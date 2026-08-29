@@ -9,18 +9,56 @@ framework; deliverables 1–5 are post-award.
 
 ## The approach
 
-A **coverage-directed hybrid**, with generation routed by what each engine can actually do:
+**Routing is by extension.** Floating point and Vector route to the concrete Oracle; every other
+extension routes to ISLA, which symbolically executes the model and uses Z3 to derive the operands
+that reach a chosen behaviour. A small template backend covers branch and jump cases.
 
-- a config-driven **concrete-oracle backbone** — run the Golden Model, bake the resulting state
-  into self-checking ELFs — for breadth across the privileged ISA, and the only viable path for
-  floating point and vector;
-- an **ISLA symbolic-execution specialist** for the corners random stimulus does not reach:
-  a specific PMP violation, a chosen page-fault cause, a precise trap delegation;
-- both **steered by, and measured against, Sail-source coverage**, which is what the RFP's
-  first evaluation criterion asks for.
+Because FP and Vector are deferred under the RFP, the Oracle leg is not used to generate tests in
+the committed scope. Its job here is a different one:
 
-Full reasoning and RFP compliance mapping:
+- it **reads the branch structure of the Sail model** and derives the configurations that structure
+  implies — PMP, PMA, exceptions, interrupts, translation;
+- it **emits the assembly that sets each one up**, and that setup code is embedded in the object
+  emitter, selected by flag.
+
+Generating one test takes both legs. The scenario goes to the emitter as flags, ISLA solves the
+operands, and the emitter writes a single program: the setup code, the instruction under test with
+those operands, and the expected result. Each program runs on **both Sail and Spike** and the two
+results are compared. Coverage is collected from the instrumented model, and the scenarios it shows
+as missing return to the generation engine, which derives a case for each.
+
+**The proposal**, with the full flow and diagrams:
+<https://claude.ai/code/artifact/f8ee98c6-d48f-40d0-8191-9a20b0b3502d>
+
+Reasoning and RFP compliance mapping:
 [`documentation/EXECUTION_PLAN.md`](documentation/EXECUTION_PLAN.md).
+
+## A worked example, in the repo
+
+`demo/pmp-lw-denied/` holds one case end to end: a load denied by PMP, generated, run, and
+measured. Generate it with
+
+```sh
+isla-testgen -A riscv-ir/riscv64.ir -C riscv-ir/riscv64.toml -a riscv64 \
+  --memory-region 0x80020000-0x80030000 -o lw_pmp_read_denied -n 1 \
+  0x80020137 0x02011113 0x02015113 0x00012083 \
+  --pmp-deny 0x80020000 --expect-trap-cause 5 --trap-is-pass
+```
+
+then run it on both simulators:
+
+```sh
+sail_riscv_sim --config <cfg>.json lw_pmp_read_denied.elf   # SUCCESS
+spike --isa=rv64imac_zicsr        lw_pmp_read_denied.elf   # exit 0
+spike --isa=rv64imac_zicsr        NEG_wrong_cause.elf      # FAILED, exit 1 — the negative control
+```
+
+The negative control is the point: the same test with the expected cause changed must fail, or a
+passing run proves nothing. Replaying the corpus on the instrumented model and regenerating the
+testplan moves PMP from **81/226 spans** (one `lw`) to **85/226** (adding sw, lr, sc and amo) —
+which says the permission check distinguishes access kinds and little else in that region, so the
+way to move PMP coverage is to vary the address relationship and the configuration. That is what
+the derived cases in `cases/*.toml` do.
 
 ## Where it stands
 
@@ -460,7 +498,29 @@ the first thing to break.
 
 ## 3. Build
 
-Both model builds as in Stage 1, then the symbolic engine:
+**The Sail model, twice.** `CMAKE_BUILD_TYPE` is required — the model's CMakeLists has no
+default and stops with *"No build type selected"* if you leave it out.
+
+```bash
+# the fast simulator that runs tests
+cmake -B sail-riscv/build -S sail-riscv -DCMAKE_BUILD_TYPE=Release
+cmake --build sail-riscv/build -j$(nproc)
+
+# the instrumented one, plus the span manifest every coverage figure is measured against
+cmake -B sail-riscv/build-coverage -S sail-riscv -DCMAKE_BUILD_TYPE=Release -DCOVERAGE=ON
+cmake --build sail-riscv/build-coverage -j$(nproc)
+```
+
+Two builds, kept separate, so a coverage run can never silently use an uninstrumented emulator.
+The second emits `sail-riscv/build-coverage/sail_riscv_model.branch_info`, the span manifest that
+is the denominator for every coverage number here. A `Release` build alone gives you a runner but
+no denominator.
+
+If a configure attempt already failed, it leaves a `CMakeCache.txt` behind; re-running with the
+flag normally just works, and `rm -rf sail-riscv/build` is the clean way out if CMake complains
+about a stale cache.
+
+**Then the symbolic engine:**
 
 ```bash
 cd isla-gen-extension
