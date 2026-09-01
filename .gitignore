@@ -27,3 +27,7 @@ demo/**/*.ld
 # LibreOffice lock files and conversion byproducts
 .~lock.*#
 PROPOSAL/*.pdf
+
+# Generated test corpus -- 1,144 ELFs, ~314 MB, reproducible with
+# demo/privileged/run.sh --clean. The measured results in results/ are kept.
+demo/privileged/corpus/

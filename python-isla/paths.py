@@ -18,7 +18,9 @@ Nothing here fails at import time. A missing tool is a problem for the script
 that needs it, reported with the variable to set -- importing this module to run
 an unrelated report should not abort because Spike is not installed.
 """
+import argparse
 import os
+import shlex
 import shutil
 
 # This file lives in <repo>/python-isla/, so the repository root is one up.
@@ -116,20 +118,65 @@ RISCV_TOOLCHAIN_DIR = _dir("RISCV_TOOLCHAIN_DIR",
                            os.path.dirname(SPIKE) if os.path.dirname(SPIKE) else "")
 
 
+# The resolution table, in one place so `describe()` and `export()` cannot drift.
+def _rows():
+    return [("SAIL_RISCV", SAIL_RISCV), ("SAIL_RISCV_SIM", SAIL_SIM),
+            ("SAIL_RISCV_COVERAGE_SIM", COVERAGE_SIM), ("SAIL_BRANCH_INFO", BRANCH_INFO),
+            ("ISLA_TESTGEN_DIR", ISLA_DIR), ("ISLA_TESTGEN_BIN", ISLA_BIN),
+            ("Z3_LIB_DIR", Z3_LIB), ("SPIKE_BIN", SPIKE),
+            ("RISCV_TOOLCHAIN_DIR", RISCV_TOOLCHAIN_DIR)]
+
+
+def export(include_missing=False):
+    """Shell `export` lines for the resolved paths.
+
+        eval "$(python3 python-isla/paths.py --export)"
+
+    Two of these do real work beyond documentation. `LD_LIBRARY_PATH` has to
+    carry the Z3 directory, because isla-testgen loads Z3 at run time rather
+    than linking it, and `PATH` has to carry the toolchain directory so the
+    assembler and linker resolve. The rest are exported so a shell session
+    agrees with what the scripts resolved, instead of each re-deriving it.
+
+    A path that does not exist is emitted as a comment rather than an export:
+    pinning a wrong value would defeat the fallback order the next time a
+    script runs. Pass --include-missing to export them anyway.
+    """
+    out = ["# resolved by paths.py -- eval \"$(python3 python-isla/paths.py --export)\""]
+    for name, value in _rows():
+        if value and os.path.exists(value):
+            out.append("export %s=%s" % (name, shlex.quote(value)))
+        elif include_missing and value:
+            out.append("export %s=%s" % (name, shlex.quote(value)))
+        else:
+            out.append("# %s not found -- leaving it unset so resolution retries" % name)
+
+    if Z3_LIB and os.path.isdir(Z3_LIB):
+        out.append("# isla-testgen loads Z3 at run time, so it must be on the loader path")
+        out.append('export LD_LIBRARY_PATH=%s${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}'
+                   % shlex.quote(Z3_LIB))
+    if RISCV_TOOLCHAIN_DIR and os.path.isdir(RISCV_TOOLCHAIN_DIR):
+        out.append("# the assembler, linker and Spike")
+        out.append('export PATH=%s${PATH:+:$PATH}' % shlex.quote(RISCV_TOOLCHAIN_DIR))
+    return "\n".join(out)
+
+
 def describe():
     """Human-readable resolution table -- what a script should print when a
     path turns out to be wrong, so the fix is obvious."""
-    rows = [("SAIL_RISCV", SAIL_RISCV), ("SAIL_RISCV_SIM", SAIL_SIM),
-            ("SAIL_RISCV_COVERAGE_SIM", COVERAGE_SIM), ("SAIL_BRANCH_INFO", BRANCH_INFO),
-            ("ISLA_TESTGEN_DIR", ISLA_DIR), ("ISLA_TESTGEN_BIN", ISLA_BIN),
-            ("Z3_LIB_DIR", Z3_LIB), ("SPIKE_BIN", SPIKE)]
     out = ["resolved paths (override any of these with the environment variable "
            "of the same name):", ""]
-    for name, value in rows:
+    for name, value in _rows():
         mark = "ok " if value and os.path.exists(value) else "MISSING"
         out.append(f"  {mark}  {name:26s} {value}")
     return "\n".join(out)
 
 
 if __name__ == "__main__":
-    print(describe())
+    ap = argparse.ArgumentParser(description="Resolve every path the framework needs.")
+    ap.add_argument("--export", action="store_true",
+                    help="emit shell export lines: eval \"$(paths.py --export)\"")
+    ap.add_argument("--include-missing", action="store_true",
+                    help="with --export, export paths that do not exist as well")
+    a = ap.parse_args()
+    print(export(a.include_missing) if a.export else describe())
