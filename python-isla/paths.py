@@ -22,6 +22,7 @@ import argparse
 import os
 import shlex
 import shutil
+import sys
 
 # This file lives in <repo>/python-isla/, so the repository root is one up.
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -170,6 +171,50 @@ def describe():
         mark = "ok " if value and os.path.exists(value) else "MISSING"
         out.append(f"  {mark}  {name:26s} {value}")
     return "\n".join(out)
+
+
+def foreign_env():
+    """Environment overrides that belong to a *different* checkout.
+
+    Everything here resolves relative to `__file__`, so running a script uses
+    the checkout that script lives in -- unless an exported variable overrides
+    it, because $VAR is checked before any fallback. Running
+    `eval "$(paths.py --export)"` in one clone and then working in another is
+    exactly how that happens, and the failure is baffling from inside the
+    second clone: nothing in it mentions the first, yet its binaries are the
+    ones being run.
+
+    A sibling checkout is legitimate and is not reported -- `sail-riscv` next
+    to the repo is a supported layout. Only a path belonging to neither this
+    repo nor its parent directory is a different tree.
+    """
+    home = os.path.dirname(REPO_ROOT)
+    for var in ("SAIL_RISCV", "SAIL_RISCV_SIM", "SAIL_RISCV_COVERAGE_SIM",
+                "SAIL_BRANCH_INFO", "ISLA_TESTGEN_DIR", "ISLA_TESTGEN_BIN"):
+        v = os.environ.get(var)
+        if not v:
+            continue
+        v = os.path.abspath(os.path.expanduser(v))
+        if v.startswith(REPO_ROOT + os.sep) or v.startswith(home + os.sep):
+            continue
+        yield var, v
+
+
+def warn_foreign_env(stream=sys.stderr):
+    """Print one warning if the environment points at another checkout."""
+    rows = list(foreign_env())
+    if not rows or os.environ.get("PATHS_NO_WARN"):
+        return rows
+    stream.write(
+        "paths.py: the environment points at a different checkout than this one.\n"
+        "  this repo: %s\n" % REPO_ROOT)
+    for var, v in rows:
+        stream.write("  %-24s %s\n" % (var + " =", v))
+    stream.write("  unset them to use this checkout, or set PATHS_NO_WARN=1 if deliberate.\n")
+    return rows
+
+
+warn_foreign_env()
 
 
 if __name__ == "__main__":
