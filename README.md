@@ -121,6 +121,26 @@ uninstrumented emulator. The second emits
 which is the denominator for every coverage number in §7 and the target list for
 the testplan in §5. A `Release` build alone gives you a runner but no denominator.
 
+**Where the binary lands.** CMake puts it one level down, not at the top of the
+build directory:
+
+```
+sail-riscv/build/c_emulator/sail_riscv_sim              runs tests
+sail-riscv/build-coverage/c_emulator/sail_riscv_sim     instrumented
+sail-riscv/build-coverage/sail_riscv_model.branch_info  span manifest
+```
+
+Some checkouts also have a top-level `sail-riscv/sail_riscv_sim`. That is a
+symlink someone made by hand, not a build product — do not rely on it, and do not
+conclude the build failed because it is absent.
+
+> **A missing binary usually means the build stopped, not that it failed.** If
+> `c_emulator/libriscv_model.a` exists but `c_emulator/sail_riscv_sim` does not,
+> compilation finished and the final link did not. Re-run `cmake --build` — it
+> takes seconds, because everything else is already compiled. Wiping the
+> directory is only for a *configure* failure, where a stale `CMakeCache.txt`
+> keeps recording the error.
+
 ### 4.3 Build the symbolic engine
 
 ```bash
@@ -142,6 +162,30 @@ eval "$(python3 python-isla/paths.py --export)"
 This is the line that appears at the top of most workflows below. Override any
 single path with its environment variable (`SAIL_RISCV`, `SAIL_RISCV_SIM`,
 `ISLA_TESTGEN_BIN`, `Z3_LIB_DIR`) if your layout differs.
+
+> **An exported variable beats everything, including a checkout you are standing
+> in.** `paths.py` resolves relative to its own location, so running a script
+> normally uses the checkout that script lives in. But `$VAR` is checked before
+> any fallback, so if you ran the `eval` above in one clone and then moved to
+> another, the first clone's binaries are still what run. Nothing in the second
+> clone mentions the first, which makes the failure hard to place.
+>
+> `paths.py` warns when it sees this:
+>
+> ```
+> paths.py: the environment points at a different checkout than this one.
+>   this repo: /home/you/work/riscv-test-generation
+>   SAIL_RISCV =             /home/you/other/sail-riscv
+>   unset them to use this checkout, or set PATHS_NO_WARN=1 if deliberate.
+> ```
+>
+> A sibling `sail-riscv` is a supported layout and is not reported. To clear a
+> stale environment:
+>
+> ```bash
+> unset SAIL_RISCV SAIL_RISCV_SIM SAIL_RISCV_COVERAGE_SIM SAIL_BRANCH_INFO \
+>       ISLA_TESTGEN_DIR ISLA_TESTGEN_BIN
+> ```
 
 ### 4.5 Verify
 
