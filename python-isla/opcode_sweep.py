@@ -64,7 +64,11 @@ def _limit_memory():
 
 
 SAIL_RISCV_DIR = paths.SAIL_RISCV
-SAIL_RISCV_SIM = f"{SAIL_RISCV_DIR}/sail_riscv_sim"
+# Ask paths.py rather than assuming a layout. CMake puts the binary at
+# build/c_emulator/sail_riscv_sim; a top-level `sail_riscv_sim` next to it is a
+# convenience symlink some checkouts have and the submodule does not, so
+# hardcoding that name worked only where someone had made the link by hand.
+SAIL_RISCV_SIM = paths.SAIL_SIM
 RISCV_TOOLCHAIN_DIR = paths.RISCV_TOOLCHAIN_DIR
 SPIKE_BIN = paths.SPIKE
 
@@ -441,7 +445,10 @@ def run_sail_sim(elf_path, xlen, timeout=15):
     try:
         result = subprocess.run(
             argv,
-            cwd=os.path.dirname(SAIL_RISCV_SIM),
+            # The model root, not the binary's directory -- the two are the same
+            # only in a checkout with the top-level symlink, and the simulator
+            # writes sail_coverage relative to cwd.
+            cwd=SAIL_RISCV_DIR,
             capture_output=True, text=True, timeout=timeout,
         )
     except subprocess.TimeoutExpired:
