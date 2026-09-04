@@ -289,9 +289,28 @@ list without running anything.
 ### 5.4 Building the testplan
 
 ```bash
-python3 python-isla/testplan.py                 # the plan, as text
-python3 python-isla/testplan_html.py            # the same plan as a page
+python3 python-isla/testplan.py                 # the plan
+python3 python-isla/testplan.py --html          # ...and render it as a page
+python3 python-isla/testplan.py -o documentation/testplan --html
 ```
+
+`testplan_html.py` is **not** a script — it is the rendering module `testplan.py`
+imports, and running it directly does nothing. The page comes from `--html`.
+
+Output goes to the **current directory**, under the `-o/--out-prefix` prefix
+(default `testplan`), so `cd` decides where it lands:
+
+| File | Size, roughly | What it is |
+|---|---|---|
+| `testplan.md` | 15 K | the readable plan |
+| `testplan.csv` | 580 K | one row per plan item |
+| `testplan.json` | 1.2 M | machine-readable; also the `--baseline` input |
+| `testplan-spans.csv` | 4.5 M | one row per span |
+| `testplan.html` | 1.8 M | only with `--html` |
+| `testplan.xlsx` | — | only with `--xlsx` |
+
+Join coverage in as a status column with `--coverage`, and narrow to a scope with
+`--scope` and `--exclude-spans` — the same files `coverage_report.py` takes.
 
 `testplan.py` turns spans into plan items a reviewer recognises — an
 instruction, a privilege transition, a CSR field — rather than a file and line
